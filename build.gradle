@@ -1,0 +1,103 @@
+buildscript {
+	ext {
+		springBootVersion = '2.7.3'
+		springBootManagementPlugin = '1.0.11.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "io.spring.gradle:dependency-management-plugin:${springBootManagementPlugin}"
+		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.sonarqube"
+
+group = 'org.container.platform.chaos'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.sourceEncoding", "UTF-8"
+		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco.xml"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	apacheHttpClientVersion = '4.5.12'
+	gsonVersion = '2.8.6'
+	lombokVersion = '1.18.12'
+	jacocoVersion = '0.8.5'
+	swaggerVersion = '2.9.2'
+	jjwtVersion = '0.9.1'
+	jsonpathVersion = '2.4.0'
+	springCloudVersion = '2021.0.3'
+}
+
+jar {
+	archivesBaseName = 'container-platform-chaos-api'
+	enabled = false
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	compile("io.springfox:springfox-swagger2:${swaggerVersion}") {
+		exclude module: 'swagger-annotations'
+		exclude module: 'swagger-models'
+	}
+	compile("io.swagger:swagger-annotations:1.5.21")
+	compile("io.swagger:swagger-models:1.5.21")
+	compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+	compile ('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-freemarker')
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+jacoco {
+	toolVersion = "${jacocoVersion}"
+	reportsDir = file("$buildDir/jacocoReport")
+}
+
+test {
+	ignoreFailures=true
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
+	}
+	finalizedBy("jacocoTestReport")
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		xml.destination file("build/reports/jacoco.xml")
+	}
+}
