@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: cp-chaos-api
+  freemarker:
+    template-loader-path: classpath:/templates/
+  security:
+    username: admin
+    password: cpchaos!123
+
+server:
+  port: ${PORT:8092}
+
+cpChaos:
+  name:
+  api:
+    access: "/apis"
+    list:
+      podFaults:
+        podKill:
+          list: "/apis/chaos-mesh.org/v1alpha1/podchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+      networkFaults:
+        delay:
+          list: "/apis/chaos-mesh.org/v1alpha1/networkchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+      stressScenarios:
+        list: "/apis/chaos-mesh.org/v1alpha1/stresschaos"
+        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
+        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
+        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+      event:
+        list: "/apis/events.k8s.io/v1/namespaces/{namespace}/events/"
