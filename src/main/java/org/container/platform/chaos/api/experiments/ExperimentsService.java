@@ -26,7 +26,7 @@ public class ExperimentsService {
 
 
     /**
-     * Instantiates a new Deployments service
+     * Instantiates a new Experiments service
      *
      * @param restTemplateService the rest template service
      * @param propertyService     the property service
@@ -38,16 +38,46 @@ public class ExperimentsService {
     }
 
     /**
-     * ExperimentsList 목록 조회 (Get ExperimentsList List)
+     * ExperimentsList 목록 조회 (Get Experiments List)
      *
      * @param params the params
      * @return the ExperimentsList
      */
-/*   public ExperimentsList getExperimentsList(Params params) {
+   public ExperimentsList getExperimentsList(Params params) {
 
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+      /*  HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
-
+*/
         return null;
+    }
+
+    /**
+     * Experiments 상세 조회(Get Experiments Detail)
+     *
+     * @param params the params
+     * @return the experiments detail
+     */
+    public Experiments getExperiments(Params params) {
+       return null;
+    }
+
+    /**
+     * Experiments 생성(Create Experiments)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+    public Object createExperiments(Params params) {
+       return null;
+    }
+
+    /**
+     * Experiments 삭제(Delete Experiments)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+   /* public ResultStatus deleteExperiments(Params params) {
+       return null;
     }*/
 }
