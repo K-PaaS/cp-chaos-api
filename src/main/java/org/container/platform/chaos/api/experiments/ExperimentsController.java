@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.common.model.Params;
+import org.container.platform.chaos.api.common.utill.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,7 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
-    /*@ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
+    @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
@@ -77,7 +78,7 @@ public class ExperimentsController {
             return object;
         }
         return experimentsService.createExperiments(params);
-    }*/
+    }
 
 
     /**
