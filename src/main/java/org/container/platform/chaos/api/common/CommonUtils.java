@@ -1,5 +1,7 @@
 package org.container.platform.chaos.api.common;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * Common Utils 클래스
  *
@@ -31,6 +33,16 @@ public class CommonUtils {
         } else {
             return "";
         }
+    }
+
+    /**
+     * Proc replace null value string
+     *
+     * @param requestString the request string
+     * @return the string
+     */
+    public static String procReplaceNullValue(String requestString) {
+        return (ObjectUtils.isEmpty(requestString)) ? Constants.NULL_REPLACE_TEXT : requestString;
     }
 
 }

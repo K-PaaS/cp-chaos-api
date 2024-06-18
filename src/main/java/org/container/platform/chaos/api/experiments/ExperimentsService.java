@@ -4,6 +4,10 @@ import org.container.platform.chaos.api.common.Constants;
 import org.container.platform.chaos.api.common.PropertyService;
 import org.container.platform.chaos.api.common.RestTemplateService;
 import org.container.platform.chaos.api.common.model.Params;
+import org.container.platform.chaos.api.common.model.ResultStatus;
+import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
+import org.container.platform.chaos.api.podFaults.PodFaultsService;
+import org.container.platform.chaos.api.stressScenarios.StressScenariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,9 @@ public class ExperimentsService {
 
     private final RestTemplateService restTemplateService;
     private final PropertyService propertyService;
+    private final NetworkFaultsService networkFaultsService;
+    private final PodFaultsService podFaultsService;
+    private final StressScenariosService stressScenariosService;
 
 
     /**
@@ -32,9 +39,13 @@ public class ExperimentsService {
      * @param propertyService     the property service
      */
     @Autowired
-    public ExperimentsService(RestTemplateService restTemplateService, PropertyService propertyService) {
+    public ExperimentsService(RestTemplateService restTemplateService, PropertyService propertyService, NetworkFaultsService networkFaultsService,
+                              PodFaultsService podFaultsService, StressScenariosService stressScenariosService) {
         this.restTemplateService = restTemplateService;
         this.propertyService = propertyService;
+        this.networkFaultsService = networkFaultsService;
+        this.podFaultsService = podFaultsService;
+        this.stressScenariosService = stressScenariosService;
     }
 
     /**
@@ -77,7 +88,7 @@ public class ExperimentsService {
      * @param params the params
      * @return the resultStatus
      */
-   /* public ResultStatus deleteExperiments(Params params) {
+    public ResultStatus deleteExperiments(Params params) {
        return null;
-    }*/
+    }
 }
