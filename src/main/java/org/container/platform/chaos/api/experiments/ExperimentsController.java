@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024.06.07
  **/
 @RestController
-@RequestMapping(value = "/experiments")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/experiments")
 public class ExperimentsController {
     private final ExperimentsService experimentsService;
 
@@ -34,15 +34,13 @@ public class ExperimentsController {
      *
      * @return the ExperimentsList
      */
-    /*@ApiOperation(value="Experiments 목록 조회(Get Experiments List)", nickname="getExperimentsList")
+    @ApiOperation(value="Experiments 목록 조회(Get Experiments List)", nickname="getExperimentsList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
     @GetMapping
     public ExperimentsList getExperimentsList(Params params) {
         return experimentsService.getExperimentsList(params);}
-
-    }*/
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
@@ -51,14 +49,14 @@ public class ExperimentsController {
      * @return the experiments detail
      */
 
-/*    @ApiOperation(value = "Experiments 상세 조회(Get Experiments Detail)", nickname = "getExperiments")
+    @ApiOperation(value = "Experiments 상세 조회(Get Experiments Detail)", nickname = "getExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
-    @GetMapping(value = "/{kind:.+}/{resourceName:.+}")
+    @GetMapping(value = "/{uid:.+}")
     public Experiments getExperiments(Params params) {
         return experimentsService.getExperiments(params);
-    }*/
+    }
 
 
     /**
@@ -68,7 +66,7 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
-/*    @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
+    /*@ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
@@ -89,11 +87,11 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
-  /*  @ApiOperation(value = "Experiments 삭제(Delete Experiments)", nickname = "deleteExperiments")
+   /* @ApiOperation(value = "Experiments 삭제(Delete Experiments)", nickname = "deleteExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
-    @DeleteMapping("/{resourceName:.+}")
+    @DeleteMapping("/{uid:.+}")
     public ResultStatus deleteExperiments(Params params) {
         return experimentsService.deleteExperiments(params);
     }*/
