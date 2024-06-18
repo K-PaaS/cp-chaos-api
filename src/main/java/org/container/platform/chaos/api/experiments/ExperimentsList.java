@@ -4,6 +4,7 @@ import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonItemMetaData;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * ExperimentsList 클래스
@@ -18,6 +19,7 @@ public class ExperimentsList {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private Map metadata;
     private CommonItemMetaData itemMetaData;
     private List<ExperimentsListItem> items;
 }
@@ -28,7 +30,7 @@ class ExperimentsListItem {
     private String namespace;
     private String kind;
     private String status;
-    private String resourceUid;
+    private String uid;
     private String creationTimestamp;
 
 }
