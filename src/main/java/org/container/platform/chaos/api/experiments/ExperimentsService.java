@@ -56,9 +56,16 @@ public class ExperimentsService {
      */
    public ExperimentsList getExperimentsList(Params params) {
 
-      /*  HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
-*/
+
+       HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+               propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
+
+       HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+               propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
+
+
         return null;
     }
 

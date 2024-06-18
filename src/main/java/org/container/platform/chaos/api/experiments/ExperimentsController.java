@@ -1,5 +1,6 @@
 package org.container.platform.chaos.api.experiments;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @version 1.0
  * @since 2024.06.07
  **/
+@Api(value = "ExperimentsController v1")
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/experiments")
 public class ExperimentsController {
@@ -33,7 +35,7 @@ public class ExperimentsController {
     /**
      * Experiments 목록 조회(Get Experiments List)
      *
-     * @return the ExperimentsList
+     * @return the Experiments List
      */
     @ApiOperation(value="Experiments 목록 조회(Get Experiments List)", nickname="getExperimentsList")
     @ApiImplicitParams({
