@@ -1,4 +1,8 @@
   stressors:
     memory:
-    workers: 4
-    size: '256MB'
+      workers: ${workers}
+      size: ${size}
+    cpu:
+      workers: ${workers}
+      load: ${load}
+  duration: ${duration}

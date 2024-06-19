@@ -103,18 +103,17 @@ public class Params {
     private String preview = "0";
 
     // experiments
+    private String uid = Constants.EMPTY_STRING;
+    private String name = Constants.EMPTY_STRING;
     private String kind = Constants.EMPTY_STRING;
-    private String namespaceSelectors = Constants.EMPTY_STRING;
-    private String labelSelectors = Constants.EMPTY_STRING;
-    private String podName = Constants.EMPTY_STRING;
-    private int duration = 0;
-    private String gracePeriod = Constants.EMPTY_STRING;
+    public List namespaces;
+    private Object labelSelectors = null;
+    private Object pods = null;
+    private String action = Constants.EMPTY_STRING;
+    private int gracePeriod = 0;
+    private String duration = Constants.EMPTY_STRING;
     private String latency = Constants.EMPTY_STRING;
-    private int correlation = 0;
-    private String jitter = Constants.EMPTY_STRING;
-    private String direction = Constants.EMPTY_STRING;
-    private List memory;
-    private List cpu;
+    private Object stressors = null;
 
     public Params(){
         this.cluster = Constants.EMPTY_STRING;
@@ -205,5 +204,19 @@ public class Params {
         this.resourceUid = resourceUid;
     }
 
-
+    public Params(String cluster, String namespace, String uid, String name, String kind, List namespaces, Object labelSelectors, Object pods, String action, int gracePeriod, String duration, String latency, Object stressors) {
+        this.cluster = cluster;
+        this.namespace = namespace;
+        this.uid = uid;
+        this.name = name;
+        this.kind = kind;
+        this.namespaces = namespaces;
+        this.labelSelectors = labelSelectors;
+        this.pods = pods;
+        this.action = action;
+        this.gracePeriod = gracePeriod;
+        this.duration = duration;
+        this.latency = latency;
+        this.stressors = stressors;
+    }
 }
