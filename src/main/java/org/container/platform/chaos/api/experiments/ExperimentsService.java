@@ -1,5 +1,6 @@
 package org.container.platform.chaos.api.experiments;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.common.Constants;
 import org.container.platform.chaos.api.common.PropertyService;
 import org.container.platform.chaos.api.common.RestTemplateService;
@@ -13,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,23 +86,63 @@ public class ExperimentsService {
      * @return the resultStatus
      */
     public Object createExperiments(Params params) {
+        String line = "";
+        StringBuilder stringBuilder = new StringBuilder();
+
         Map map = new HashMap();
         map.put("kind", params.getKind());
         map.put("name", params.getName());
         map.put("namespace", params.getNamespace());
-        map.put("namespaces", params.getNamespaces());
+        map.put("action", params.getAction());
+        map.put("gracePeriod", params.getGracePeriod());
+        map.put("duration", params.getDuration());
+        map.put("latency", params.getLatency());
 
-        String commonYaml = templateService.convert("create_chaosMesh_common.ftl", map);
+        stringBuilder.append(templateService.convert("create_chaosMesh_common.ftl", map));
+        stringBuilder.append(Constants.NEW_LINE);
+        stringBuilder.append(Constants.CHAOS_MESH_NAMESPACES);
+        for (int i=0; i < params.getNamespaces().size(); i++ ) {
+            line = "      - " + params.getNamespaces().get(i) + Constants.NEW_LINE;
+            stringBuilder.append(line);
+        }
 
-        if (params.getKind().equals(Constants.CHAOS_MESH_POD_CHAOS)) {
+        stringBuilder.append(Constants.CHAOS_MESH_LABEL_SELECTOR);
 
-        } else if (params.getKind().equals(Constants.CHAOS_MESH_NETWORK_CHAOS)) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> mapLabelSelector = objectMapper.convertValue(params.getLabelSelectors(), Map.class);
 
-        } else {
+        for (Map.Entry<String, String> entry : mapLabelSelector.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            line = "      " + key + ": " + value + Constants.NEW_LINE;
+            stringBuilder.append(line);
+        }
 
+        stringBuilder.append(Constants.CHAOS_MESH_PODS);
+
+        Map<String, ArrayList<String>> mapPods = objectMapper.convertValue(params.getPods(), Map.class);
+        for (Map.Entry<String, ArrayList<String>> entry : mapPods.entrySet()) {
+            String key = entry.getKey();
+            line = "      " + key + ":";
+            stringBuilder.append(line);
+            stringBuilder.append(Constants.NEW_LINE);
+
+            ArrayList<String> value = entry.getValue();
+            for (int i=0; i < value.size(); i++) {
+                line = "        - " + value.get(i);
+                stringBuilder.append(line);
+                stringBuilder.append(Constants.NEW_LINE);
+            }
         }
 
 
+        if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
+            stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
+        } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
+            stringBuilder.append(templateService.convert("create_networkFaults_delay.ftl", map));
+        } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
+
+        }
 
         return null;
     }

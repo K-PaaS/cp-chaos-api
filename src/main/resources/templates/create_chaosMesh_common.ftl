@@ -6,10 +6,3 @@ metadata:
 spec:
   mode: all
   selector:
-    namespaces:
-    - ${namespaces}
-    labelSelectors:
-      ${labelSelectors}
-    pods:
-      ${namespaces}:
-      - ${pods[i]}
