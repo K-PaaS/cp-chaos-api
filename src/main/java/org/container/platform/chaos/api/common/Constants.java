@@ -82,6 +82,7 @@ public class Constants {
     public static final String INGRESS_CONTROLLER_NAMESPACE= "ingress-nginx";
     public static final String INGRESS_CONTROLLER_RESOURCE_NAME= "ingress-nginx-controller";
 
+
     public static final String CHAOS_MESH_KIND_POD_CHAOS = "PodChaos";
     public static final String CHAOS_MESH_KIND_NETWORK_CHAOS = "NetworkChaos";
     public static final String CHAOS_MESH_KIND_STRESS_CHAOS = "StressChaos";
