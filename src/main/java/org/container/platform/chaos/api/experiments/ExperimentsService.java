@@ -13,6 +13,7 @@ import org.container.platform.chaos.api.stressScenarios.StressScenariosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +64,12 @@ public class ExperimentsService {
      */
     public ExperimentsList getExperimentsList(Params params) {
 
-      /*  HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
-*/
+        HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
+        HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
         return null;
     }
 

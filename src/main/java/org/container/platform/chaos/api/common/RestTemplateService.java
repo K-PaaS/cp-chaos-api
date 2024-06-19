@@ -188,8 +188,8 @@ public class RestTemplateService {
 
         // Chaos API
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
-            apiUrl = propertyService.getCpChaosApiAccessUrl();
-            authorization = chaosApiBase64Authorization;
+         //   apiUrl = propertyService.getCpChaosApiListPodFaultsPodKillListUrl();
+          //  authorization = chaosApiBase64Authorization;
 
         }
 /*
