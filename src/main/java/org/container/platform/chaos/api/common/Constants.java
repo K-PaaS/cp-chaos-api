@@ -82,9 +82,14 @@ public class Constants {
     public static final String INGRESS_CONTROLLER_NAMESPACE= "ingress-nginx";
     public static final String INGRESS_CONTROLLER_RESOURCE_NAME= "ingress-nginx-controller";
 
-    public static final String CHAOS_MESH_POD_CHAOS= "PodChaos";
-    public static final String CHAOS_MESH_NETWORK_CHAOS= "NetworkChaos";
-    public static final String CHAOS_MESH_STRESS_CHAOS= "StressChaos";
+    public static final String CHAOS_MESH_KIND_POD_CHAOS = "PodChaos";
+    public static final String CHAOS_MESH_KIND_NETWORK_CHAOS = "NetworkChaos";
+    public static final String CHAOS_MESH_KIND_STRESS_CHAOS = "StressChaos";
+    public static final String CHAOS_MESH_LABEL_SELECTOR = "    labelSelectors:" + "\r\n";
+    public static final String CHAOS_MESH_NAMESPACES = "    namespaces:" + "\r\n";
+    public static final String CHAOS_MESH_PODS = "    pods:" + "\r\n";
+    public static final String NEW_LINE = "\r\n";
+
 
     public static final List<String> LIMIT_RANGE_TYPE_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
