@@ -1,2 +1,2 @@
-  action: pod-kill
+  action: ${action}
   gracePeriod: ${gracePeriod}
