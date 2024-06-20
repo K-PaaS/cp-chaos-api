@@ -11,6 +11,9 @@ public class PropertyService {
     @Value("${cpChaos.api.access}")
     private String cpChaosApiAccessUrl;
 
+    @Value("${cpChaos.api.url: }")
+    private String cpChaosApiUrl;
+
     //podFaults
     @Value("${cpChaos.api.list.podFaults.podKill.list}")
     private String cpChaosApiListPodFaultsPodKillListUrl;
