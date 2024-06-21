@@ -13,7 +13,6 @@ import org.container.platform.chaos.api.stressScenarios.StressScenariosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,12 +63,13 @@ public class ExperimentsService {
      */
     public ExperimentsList getExperimentsList(Params params) {
 
-        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+      /*  HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
+
         return null;
     }
 
@@ -139,12 +139,40 @@ public class ExperimentsService {
             }
         }
 
-
         if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
             stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
         } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
             stringBuilder.append(templateService.convert("create_networkFaults_delay.ftl", map));
         } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
+            stringBuilder.append(templateService.convert("create_stressScenarios.ftl", map));
+            stringBuilder.append(Constants.NEW_LINE);
+            Map<String, Object> mapStressors = objectMapper.convertValue(params.getStressors(), Map.class);
+            for (Map.Entry<String, Object> entry : mapStressors.entrySet() ) {
+                if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_CPU)) {
+                    line = "    " + Constants.CHAOS_MESH_STRESSORS_CPU + ":";
+                    stringBuilder.append(line);
+                    stringBuilder.append(Constants.NEW_LINE);
+
+                    Object value = entry.getValue();
+                    Map<String, Integer> mapCpu = objectMapper.convertValue(value, Map.class);
+                    for (Map.Entry<String, Integer> entryCpu: mapCpu.entrySet()) {
+                        stringBuilder.append("      " + entryCpu.getKey() + ": " + entryCpu.getValue());
+                        stringBuilder.append(Constants.NEW_LINE);
+                    }
+                } else if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_MEMORY)) {
+                    line = "    " + Constants.CHAOS_MESH_STRESSORS_MEMORY + ":";
+                    stringBuilder.append(line);
+                    stringBuilder.append(Constants.NEW_LINE);
+
+                    Object value = entry.getValue();
+                    Map<String, Integer> mapMemory = objectMapper.convertValue(value, Map.class);
+                    for (Map.Entry<String, Integer> entryMemory: mapMemory.entrySet()) {
+                        stringBuilder.append("      " + entryMemory.getKey() + ": " + entryMemory.getValue());
+                        stringBuilder.append(Constants.NEW_LINE);
+                    }
+
+                }
+            }
 
         }
 
