@@ -5,16 +5,16 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.common.model.Params;
-import org.container.platform.chaos.api.common.utill.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 /**
  * Experiments Controller 클래스
  *
- * @author jjy
+ * @author luna
  * @version 1.0
- * @since 2024.06.07
+ * @since 2024.06.21
  **/
 @Api(value = "ExperimentsController v1")
 @RestController
@@ -43,6 +43,10 @@ public class ExperimentsController {
     })
     @GetMapping
     public ExperimentsList getExperimentsList(Params params) {
+
+
+        System.out.println("controller");
+
         return experimentsService.getExperimentsList(params);}
 
     /**
@@ -69,7 +73,7 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
-    @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
+ /*   @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
@@ -81,7 +85,7 @@ public class ExperimentsController {
         }
         return experimentsService.createExperiments(params);
     }
-
+*/
 
     /**
      * Experiments 삭제(Delete Experiments)

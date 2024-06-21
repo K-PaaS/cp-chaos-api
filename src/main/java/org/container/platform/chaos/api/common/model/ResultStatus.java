@@ -2,14 +2,15 @@ package org.container.platform.chaos.api.common.model;
 
 import lombok.Builder;
 import lombok.Data;
+
 import org.container.platform.chaos.api.common.CommonUtils;
 
 /**
  * Result Status model 클래스
  *
- * @author jjy
+ * @author hrjin
  * @version 1.0
- * @since 2024.06.18
+ * @since 2020.08.28
  **/
 @Data
 @Builder

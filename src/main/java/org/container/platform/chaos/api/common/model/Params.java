@@ -85,35 +85,9 @@ public class Params {
     private String browser = Constants.EMPTY_STRING;
     private String clientIp = Constants.EMPTY_STRING;
 
+
+
     private Boolean isGlobal = false;
-
-    // catalog
-    private String repositories = Constants.EMPTY_STRING;
-    private String releases = Constants.EMPTY_STRING;
-    private String reversion = Constants.EMPTY_STRING;
-    private String charts = Constants.EMPTY_STRING;
-    private String info = Constants.EMPTY_STRING;
-    private String version = Constants.EMPTY_STRING;
-    private String repoName = Constants.EMPTY_STRING;
-    private String repoUrl = Constants.EMPTY_STRING;
-    private String packages = Constants.EMPTY_STRING;
-    private String packageID = Constants.EMPTY_STRING;
-    private String query = Constants.EMPTY_STRING;
-    private String userDefined = "1";
-    private String preview = "0";
-
-    // experiments
-    private String uid = Constants.EMPTY_STRING;
-    private String name = Constants.EMPTY_STRING;
-    private String kind = Constants.EMPTY_STRING;
-    public List namespaces;
-    private Object labelSelectors = null;
-    private Object pods = null;
-    private String action = Constants.EMPTY_STRING;
-    private int gracePeriod = 0;
-    private String duration = Constants.EMPTY_STRING;
-    private String latency = Constants.EMPTY_STRING;
-    private Object stressors = null;
 
     public Params(){
         this.cluster = Constants.EMPTY_STRING;
@@ -204,19 +178,5 @@ public class Params {
         this.resourceUid = resourceUid;
     }
 
-    public Params(String cluster, String namespace, String uid, String name, String kind, List namespaces, Object labelSelectors, Object pods, String action, int gracePeriod, String duration, String latency, Object stressors) {
-        this.cluster = cluster;
-        this.namespace = namespace;
-        this.uid = uid;
-        this.name = name;
-        this.kind = kind;
-        this.namespaces = namespaces;
-        this.labelSelectors = labelSelectors;
-        this.pods = pods;
-        this.action = action;
-        this.gracePeriod = gracePeriod;
-        this.duration = duration;
-        this.latency = latency;
-        this.stressors = stressors;
-    }
+
 }
