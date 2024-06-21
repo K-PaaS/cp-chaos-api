@@ -135,12 +135,41 @@ public class ExperimentsService {
             }
         }
 
-
         if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
             stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
         } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
             stringBuilder.append(templateService.convert("create_networkFaults_delay.ftl", map));
         } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
+            stringBuilder.append(templateService.convert("create_stressScenarios.ftl", map));
+            stringBuilder.append(Constants.NEW_LINE);
+            Map<String, Object> mapStressors = objectMapper.convertValue(params.getStressors(), Map.class);
+            for (Map.Entry<String, Object> entry : mapStressors.entrySet() ) {
+                if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_CPU)) {
+                    line = "    " + Constants.CHAOS_MESH_STRESSORS_CPU + ":";
+                    stringBuilder.append(line);
+                    stringBuilder.append(Constants.NEW_LINE);
+
+                    Object value = entry.getValue();
+                    Map<String, Integer> mapCpu = objectMapper.convertValue(value, Map.class);
+                    for (Map.Entry<String, Integer> entryCpu: mapCpu.entrySet()) {
+                        stringBuilder.append("      " + entryCpu.getKey() + ": " + entryCpu.getValue());
+                        stringBuilder.append(Constants.NEW_LINE);
+                    }
+                } else if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_MEMORY)) {
+                    line = "    " + Constants.CHAOS_MESH_STRESSORS_MEMORY + ":";
+                    stringBuilder.append(line);
+                    stringBuilder.append(Constants.NEW_LINE);
+
+                    Object value = entry.getValue();
+                    Map<String, Integer> mapMemory = objectMapper.convertValue(value, Map.class);
+                    for (Map.Entry<String, Integer> entryMemory: mapMemory.entrySet()) {
+                        stringBuilder.append("      " + entryMemory.getKey() + ": " + entryMemory.getValue());
+                        stringBuilder.append(Constants.NEW_LINE);
+                    }
+
+                }
+            }
+
 
         }
 
