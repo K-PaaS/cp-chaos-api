@@ -13,6 +13,7 @@ server:
 cpChaos:
   name:
   api:
+    url: ${K8S_URL}
     access: "/apis"
     list:
       podFaults:
