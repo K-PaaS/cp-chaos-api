@@ -13,13 +13,13 @@ import java.util.Map;
 
 /**
  * Template Service 클래스
- *
+ * 
  * Template 파일의 변수 부분을 치환 후 내용을 완성하여, 해당 내용을 특정한 프로세스에 의해 실행하거나
  * 해당 내용 자체를 반환하는 클래스에 대한 인터페이스
  *
- * @author jjyv
+ * @author hrjin
  * @version 1.0
- * @since 2024.06.10
+ * @since 2020.08.26
  */
 @Service
 public class TemplateService {

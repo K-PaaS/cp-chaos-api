@@ -1,6 +1,5 @@
 package org.container.platform.chaos.api.experiments;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**

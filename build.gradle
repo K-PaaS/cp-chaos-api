@@ -14,6 +14,7 @@ buildscript {
 	}
 }
 
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -22,8 +23,9 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: "org.sonarqube"
 
-group = 'org.container.platform.chaos'
+group = 'org.container.platform.api'
 sourceCompatibility = '1.8'
+
 
 configurations {
 	compileOnly {
@@ -42,6 +44,7 @@ repositories {
 	mavenCentral()
 }
 
+
 ext {
 	apacheHttpClientVersion = '4.5.12'
 	gsonVersion = '2.8.6'
@@ -55,15 +58,19 @@ ext {
 
 jar {
 	archivesBaseName = 'container-platform-chaos-api'
-	enabled = false
+    enabled = false
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	compile "org.springframework.boot:spring-boot-starter-security"
+	compile "org.springframework.boot:spring-boot-starter-web"
+	compile "org.springframework.boot:spring-boot-starter-aop"
+	compile "org.apache.httpcomponents:httpclient:${apacheHttpClientVersion}"
+	compile "com.google.code.gson:gson:${gsonVersion}"
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	compile('org.springframework.boot:spring-boot-starter-freemarker')
+	compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
 	compile("io.springfox:springfox-swagger2:${swaggerVersion}") {
 		exclude module: 'swagger-annotations'
 		exclude module: 'swagger-models'
@@ -71,9 +78,28 @@ dependencies {
 	compile("io.swagger:swagger-annotations:1.5.21")
 	compile("io.swagger:swagger-models:1.5.21")
 	compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
-	compile ('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-freemarker')
+	compile "com.jayway.jsonpath:json-path:${jsonpathVersion}"
+	compile 'com.fasterxml.jackson.core:jackson-core'
+	compile 'com.fasterxml.jackson.core:jackson-databind'
+	compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+	compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
+	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testImplementation('junit:junit:4.13')
+
+	implementation 'org.springframework.retry:spring-retry'
+	implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.9'
+	implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.9'
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
+	implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.32'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.0'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
+	implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
+	implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
+	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+
+	compile( "org.springframework.cloud:spring-cloud-starter-vault-config")
+	compile 'commons-io:commons-io:2.11.0'
 }
 
 dependencyManagement {
@@ -88,7 +114,7 @@ jacoco {
 }
 
 test {
-	ignoreFailures=true
+	ignoreFailures = true
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
 	}

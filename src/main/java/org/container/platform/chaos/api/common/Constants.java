@@ -1,15 +1,13 @@
 package org.container.platform.chaos.api.common;
-
 import org.springframework.http.MediaType;
-
 import java.util.*;
 
 /**
  * Constants 클래스
  *
- * @author jjy
+ * @author hrjin
  * @version 1.0
- * @since 2024.06.07
+ * @since 2020.08.26
  */
 public class Constants {
 
@@ -35,8 +33,6 @@ public class Constants {
     public static final String TARGET_TERRAMAN_API = "terramanApi";
     public static final String TARGET_CHAOS_API = "chaosAPI";
     public static final String TARGET_METRIC_COLLECTOR_API = "metricCollectorApi";
-
-    public static final String TARGET_CATALOG_API = "catalogApi";
 
     public static final String CLUSTER_TYPE_HOST = "host";
     public static final String CLUSTER_TYPE_SUB = "sub";
@@ -81,16 +77,6 @@ public class Constants {
 
     public static final String INGRESS_CONTROLLER_NAMESPACE= "ingress-nginx";
     public static final String INGRESS_CONTROLLER_RESOURCE_NAME= "ingress-nginx-controller";
-
-
-    public static final String CHAOS_MESH_KIND_POD_CHAOS = "PodChaos";
-    public static final String CHAOS_MESH_KIND_NETWORK_CHAOS = "NetworkChaos";
-    public static final String CHAOS_MESH_KIND_STRESS_CHAOS = "StressChaos";
-    public static final String CHAOS_MESH_LABEL_SELECTOR = "    labelSelectors:" + "\r\n";
-    public static final String CHAOS_MESH_NAMESPACES = "    namespaces:" + "\r\n";
-    public static final String CHAOS_MESH_PODS = "    pods:" + "\r\n";
-    public static final String NEW_LINE = "\r\n";
-
 
     public static final List<String> LIMIT_RANGE_TYPE_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
@@ -286,7 +272,7 @@ public class Constants {
 
 
     /** 서비스 클래스의 Package */
-    public static final String SERVICE_PACKAGE = "org.container.platform.api.";
+    public static final String SERVICE_PACKAGE = "org.container.platform.chaos.api.";
 
     public static final Map<String, String> RESOURCE_SERVICE_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {
         {

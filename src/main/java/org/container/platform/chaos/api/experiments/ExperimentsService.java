@@ -1,42 +1,41 @@
 package org.container.platform.chaos.api.experiments;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.container.platform.chaos.api.common.Constants;
-import org.container.platform.chaos.api.common.PropertyService;
-import org.container.platform.chaos.api.common.RestTemplateService;
-import org.container.platform.chaos.api.common.TemplateService;
+import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
+/*import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
 import org.container.platform.chaos.api.podFaults.PodFaultsService;
-import org.container.platform.chaos.api.stressScenarios.StressScenariosService;
+import org.container.platform.chaos.api.stressScenarios.StressScenariosService;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Experiments Service 클래스
  *
- * @author jjy
+ * @author luna
  * @version 1.0
- * @since 2024.06.04
+ * @since 2024.06.21
  */
 @Service
 public class ExperimentsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentsService.class);
+    private final CommonService commonService;
 
     private final RestTemplateService restTemplateService;
     private final PropertyService propertyService;
     private final TemplateService templateService;
-    private final NetworkFaultsService networkFaultsService;
+/*    private final NetworkFaultsService networkFaultsService;
     private final PodFaultsService podFaultsService;
-    private final StressScenariosService stressScenariosService;
+    private final StressScenariosService stressScenariosService;*/
 
 
     /**
@@ -46,14 +45,14 @@ public class ExperimentsService {
      * @param propertyService     the property service
      */
     @Autowired
-    public ExperimentsService(RestTemplateService restTemplateService, PropertyService propertyService, TemplateService templateService,
-                              NetworkFaultsService networkFaultsService, PodFaultsService podFaultsService, StressScenariosService stressScenariosService) {
+    public ExperimentsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, TemplateService templateService) {
         this.restTemplateService = restTemplateService;
+        this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
-        this.networkFaultsService = networkFaultsService;
+/*        this.networkFaultsService = networkFaultsService;
         this.podFaultsService = podFaultsService;
-        this.stressScenariosService = stressScenariosService;
+        this.stressScenariosService = stressScenariosService;*/
     }
 
     /**
@@ -63,15 +62,62 @@ public class ExperimentsService {
      * @return the ExperimentsList
      */
     public ExperimentsList getExperimentsList(Params params) {
+        System.out.println("service");        
 
-        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+       HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
+        //ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
+       // podFaultList = commonService.resourceListProcessing(podFaultList, params, ExperimentsList.class);
+
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
+        //ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
+       // networkDelayList = commonService.resourceListProcessing(networkDelayList, params, ExperimentsList.class);
+
         HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
-        return null;
-    }
+        //ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
+        //stressList = commonService.resourceListProcessing(stressList, params, ExperimentsList.class);
+
+
+        HashMap<String, Object> responseTotal = new HashMap<>();
+
+        if (responseMapPodFault != null) {
+            responseTotal.put("podFaultData", responseMapPodFault);
+        }
+
+        if (responseMapNetworkDelay != null) {
+            responseTotal.put("networkDelayData", responseMapNetworkDelay);
+        }
+
+        if (responseMapStress != null) {
+            responseTotal.put("stressData", responseMapStress);
+        }
+
+        HashMap<String, Object> responseItems = new HashMap<>();
+        if (responseTotal != null) {
+            responseItems.put("items", responseTotal);
+        }
+
+        ExperimentsList totalList = commonService.setResultObject(responseItems, ExperimentsList.class);
+        System.out.println("totalList1 : " + totalList);
+
+
+        totalList = commonService.resourceListProcessing(totalList, params, ExperimentsList.class);
+        System.out.println("totalList2 : " + totalList);
+
+      //  HashMap responseTotal = new HashMap();
+
+      //  responseTotal.put(responseMapPodFault);
+
+
+
+//return null;
+
+        return (ExperimentsList) commonService.setResultModel(totalList, Constants.RESULT_STATUS_SUCCESS);
+    };
+
+
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
@@ -89,6 +135,7 @@ public class ExperimentsService {
      * @param params the params
      * @return the resultStatus
      */
+/*
     public Object createExperiments(Params params) {
         String line = "";
         StringBuilder stringBuilder = new StringBuilder();
@@ -151,6 +198,7 @@ public class ExperimentsService {
         return null;
     }
 
+*/
     /**
      * Experiments 삭제(Delete Experiments)
      *

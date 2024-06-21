@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Events Controller 클래스
  *
- * @author luna
+ * @author kjhoon
  * @version 1.0
- * @since 2024.06.18
- **/
+ * @since 2022.05.25
+ */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/experiments/events")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/events")
 public class EventsController {
 
     private final EventsService eventsService;
@@ -25,42 +25,43 @@ public class EventsController {
     /**
      * Instantiates a new Events controller
      *
-     * @param eventsService the Events service
+     * @param eventsService the events service
      */
     @Autowired
     public EventsController(EventsService eventsService) {
         this.eventsService = eventsService;
     }
 
+
     /**
-     * Events 목록 조회(Get Events List)
+     * 특정 Namespace 의 전체 Events 목록 조회(Get Events List in a Namespace)
      *
-     * @return the EventsList
+     * @param params the params
+     * @return the events list
      */
-    @ApiOperation(value="Events 목록 조회(Get Events List)", nickname="getEventsList")
+    @ApiOperation(value = "특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace)", nickname = "getNamespaceEventsList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
     @GetMapping
-    public EventsList getEventsList(Params params) {
-        return eventsService.getEventsList(params);
+    public Object getNamespaceEventsList(Params params) {
+            return eventsService.getNamespaceEventsList(params);
     }
 
+
     /**
-     * Events 상세 조회(Get Events Detail)
+     * Events 목록 조회(Get Events list)
      *
      * @param params the params
-     * @return the Events detail
+     * @return the events list
      */
-
-    @ApiOperation(value = "Events 상세 조회(Get Events Detail)", nickname = "getEvents")
+    @ApiOperation(value = "Events 목록 조회(Get Events list)", nickname = "getEventsList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
-    @GetMapping(value = "/{uid:.+}")
-    public Events getEvents(Params params) {
-        return eventsService.getEvents(params);
+    @GetMapping(value = "/resources/{resourceUid:.+}")
+    public EventsList getEventsList(Params params) {
+            return eventsService.getEventsList(params);
     }
-
 
 }

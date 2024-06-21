@@ -6,14 +6,12 @@ spring:
   security:
     username: admin
     password: cpchaos!123
-
 server:
   port: ${PORT:8092}
-
 cpChaos:
   name:
   api:
-    url: ${K8S_URL}
+    url: ${CP_PORTAL_CHAOS_API_URI}
     access: "/apis"
     list:
       podFaults:
@@ -36,3 +34,291 @@ cpChaos:
       event:
         list: "/api/v1/events?fieldSelector=involvedObject.apiVersion=chaos-mesh.org/v1alpha1"
         get: "/api/v1/namespaces/{namespace}/events?fieldSelector=involvedObject.uid={uid}"
+
+
+---
+spring:
+  application:
+    name: cp-portal-api
+  freemarker:
+    template-loader-path: classpath:/templates/
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  cloud:
+    vault:
+      scheme: http
+      uri: ${VAULT_URL}
+      authentication: APPROLE
+      kv:
+        enabled: true
+        backend: secret
+      app-role:
+        role-id: ${VAULT_ROLE_ID}
+        secret-id: ${VAULT_SECRET_ID}
+        role: ${VAULT_ROLE_NAME}
+        app-role-path: approle
+      config:
+        lifecycle:
+          enabled: true
+          min-renewal: 10s
+          expiry-threshold: 1m
+
+aspect:
+  enabled: false # for checking Elapsed time
+ 
+jwt:
+  secret: dfa4ad2646d6b4864f2dfa5428249d4eb54dc29bf3f29658fd4676d25706f83c9fc4ef626fa60d2c589a79ebec448ba4d591e2fcb04926fab783fcae50e97c06
+  expirationDateInMs: 10800000
+  refreshExpirationDateInMs: 10800000
+
+project:
+  name: cp-portal-api
+  artifactId: cp-portal-api
+  description: API of the K-PaaS Container Platform Portal
+ 
+management:
+  security:
+    enabled: false
+
+vault:
+  path:
+    base: "secret/"
+    super-admin-token: "secret/cluster/{clusterId}"
+    user-token: "secret/user/{userAuthId}/{clusterId}/{namespace}"
+    provider-credential: "secret/{iaas}/{id}"
+    cluster-token: "secret/cluster/{id}"
+    ssh-key: "secret/ssh-key/{id}"
+
+cp:
+  provide-as-service: cp-portal-service
+  provide-as-standalone: cp-portal-standalone
+
+cpNamespace:
+  defaultNamespace: cp-portal-temp-namespace
+  exceptNamespace: ${cpNamespace.defaultNamespace}, all
+  clusterAdminNamespace: kube-system
+  role:
+    list: cp-init-role, cp-admin-role
+    init: cp-init-role
+    admin: cp-admin-role
+  resourceQuotas:
+    list: cp-low-resourcequota, cp-medium-resourcequota, cp-high-resourcequota
+    low: cp-low-resourcequota
+    medium: cp-medium-resourcequota
+    high: cp-high-resourcequota
+  limitRanges:
+    list: cp-low-limitrange, cp-medium-limitrange, cp-high-limitrange
+    low: cp-low-limitrange
+    medium: cp-medium-limitrange
+    high: cp-high-limitrange
+ 
+cpAnnotations:
+  configuration: kubectl.kubernetes.io/, kubernetes.io/, k8s.io/
+  last-applied: last-applied
+
+cpResource:
+  clusterResource: Namespace, PersistentVolume, StorageClass, Role, ResourceQuota, LimitRange, ConfigMap
+ 
+cpMaster:
+  name:
+  api:
+    access: "/api"
+    list:
+      services:
+        list: "/api/v1/namespaces/{namespace}/services"
+        get: "/api/v1/namespaces/{namespace}/services/{name}"
+        create: "/api/v1/namespaces/{namespace}/services"
+        delete: "/api/v1/namespaces/{namespace}/services/{name}"
+        update: "/api/v1/namespaces/{namespace}/services/{name}"
+        listAllNamespaces: "/api/v1/services"
+      endpoints:
+        list: "/api/v1/namespaces/{namespace}/endpoints"
+        get: "/api/v1/namespaces/{namespace}/endpoints/{name}"
+        listAllNamespaces: "/api/v1/endpoints"
+      pods:
+        list: "/api/v1/namespaces/{namespace}/pods"
+        get: "/api/v1/namespaces/{namespace}/pods/{name}"
+        create: "/api/v1/namespaces/{namespace}/pods"
+        delete: "/api/v1/namespaces/{namespace}/pods/{name}"
+        update: "/api/v1/namespaces/{namespace}/pods/{name}"
+        listAllNamespaces: "/api/v1/pods"
+      nodes:
+        list: "/api/v1/nodes"
+        get: "/api/v1/nodes/{name}"
+      replicaSets:
+        list: "/apis/apps/v1/namespaces/{namespace}/replicasets"
+        get: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        create: "/apis/apps/v1/namespaces/{namespace}/replicasets"
+        delete: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        update: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        listAllNamespaces: "/apis/apps/v1/replicasets"
+      persistentVolumes:
+        list: "/api/v1/persistentvolumes"
+        get: "/api/v1/persistentvolumes/{name}"
+        create: "/api/v1/persistentvolumes"
+        delete: "/api/v1/persistentvolumes/{name}"
+        update: "/api/v1/persistentvolumes/{name}"
+        listAllNamespaces: "/api/v1/persistentvolumes"
+      persistentVolumeClaims:
+        list: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
+        get: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        create: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
+        delete: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        update: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        listAllNamespaces: "/api/v1/persistentvolumeclaims"
+      storageClasses:
+        list: "/apis/storage.k8s.io/v1/storageclasses"
+        get: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+        create: "/apis/storage.k8s.io/v1/storageclasses"
+        delete: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+        update: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+      events:
+        list: "/api/v1/namespaces/{namespace}/events"
+        get: "/api/v1/namespaces/{namespace}/events/{name}"
+        listAllNamespaces: "/api/v1/events"
+      roles:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        listAllNamespaces: "/apis/rbac.authorization.k8s.io/v1/roles"
+      deployments:
+        list: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        get: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        create: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        delete: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        update: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        listAllNamespaces: "/apis/apps/v1/deployments"
+      roleBindings:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        listAllNamespaces: "/apis/rbac.authorization.k8s.io/v1/rolebindings"
+      users:
+        get: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+        create: "/api/v1/namespaces/{namespace}/serviceaccounts"
+        delete: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+        listAllNamespaces: "/api/v1/serviceaccounts"
+      namespaces:
+        list: "/api/v1/namespaces"
+        get: "/api/v1/namespaces/{namespace}"
+        create: "/api/v1/namespaces"
+        delete: "/api/v1/namespaces/{namespace}"
+        update: "/api/v1/namespaces/{namespace}"
+      resourceQuotas:
+        list: "/api/v1/namespaces/{namespace}/resourcequotas"
+        get: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        create: "/api/v1/namespaces/{namespace}/resourcequotas"
+        delete: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        update: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        listAllNamespaces: "/api/v1/resourcequotas"
+      secrets:
+        get: "/api/v1/namespaces/{namespace}/secrets/{name}"
+        create: "/api/v1/namespaces/{namespace}/secrets"
+      tokens:
+        create: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}/token"
+      clusterRoleBindings:
+        create: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings"
+        delete: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}"
+      limitRanges:
+        list: "/api/v1/namespaces/{namespace}/limitranges"
+        get: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        create: "/api/v1/namespaces/{namespace}/limitranges"
+        delete: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        update: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        listAllNamespaces: "/api/v1/limitranges"
+      configMaps:
+        list: "/api/v1/namespaces/{namespace}/configmaps"
+        get: "/api/v1/namespaces/{namespace}/configmaps/{name}"
+        create: "/api/v1/namespaces/{namespace}/configmaps"
+        delete: "/api/v1/namespaces/{namespace}/configmaps/{name}"
+        update: "/api/v1/namespaces/{namespace}/configmaps/{name}"
+        listAllNamespaces: "/api/v1/configmaps"
+      ingresses:
+        list: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses"
+        get: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses/{name}"
+        create: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses"
+        delete: "/apis/networking.k8s.io/v1/namespaces/{namespace}//ingresses/{name}"
+        update: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses/{name}"
+        listAllNamespaces: "/apis/networking.k8s.io/v1/ingresses"
+    metrics:
+      node:
+        list: "/apis/metrics.k8s.io/v1beta1/nodes"
+        get: "/apis/metrics.k8s.io/v1beta1/nodes/{name}"
+      pod:
+        list: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods"
+        get: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods/{name}"
+
+cpTerraman:
+  api:
+    url: ${CP_PORTAL_TERRAMAN_API_URI}
+
+cpMetricCollector:
+  api:
+    authorization:
+      id: paasta
+      password: password
+    url: ${CP_PORTAL_METRIC_COLLECTOR_API_URI}
+    clusters:
+      get: "/getDashboardData"
+      key: "cluster_id"
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+ 
+server:
+  port: ${PORT:8092}
+  auth:
+    valid: N
+ 
+commonApi:
+  url: http://localhost:3334
+  authorization:
+    id: admin
+    password: cpcommon!123
+
+
+cpTerraman:
+  template:
+    path: "C:/Temp/{id}/{id}.tf"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+ 
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+ 
+server:
+  port: ${PORT:8092}
+  auth:
+    valid: N
+ 
+commonApi:
+  url: ${CP_PORTAL_COMMON_API_URI}
+  authorization:
+    id: admin
+    password: cpcommon!123
+
+cpTerraman:
+  template:
+    path: "/tmp/terraform/{id}/{id}.tf"
