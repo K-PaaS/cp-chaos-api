@@ -44,9 +44,6 @@ public class ExperimentsController {
     @GetMapping
     public ExperimentsList getExperimentsList(Params params) {
 
-
-        System.out.println("controller");
-
         return experimentsService.getExperimentsList(params);}
 
     /**
@@ -55,6 +52,7 @@ public class ExperimentsController {
      * @param params the params
      * @return the experiments detail
      */
+/*
 
     @ApiOperation(value = "Experiments 상세 조회(Get Experiments Detail)", nickname = "getExperiments")
     @ApiImplicitParams({
@@ -65,6 +63,7 @@ public class ExperimentsController {
         return experimentsService.getExperiments(params);
     }
 
+*/
 
     /**
      * Experiments 생성(Create Experiments)
