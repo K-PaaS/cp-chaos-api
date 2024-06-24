@@ -21,45 +21,10 @@ public class ExperimentsList {
     private String detailMessage;
     private Map metadata;
     private CommonItemMetaData itemMetaData;
-    private List<ExperimentsListItem> items;
-
+    private List<ExperimentsListItems> items;
 
 }
 
-@Data
-class ExperimentsListItem {
-    private Map podFaultData;
-    private Map networkDelayData;
-    private Map stressData;
-
-    @Data
-    public class ExperimentsItem {
-        private String kind;
-        private Metadata metadata;
-        private Status status;
-    }
 
 
-    @Data
-    public class Metadata {
-        private String creationTimestamp;
-        private String name;
-        private String namespace;
-        private String uid;
-    }
 
-    @Data
-    public class Status {
-        private Experiment experiment;
-    }
-
-    @Data
-    public class Experiment {
-        private List<ContainerRecordsListItem> containerRecords;
-    }
-
-    @Data
-    class ContainerRecordsListItem {
-        private String phase;
-    }
-}

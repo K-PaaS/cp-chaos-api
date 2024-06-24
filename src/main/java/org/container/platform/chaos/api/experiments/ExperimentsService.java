@@ -9,6 +9,7 @@ import org.container.platform.chaos.api.stressScenarios.StressScenariosService;*
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -61,64 +62,40 @@ public class ExperimentsService {
      * @return the ExperimentsList
      */
     public ExperimentsList getExperimentsList(Params params) {
-        System.out.println("service");        
+        ExperimentsList experimentsList = new ExperimentsList();
 
-      /*  HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-
+        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
-        //ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
-       // podFaultList = commonService.resourceListProcessing(podFaultList, params, ExperimentsList.class);
+        ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
+        experimentsList.setItems(podFaultList.getItems());
+        System.out.println("experimentsList pod\n" + experimentsList);
 
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
-        //ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
-       // networkDelayList = commonService.resourceListProcessing(networkDelayList, params, ExperimentsList.class);
+        ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
+        experimentsList.getItems().addAll(networkDelayList.getItems());
+
+        System.out.println("experimentsList network\n" + experimentsList);
+
 
         HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
-
-        //ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
-        //stressList = commonService.resourceListProcessing(stressList, params, ExperimentsList.class);
-
-
-        HashMap<String, Object> responseTotal = new HashMap<>();
-
-        if (responseMapPodFault != null) {
-            responseTotal.put("podFaultData", responseMapPodFault);
-        }
-
-        if (responseMapNetworkDelay != null) {
-            responseTotal.put("networkDelayData", responseMapNetworkDelay);
-        }
-
-        if (responseMapStress != null) {
-            responseTotal.put("stressData", responseMapStress);
-        }
-
-        HashMap<String, Object> responseItems = new HashMap<>();
-        if (responseTotal != null) {
-            responseItems.put("items", responseTotal);
-        }
-
-        ExperimentsList totalList = commonService.setResultObject(responseItems, ExperimentsList.class);
-        System.out.println("totalList1 : " + totalList);
+        ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
+        experimentsList.getItems().addAll(stressList.getItems());
 
 
-        totalList = commonService.resourceListProcessing(totalList, params, ExperimentsList.class);
-        System.out.println("totalList2 : " + totalList);
+        System.out.println("응답값을 ExperimentsList에 넣기 파드\n" + podFaultList);
+        System.out.println("응답값을 ExperimentsList에 넣기 네트워크\n" + networkDelayList);
+        System.out.println("응답값을 ExperimentsList에 넣기 스트레스\n" + stressList);
+        System.out.println("experimentsList\n" + experimentsList);
 
-      //  HashMap responseTotal = new HashMap();
-
-      //  responseTotal.put(responseMapPodFault);
+        experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
 
 
-
-//return null;
-
-        return (ExperimentsList) commonService.setResultModel(totalList, Constants.RESULT_STATUS_SUCCESS);
+        return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
     };
 
-*/
+
 
 
 
@@ -128,9 +105,11 @@ public class ExperimentsService {
      * @param params the params
      * @return the experiments detail
      */
+/*
     public Experiments getExperiments(Params params) {
         return null;
     }
+*/
 
     /**
      * Experiments 생성(Create Experiments)
