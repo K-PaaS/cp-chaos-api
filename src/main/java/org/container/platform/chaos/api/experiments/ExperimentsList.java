@@ -19,7 +19,6 @@ public class ExperimentsList {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private Map metadata;
     private CommonItemMetaData itemMetaData;
     private List<ExperimentsListItems> items;
 
