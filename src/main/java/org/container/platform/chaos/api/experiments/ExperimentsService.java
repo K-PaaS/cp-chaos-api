@@ -68,29 +68,18 @@ public class ExperimentsService {
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
         experimentsList.setItems(podFaultList.getItems());
-        System.out.println("experimentsList pod\n" + experimentsList);
 
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
         experimentsList.getItems().addAll(networkDelayList.getItems());
 
-        System.out.println("experimentsList network\n" + experimentsList);
-
-
         HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
         experimentsList.getItems().addAll(stressList.getItems());
 
-
-        System.out.println("응답값을 ExperimentsList에 넣기 파드\n" + podFaultList);
-        System.out.println("응답값을 ExperimentsList에 넣기 네트워크\n" + networkDelayList);
-        System.out.println("응답값을 ExperimentsList에 넣기 스트레스\n" + stressList);
-        System.out.println("experimentsList\n" + experimentsList);
-
         experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
-
 
         return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
     };
