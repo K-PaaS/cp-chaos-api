@@ -161,10 +161,6 @@ public class RestTemplateService {
         LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", CommonUtils.loggerReplace(httpMethod), CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(reqHeaders.get(CONTENT_TYPE)));
 
         ResponseEntity<T> resEntity = null;
-        System.out.println("requrl: " + reqUrl);
-        System.out.println("reqApi:" + reqApi);
-        System.out.println("baseUrl: " + baseUrl);
-        System.out.println("responseType: " + responseType);
         try {
             resEntity = restTemplate.exchange(baseUrl + reqUrl, httpMethod, reqEntity, responseType);
         } catch (HttpStatusCodeException exception) {
@@ -401,9 +397,9 @@ public class RestTemplateService {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
 
             }
-            reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getResourceName()).replace("{userId}", params.getUserId());
-        }
 
+            reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getName());
+        }
         return reqUrl;
     }
 

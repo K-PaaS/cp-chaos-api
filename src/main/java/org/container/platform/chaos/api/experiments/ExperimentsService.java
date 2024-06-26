@@ -6,6 +6,7 @@ import org.container.platform.chaos.api.common.model.ResultStatus;
 /*import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
 import org.container.platform.chaos.api.podFaults.PodFaultsService;
 import org.container.platform.chaos.api.stressScenarios.StressScenariosService;*/
+import org.container.platform.chaos.api.configmaps.ConfigMaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,11 +95,34 @@ public class ExperimentsService {
      * @param params the params
      * @return the experiments detail
      */
-/*
+
     public Experiments getExperiments(Params params) {
-        return null;
+        Experiments experiments = new Experiments();
+
+        if (params.kind.equals("PodChaos")) {
+            HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListPodFaultsPodKillGetUrl(), HttpMethod.GET, null, Map.class, params);
+            ExperimentsItem podFaultItem = commonService.setResultObject(responseMapPodFault, ExperimentsItem.class);
+            experiments.addItem(podFaultItem);
+        }
+        if (params.kind.equals("NetworkChaos")) {
+            HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListNetworkFaultsDelayGetUrl(), HttpMethod.GET, null, Map.class, params);
+            ExperimentsItem networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsItem.class);
+            experiments.addItem(networkDelayList);
+        }
+
+        if (params.kind.equals("StressChaos")) {
+            HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
+            ExperimentsItem stressList = commonService.setResultObject(responseMapStress, ExperimentsItem.class);
+            experiments.addItem(stressList);
+        }
+
+
+        return (Experiments) commonService.setResultModel(experiments, Constants.RESULT_STATUS_SUCCESS);
     }
-*/
+
 
     /**
      * Experiments 생성(Create Experiments)
