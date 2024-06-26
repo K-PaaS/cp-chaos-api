@@ -1,6 +1,10 @@
 package org.container.platform.chaos.api.experiments;
 
 import lombok.Data;
+import org.container.platform.chaos.api.common.model.CommonItemMetaData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ExperimentsList 클래스
@@ -16,16 +20,16 @@ public class Experiments {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private CommonItemMetaData itemMetaData;
 
-//    @JsonIgnore
-//    private CommonMetaData metadata;
+    private List<ExperimentsItem> items;
 
-    private String name;
-    private String namespace;
-    private String kind;
-    private String status;
-    private String uid;
-    private String creationTimestamp;
+    public Experiments() {
+        this.items = new ArrayList<>();
+    }
 
+    public void addItem(ExperimentsItem item) {
+        this.items.add(item);
+    }
 
 }

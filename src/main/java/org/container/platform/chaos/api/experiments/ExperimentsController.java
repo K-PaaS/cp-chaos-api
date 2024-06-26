@@ -52,18 +52,16 @@ public class ExperimentsController {
      * @param params the params
      * @return the experiments detail
      */
-/*
 
     @ApiOperation(value = "Experiments 상세 조회(Get Experiments Detail)", nickname = "getExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
-    @GetMapping(value = "/{uid:.+}")
+    @GetMapping(value = "/{kind:.+}/{name:.+}")
     public Experiments getExperiments(Params params) {
         return experimentsService.getExperiments(params);
     }
 
-*/
 
     /**
      * Experiments 생성(Create Experiments)

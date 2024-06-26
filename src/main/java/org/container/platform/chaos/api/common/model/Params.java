@@ -78,6 +78,11 @@ public class Params {
     // rest send type
     public Boolean isClusterToken = false;
 
+    // chaos
+    public String kind = Constants.EMPTY_STRING;
+    public String name = Constants.EMPTY_STRING;
+
+
     public
     @JsonProperty("yaml")
     String yaml = Constants.EMPTY_STRING;
