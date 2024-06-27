@@ -16,18 +16,18 @@ cpChaos:
     list:
       podFaults:
         podKill:
-          list: "/apis/chaos-mesh.org/v1alpha1/podchaos"
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
           get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
           create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
           delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
       networkFaults:
         delay:
-          list: "/apis/chaos-mesh.org/v1alpha1/networkchaos"
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
           get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
           create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
           delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
       stressScenarios:
-        list: "/apis/chaos-mesh.org/v1alpha1/stresschaos"
+        list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
         get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"

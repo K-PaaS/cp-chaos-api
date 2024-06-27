@@ -3,6 +3,7 @@ package org.container.platform.chaos.api.common.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
+import org.container.platform.chaos.api.experiments.ExperimentsItem;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,8 +80,29 @@ public class Params {
     public Boolean isClusterToken = false;
 
     // chaos
-    public String kind = Constants.EMPTY_STRING;
-    public String name = Constants.EMPTY_STRING;
+  public String kind = Constants.EMPTY_STRING = Constants.EMPTY_STRING;
+    public String name = Constants.EMPTY_STRING = Constants.EMPTY_STRING;
+   // private List<String> namespaces;
+    //private Object labelSelectors = Constants.EMPTY_STRING;
+    //private Object pods = Constants.EMPTY_STRING;
+   // private String duration = Constants.EMPTY_STRING;
+   // private String action = Constants.EMPTY_STRING;
+    //private String gracePeriod = Constants.EMPTY_STRING;
+   // private String latency = Constants.EMPTY_STRING;
+
+    private String uid = Constants.EMPTY_STRING;
+
+    public List namespaces;
+    private Object labelSelectors = null;
+    private Object pods = null;
+    private String action = Constants.EMPTY_STRING;
+    private int gracePeriod = 0;
+    private String duration = Constants.EMPTY_STRING;
+    private String latency = Constants.EMPTY_STRING;
+    private Object stressors = null;
+
+//    private String stressors = Constants.EMPTY_STRING;
+
 
 
     public
@@ -89,7 +111,6 @@ public class Params {
 
     private String browser = Constants.EMPTY_STRING;
     private String clientIp = Constants.EMPTY_STRING;
-
 
 
     private Boolean isGlobal = false;
