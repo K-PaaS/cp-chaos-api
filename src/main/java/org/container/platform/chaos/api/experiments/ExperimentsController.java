@@ -5,10 +5,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.common.model.Params;
+import org.container.platform.chaos.api.common.model.ResultStatus;
+import org.container.platform.chaos.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 /**
  * Experiments Controller 클래스
  *
@@ -70,7 +71,7 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
- /*   @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
+    @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
@@ -82,7 +83,7 @@ public class ExperimentsController {
         }
         return experimentsService.createExperiments(params);
     }
-*/
+
 
     /**
      * Experiments 삭제(Delete Experiments)
@@ -91,12 +92,12 @@ public class ExperimentsController {
      * @return the resultStatus
      */
 
-   /* @ApiOperation(value = "Experiments 삭제(Delete Experiments)", nickname = "deleteExperiments")
+    @ApiOperation(value = "Experiments 삭제(Delete Experiments)", nickname = "deleteExperiments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
-    @DeleteMapping("/{uid:.+}")
+    @DeleteMapping("/{kind:.+}/{name:.+}")
     public ResultStatus deleteExperiments(Params params) {
         return experimentsService.deleteExperiments(params);
-    }*/
+    }
 }

@@ -1,5 +1,6 @@
 package org.container.platform.chaos.api.experiments;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
@@ -34,9 +35,7 @@ public class ExperimentsService {
     private final RestTemplateService restTemplateService;
     private final PropertyService propertyService;
     private final TemplateService templateService;
-/*    private final NetworkFaultsService networkFaultsService;
-    private final PodFaultsService podFaultsService;
-    private final StressScenariosService stressScenariosService;*/
+
 
 
     /**
@@ -108,6 +107,7 @@ public class ExperimentsService {
         if (params.kind.equals("NetworkChaos")) {
             HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                     propertyService.getCpChaosApiListNetworkFaultsDelayGetUrl(), HttpMethod.GET, null, Map.class, params);
+            System.out.println(responseMapNetworkDelay);
             ExperimentsItem networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsItem.class);
             experiments.addItem(networkDelayList);
         }
@@ -130,7 +130,7 @@ public class ExperimentsService {
      * @param params the params
      * @return the resultStatus
      */
-/*
+
     public Object createExperiments(Params params) {
         String line = "";
         StringBuilder stringBuilder = new StringBuilder();
@@ -219,9 +219,10 @@ public class ExperimentsService {
         }
 
         return null;
+
     }
 
-*/
+
     /**
      * Experiments 삭제(Delete Experiments)
      *
@@ -229,6 +230,21 @@ public class ExperimentsService {
      * @return the resultStatus
      */
     public ResultStatus deleteExperiments(Params params) {
-        return null;
+        ResultStatus resultStatus = null;
+        if (params.kind.equals("PodChaos")) {
+            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListPodFaultsPodKillDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+        }
+        if (params.kind.equals("NetworkChaos")) {
+            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListNetworkFaultsDelayDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+        }
+        if (params.kind.equals("StressChaos")) {
+            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+
+        }
+        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+
     }
 }
