@@ -80,29 +80,18 @@ public class Params {
     public Boolean isClusterToken = false;
 
     // chaos
-  public String kind = Constants.EMPTY_STRING = Constants.EMPTY_STRING;
-    public String name = Constants.EMPTY_STRING = Constants.EMPTY_STRING;
-   // private List<String> namespaces;
-    //private Object labelSelectors = Constants.EMPTY_STRING;
-    //private Object pods = Constants.EMPTY_STRING;
-   // private String duration = Constants.EMPTY_STRING;
-   // private String action = Constants.EMPTY_STRING;
-    //private String gracePeriod = Constants.EMPTY_STRING;
-   // private String latency = Constants.EMPTY_STRING;
-
+    public String kind = Constants.EMPTY_STRING;
+    public String name = Constants.EMPTY_STRING;
     private String uid = Constants.EMPTY_STRING;
-
-    public List namespaces;
-    private Object labelSelectors = null;
-    private Object pods = null;
+    public String chaosNamespace = Constants.EMPTY_STRING;
+    private String duration = Constants.EMPTY_STRING;
     private String action = Constants.EMPTY_STRING;
     private int gracePeriod = 0;
-    private String duration = Constants.EMPTY_STRING;
-    private String latency = Constants.EMPTY_STRING;
+    private Object labelSelectors = null;
+    public List namespaces;
+    private Object pods = null;
     private Object stressors = null;
-
-//    private String stressors = Constants.EMPTY_STRING;
-
+    private String latency = Constants.EMPTY_STRING;
 
 
     public
@@ -114,6 +103,21 @@ public class Params {
 
 
     private Boolean isGlobal = false;
+
+    // catalog
+    private String repositories = Constants.EMPTY_STRING;
+    private String releases = Constants.EMPTY_STRING;
+    private String reversion = Constants.EMPTY_STRING;
+    private String charts = Constants.EMPTY_STRING;
+    private String info = Constants.EMPTY_STRING;
+    private String version = Constants.EMPTY_STRING;
+    private String repoName = Constants.EMPTY_STRING;
+    private String repoUrl = Constants.EMPTY_STRING;
+    private String packages = Constants.EMPTY_STRING;
+    private String packageID = Constants.EMPTY_STRING;
+    private String query = Constants.EMPTY_STRING;
+    private String userDefined = "1";
+    private String preview = "0";
 
     public Params(){
         this.cluster = Constants.EMPTY_STRING;
