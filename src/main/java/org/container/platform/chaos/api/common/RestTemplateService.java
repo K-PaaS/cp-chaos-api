@@ -8,12 +8,14 @@ import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.exception.CommonStatusCodeException;
 import org.container.platform.chaos.api.exception.ResultStatusException;
+import org.container.platform.chaos.api.login.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.Base64Utils;
@@ -21,6 +23,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+
 
 import static org.container.platform.chaos.api.common.Constants.*;
 
@@ -39,10 +43,12 @@ public class RestTemplateService {
     private static final String CONTENT_TYPE = "Content-Type";
     private final String commonApiBase64Authorization;
     private final String metricCollectorApiBase64Authorization;
+    private final String catalogApiBase64Authorization;
 
     private final String chaosApiBase64Authorization;
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
+    private final RestTemplate apiRestTemplate;
     protected final PropertyService propertyService;
     private final CommonService commonService;
     protected final VaultService vaultService;
@@ -59,6 +65,7 @@ public class RestTemplateService {
     @Autowired
     public RestTemplateService(RestTemplate restTemplate,
                                @Qualifier("shortTimeoutRestTemplate") RestTemplate shortRestTemplate,
+                               @Qualifier("apiRestTemplate") RestTemplate apiRestTemplate,
                                PropertyService propertyService,
                                CommonService commonService,
                                VaultService vaultService,
@@ -67,9 +74,12 @@ public class RestTemplateService {
                                @Value("${cpMetricCollector.api.authorization.id}") String metricCollectorApiAuthorizationId,
                                @Value("${cpMetricCollector.api.authorization.password}") String metricCollectorApiAuthorizationPassword,
                                @Value("${spring.security.username}") String chaosApiAuthorizationId,
-                               @Value("${spring.security.password}") String chaosApiAuthorizationPassword) {
+                               @Value("${spring.security.password}") String chaosApiAuthorizationPassword,
+                               @Value("${cpCatalog.api.authorization.id: }") String catalogApiAuthorizationId,
+                               @Value("${cpCatalog.api.authorization.password: }") String catalogApiAuthorizationPassword) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
+        this.apiRestTemplate = apiRestTemplate;
         this.propertyService = propertyService;
         this.commonService = commonService;
         this.vaultService = vaultService;
@@ -82,6 +92,9 @@ public class RestTemplateService {
         this.chaosApiBase64Authorization =  "Basic "
                 + Base64Utils.encodeToString(
                 (chaosApiAuthorizationId + ":" + chaosApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
+        this.catalogApiBase64Authorization =  "Basic "
+                + Base64Utils.encodeToString(
+                (catalogApiAuthorizationId + ":" + catalogApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
     }
 
 
@@ -125,6 +138,9 @@ public class RestTemplateService {
 
     }
 
+    public <T> T sendApi(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, Params params) {
+        return sendApiTemplate(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
+    }
 
 
     /**
@@ -359,6 +375,12 @@ public class RestTemplateService {
             authorization = metricCollectorApiBase64Authorization;
         }
 
+        // CATALOG API
+        if(TARGET_CATALOG_API.equals(reqApi)) {
+            apiUrl = propertyService.getCpCatalogApiUrl();
+            authorization = catalogApiBase64Authorization;
+        }
+
         // Chaos API
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
@@ -448,5 +470,61 @@ public class RestTemplateService {
 
         return resEntity.getBody();
     }
+    /**
+     * t 전송(Send t)
+     * <p>
+     * (Admin)
+     *
+     * @param <T>          the type parameter
+     * @param reqApi       the req api
+     * @param reqUrl       the req url
+     * @param httpMethod   the http method
+     * @param bodyObject   the body object
+     * @param responseType the response type
+     * @param acceptType   the accept type
+     * @param contentType  the content type
+     * @return the t
+     */
+    public <T> T sendApiTemplate(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType, String contentType, Params params) {
+        reqUrl = setRequestParameter(reqApi, reqUrl, httpMethod, params);
+        setApiUrlAuthorization(reqApi, params);
 
+        HttpHeaders reqHeaders = new HttpHeaders();
+        reqHeaders.add(AUTHORIZATION_HEADER_KEY, base64Authorization);
+        reqHeaders.add(CONTENT_TYPE, contentType);
+        reqHeaders.add("ACCEPT", acceptType);
+        reqHeaders.add("Accept-Language", getLang());
+
+        HttpEntity<Object> reqEntity;
+        if (bodyObject == null) {
+            reqEntity = new HttpEntity<>(reqHeaders);
+        } else {
+            reqEntity = new HttpEntity<>(bodyObject, reqHeaders);
+        }
+
+        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", CommonUtils.loggerReplace(httpMethod), CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(reqHeaders.get(CONTENT_TYPE)));
+
+        ResponseEntity<T> resEntity = null;
+
+        try {
+            resEntity = apiRestTemplate.exchange(baseUrl + reqUrl, httpMethod, reqEntity, responseType);
+        } catch (HttpStatusCodeException exception) {
+            LOGGER.info("HttpStatusCodeException API Call URL : {}, errorCode : {}, errorMessage : {}", CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(exception.getRawStatusCode()), CommonUtils.loggerReplace(exception.getMessage()));
+            throw new CommonStatusCodeException(Integer.toString(exception.getRawStatusCode()));
+        }
+
+        return resEntity.getBody();
+    }
+
+    public String getLang(){
+        CustomUserDetails customUserDetails = null;
+        String u_lang = "";
+        try {
+            customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            u_lang = customUserDetails.getULang();
+        } catch (Exception e) {
+            u_lang = Constants.U_LANG_ENG;
+        }
+        return u_lang;
+    }
 }

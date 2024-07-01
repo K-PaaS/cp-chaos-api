@@ -77,10 +77,11 @@ public class ExperimentsController {
     })
     @PostMapping
     public Object createExperiments(@RequestBody Params params) throws Exception {
-        if (params.getYaml().contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(params);
-            return object;
-        }
+//        if (params.getYaml().contains("---")) {
+//            Object object = ResourceExecuteManager.commonControllerExecute(params);
+//            return object;
+//        }
+
         return experimentsService.createExperiments(params);
     }
 
