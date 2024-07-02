@@ -1,4 +1,4 @@
-package org.container.platform.chaos.api.experiments;
+package org.container.platform.chaos.api.chaos;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-import org.container.platform.chaos.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,12 +75,7 @@ public class ExperimentsController {
             @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
     })
     @PostMapping
-    public Object createExperiments(@RequestBody Params params) throws Exception {
-//        if (params.getYaml().contains("---")) {
-//            Object object = ResourceExecuteManager.commonControllerExecute(params);
-//            return object;
-//        }
-
+    public Object createExperiments(@RequestBody Params params) {
         return experimentsService.createExperiments(params);
     }
 

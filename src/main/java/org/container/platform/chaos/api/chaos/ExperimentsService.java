@@ -1,4 +1,4 @@
-package org.container.platform.chaos.api.experiments;
+package org.container.platform.chaos.api.chaos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.common.*;
@@ -7,7 +7,6 @@ import org.container.platform.chaos.api.common.model.ResultStatus;
 /*import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
 import org.container.platform.chaos.api.podFaults.PodFaultsService;
 import org.container.platform.chaos.api.stressScenarios.StressScenariosService;*/
-import org.container.platform.chaos.api.configmaps.ConfigMaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -131,14 +129,14 @@ public class ExperimentsService {
      * @return the resultStatus
      */
 
-    public Object createExperiments(Params params) {
+    public ResultStatus createExperiments(Params params) {
         String line = "";
         StringBuilder stringBuilder = new StringBuilder();
 
         Map map = new HashMap();
         map.put("kind", params.getKind());
         map.put("name", params.getName());
-        map.put("namespace", params.getNamespace());
+        map.put("namespace", params.getChaosNamespace());
         map.put("action", params.getAction());
         map.put("gracePeriod", params.getGracePeriod());
         map.put("duration", params.getDuration());
@@ -155,7 +153,7 @@ public class ExperimentsService {
         stringBuilder.append(Constants.CHAOS_MESH_LABEL_SELECTOR);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> mapLabelSelector = objectMapper.convertValue(params.getLabelSelectors(), Map.class);
+        Map<String, String> mapLabelSelector = params.getLabelSelectors();
 
         for (Map.Entry<String, String> entry : mapLabelSelector.entrySet()) {
             String key = entry.getKey();
@@ -181,14 +179,26 @@ public class ExperimentsService {
             }
         }
 
+        ResultStatus resultStatus = null;
         if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
             stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
-        } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
+            params.setYaml(stringBuilder.toString());
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListPodFaultsPodKillCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
+        }
+        else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
             stringBuilder.append(templateService.convert("create_networkFaults_delay.ftl", map));
-        } else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
+            params.setYaml(stringBuilder.toString());
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListNetworkFaultsDelayCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
+        }
+        else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
             stringBuilder.append(templateService.convert("create_stressScenarios.ftl", map));
+            params.setYaml(stringBuilder.toString());
             stringBuilder.append(Constants.NEW_LINE);
             Map<String, Object> mapStressors = objectMapper.convertValue(params.getStressors(), Map.class);
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
             for (Map.Entry<String, Object> entry : mapStressors.entrySet() ) {
                 if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_CPU)) {
                     line = "    " + Constants.CHAOS_MESH_STRESSORS_CPU + ":";
@@ -218,7 +228,7 @@ public class ExperimentsService {
 
         }
 
-        return null;
+        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
 
     }
 

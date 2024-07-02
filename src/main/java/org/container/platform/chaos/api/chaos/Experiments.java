@@ -1,4 +1,4 @@
-package org.container.platform.chaos.api.experiments;
+package org.container.platform.chaos.api.chaos;
 
 import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonItemMetaData;

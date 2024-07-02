@@ -3,10 +3,10 @@ package org.container.platform.chaos.api.common.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
-import org.container.platform.chaos.api.experiments.ExperimentsItem;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Params {
@@ -86,8 +86,8 @@ public class Params {
     public String chaosNamespace = Constants.EMPTY_STRING;
     private String duration = Constants.EMPTY_STRING;
     private String action = Constants.EMPTY_STRING;
-    private int gracePeriod = 0;
-    private Object labelSelectors = null;
+    private String gracePeriod = Constants.EMPTY_STRING;
+    private Map<String, String> labelSelectors = null;
     public List namespaces;
     private Object pods = null;
     private Object stressors = null;
