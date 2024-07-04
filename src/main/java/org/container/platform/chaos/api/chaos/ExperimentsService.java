@@ -105,7 +105,6 @@ public class ExperimentsService {
         if (params.kind.equals("NetworkChaos")) {
             HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                     propertyService.getCpChaosApiListNetworkFaultsDelayGetUrl(), HttpMethod.GET, null, Map.class, params);
-            System.out.println(responseMapNetworkDelay);
             ExperimentsItem networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsItem.class);
             experiments.addItem(networkDelayList);
         }
@@ -194,12 +193,10 @@ public class ExperimentsService {
         }
         else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
             stringBuilder.append(templateService.convert("create_stressScenarios.ftl", map));
-            params.setYaml(stringBuilder.toString());
             stringBuilder.append(Constants.NEW_LINE);
+
             Map<String, Object> mapStressors = objectMapper.convertValue(params.getStressors(), Map.class);
-            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
-            for (Map.Entry<String, Object> entry : mapStressors.entrySet() ) {
+              for (Map.Entry<String, Object> entry : mapStressors.entrySet() ) {
                 if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_CPU)) {
                     line = "    " + Constants.CHAOS_MESH_STRESSORS_CPU + ":";
                     stringBuilder.append(line);
@@ -211,7 +208,8 @@ public class ExperimentsService {
                         stringBuilder.append("      " + entryCpu.getKey() + ": " + entryCpu.getValue());
                         stringBuilder.append(Constants.NEW_LINE);
                     }
-                } else if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_MEMORY)) {
+                }
+                if (entry.getKey().equals(Constants.CHAOS_MESH_STRESSORS_MEMORY)) {
                     line = "    " + Constants.CHAOS_MESH_STRESSORS_MEMORY + ":";
                     stringBuilder.append(line);
                     stringBuilder.append(Constants.NEW_LINE);
@@ -225,6 +223,10 @@ public class ExperimentsService {
 
                 }
             }
+            params.setYaml(stringBuilder.toString());
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
+                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
+
 
         }
 

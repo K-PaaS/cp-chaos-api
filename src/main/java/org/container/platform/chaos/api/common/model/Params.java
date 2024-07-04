@@ -90,9 +90,8 @@ public class Params {
     private Map<String, String> labelSelectors = null;
     public List namespaces;
     private Object pods = null;
-    private Object stressors = null;
     private String latency = Constants.EMPTY_STRING;
-
+    private Object stressors = null;
 
     public
     @JsonProperty("yaml")
