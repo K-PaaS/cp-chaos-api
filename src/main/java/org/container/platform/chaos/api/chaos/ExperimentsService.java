@@ -82,10 +82,6 @@ public class ExperimentsService {
         return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
     };
 
-
-
-
-
     /**
      * Experiments 상세 조회(Get Experiments Detail)
      *
@@ -119,7 +115,6 @@ public class ExperimentsService {
 
         return (Experiments) commonService.setResultModel(experiments, Constants.RESULT_STATUS_SUCCESS);
     }
-
 
     /**
      * Experiments 생성(Create Experiments)
@@ -234,7 +229,6 @@ public class ExperimentsService {
 
     }
 
-
     /**
      * Experiments 삭제(Delete Experiments)
      *
@@ -259,4 +253,18 @@ public class ExperimentsService {
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
 
     }
+
+    /**
+     * ExperimentsList Events 목록 조회 (Get Experiments Events List)
+     *
+     * @param params the params
+     * @return the ExperimentsEventsList
+     */
+    public ExperimentsEventsList getExperimentsEventsList(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
+                propertyService.getCpChaosApiListEventListUrl(), HttpMethod.GET, null, Map.class, params);
+        ExperimentsEventsList experimentsEventsList = commonService.setResultObject(responseMap, ExperimentsEventsList.class);
+        return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+    };
+
 }

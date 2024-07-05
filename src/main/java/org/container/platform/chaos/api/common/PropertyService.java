@@ -23,6 +23,10 @@ public class PropertyService {
     @Value("${cpChaos.api.url: }")
     private String cpChaosApiUrl;
 
+    @Value("${cpChaos.api.list.event.url: }")
+    private String cpChaosEventApiUrl;
+
+
     //podFaults
     @Value("${cpChaos.api.list.podFaults.podKill.list}")
     private String cpChaosApiListPodFaultsPodKillListUrl;
@@ -62,8 +66,11 @@ public class PropertyService {
     @Value("${cpChaos.api.list.stressScenarios.delete}")
     private String cpChaosApiListStressScenariosDeleteUrl;
 
+    // events
     @Value("${cpChaos.api.list.event.list}")
     private String cpChaosApiListEventListUrl;
+    @Value("${cpChaos.api.list.event.get}")
+    private String cpChaosApiListEventGetUrl;
 
 
 
