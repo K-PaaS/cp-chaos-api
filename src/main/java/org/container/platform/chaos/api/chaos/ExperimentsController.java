@@ -95,4 +95,23 @@ public class ExperimentsController {
     public ResultStatus deleteExperiments(Params params) {
         return experimentsService.deleteExperiments(params);
     }
+
+
+    /**
+     * Experiments Events 목록 조회(Get Experiments Events List)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+
+    @ApiOperation(value="Experiments Events 목록 조회(Get Experiments Events List)", nickname="getExperimentsEventsList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
+    })
+    @GetMapping("/events")
+    public ExperimentsEventsList getExperimentsEventsList(Params params) {
+        return experimentsService.getExperimentsEventsList(params);}
+
 }
+
+

@@ -385,14 +385,20 @@ public class RestTemplateService {
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
+          //    authorization = chaosApiBase64Authorization;
           //  apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
-
             apiUrl = propertyService.getCpChaosApiUrl();
-        //    authorization = chaosApiBase64Authorization;
 
         }
 
+        // Chaos Event API
+        if (Constants.TARGET_CHAOS_EVENT_API.equals(reqApi)) {
+            Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
+            Assert.notNull(clusters, "Invalid parameter");
+            authorization = "Bearer " + clusters.getClusterToken();
+            apiUrl = propertyService.getCpChaosEventApiUrl();
+        }
 
         this.base64Authorization = authorization;
         this.baseUrl = apiUrl;
@@ -414,7 +420,7 @@ public class RestTemplateService {
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getResourceName()).replace("{userId}", params.getUserId());
         }
 
-        if (reqApi.equals(Constants.TARGET_CHAOS_API)) {
+        if (reqApi.equals(Constants.TARGET_CHAOS_API) || reqApi.equals(Constants.TARGET_CHAOS_EVENT_API)) {
             if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
 

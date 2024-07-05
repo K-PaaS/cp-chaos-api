@@ -32,6 +32,7 @@ public class Constants {
     //FIXME!!
     public static final String TARGET_TERRAMAN_API = "terramanApi";
     public static final String TARGET_CHAOS_API = "chaosAPI";
+    public static final String TARGET_CHAOS_EVENT_API = "chaosEventAPI";
     public static final String TARGET_METRIC_COLLECTOR_API = "metricCollectorApi";
     public static final String TARGET_CATALOG_API = "catalogApi";
 
