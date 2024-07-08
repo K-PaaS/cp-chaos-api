@@ -386,7 +386,6 @@ public class RestTemplateService {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
           //    authorization = chaosApiBase64Authorization;
-          //  apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
             apiUrl = propertyService.getCpChaosApiUrl();
 
