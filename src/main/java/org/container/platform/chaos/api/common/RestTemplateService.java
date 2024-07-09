@@ -43,8 +43,6 @@ public class RestTemplateService {
     private static final String CONTENT_TYPE = "Content-Type";
     private final String commonApiBase64Authorization;
     private final String metricCollectorApiBase64Authorization;
-    private final String catalogApiBase64Authorization;
-
     private final String chaosApiBase64Authorization;
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
@@ -74,9 +72,7 @@ public class RestTemplateService {
                                @Value("${cpMetricCollector.api.authorization.id}") String metricCollectorApiAuthorizationId,
                                @Value("${cpMetricCollector.api.authorization.password}") String metricCollectorApiAuthorizationPassword,
                                @Value("${spring.security.username}") String chaosApiAuthorizationId,
-                               @Value("${spring.security.password}") String chaosApiAuthorizationPassword,
-                               @Value("${cpCatalog.api.authorization.id: }") String catalogApiAuthorizationId,
-                               @Value("${cpCatalog.api.authorization.password: }") String catalogApiAuthorizationPassword) {
+                               @Value("${spring.security.password}") String chaosApiAuthorizationPassword) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
         this.apiRestTemplate = apiRestTemplate;
@@ -92,9 +88,6 @@ public class RestTemplateService {
         this.chaosApiBase64Authorization =  "Basic "
                 + Base64Utils.encodeToString(
                 (chaosApiAuthorizationId + ":" + chaosApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
-        this.catalogApiBase64Authorization =  "Basic "
-                + Base64Utils.encodeToString(
-                (catalogApiAuthorizationId + ":" + catalogApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
     }
 
 
@@ -373,12 +366,6 @@ public class RestTemplateService {
         if(TARGET_METRIC_COLLECTOR_API.equals(reqApi)) {
             apiUrl = propertyService.getCpMetricCollectorApiUrl();
             authorization = metricCollectorApiBase64Authorization;
-        }
-
-        // CATALOG API
-        if(TARGET_CATALOG_API.equals(reqApi)) {
-            apiUrl = propertyService.getCpCatalogApiUrl();
-            authorization = catalogApiBase64Authorization;
         }
 
         // Chaos API
