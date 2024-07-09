@@ -415,25 +415,6 @@ public class PropertyService {
     @Value("${cpMaster.api.list.limitRanges.listAllNamespaces}")
     private String cpMasterApiListLimitRangesListAllNamespacesUrl;
 
-    //configmaps
-    @Value("${cpMaster.api.list.configMaps.list}")
-    private String cpMasterApiListConfigMapsListUrl;
-
-    @Value("${cpMaster.api.list.configMaps.get}")
-    private String cpMasterApiListConfigMapsGetUrl;
-
-    @Value("${cpMaster.api.list.configMaps.create}")
-    private String cpMasterApiListConfigMapsCreateUrl;
-
-    @Value("${cpMaster.api.list.configMaps.delete}")
-    private String cpMasterApiListConfigMapsDeleteUrl;
-
-    @Value("${cpMaster.api.list.configMaps.update}")
-    private String cpMasterApiListConfigMapsUpdateUrl;
-
-    @Value("${cpMaster.api.list.configMaps.listAllNamespaces}")
-    private String cpMasterApiListConfigMapsListAllNamespacesUrl;
-
     //ingresses
     @Value("${cpMaster.api.list.ingresses.list}")
     private String cpMasterApiListIngressesListUrl;

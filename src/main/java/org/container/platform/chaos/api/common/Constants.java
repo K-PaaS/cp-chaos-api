@@ -221,9 +221,6 @@ public class Constants {
     public static final String URI_LIMIT_RANGES_DETAIL = "/container-platform/limitRanges/{limitRangeName:.+}";
     public static final String URI_SERVICEINSTANCE_DETAIL =  "/serviceInstance/{serviceInstanceId:.+}";
 
-    public static final String URI_CONFIGMAPS = "/container-platform";
-    public static final String URI_CONFIGMAPS_DETAIL = "/container-platform/configMaps/{configMapsName:.+}";
-
     public static final String DIR_SSH_KEY ="ssh-key/";
 
 
