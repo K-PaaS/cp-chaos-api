@@ -99,15 +99,6 @@ public class PropertyService {
     private String clusterAdminNamespace;
 
 
-    @Value("${cpNamespace.role.list}")
-    List<String> rolesList;
-
-    @Value("${cpNamespace.role.init}")
-    private String initRole;
-
-    @Value("${cpNamespace.role.admin}")
-    private String adminRole;
-
     @Value("${cpNamespace.resourceQuotas.list}")
     List<String> resourceQuotasList;
 
@@ -137,25 +128,6 @@ public class PropertyService {
 
     @Value("${cpAnnotations.last-applied}")
     String cpAnnotationsLastApplied;
-
-    //service
-    @Value("${cpMaster.api.list.services.list}")
-    private String cpMasterApiListServicesListUrl;
-
-    @Value("${cpMaster.api.list.services.get}")
-    private String cpMasterApiListServicesGetUrl;
-
-    @Value("${cpMaster.api.list.services.create}")
-    private String cpMasterApiListServicesCreateUrl;
-
-    @Value("${cpMaster.api.list.services.delete}")
-    private String cpMasterApiListServicesDeleteUrl;
-
-    @Value("${cpMaster.api.list.services.update}")
-    private String cpMasterApiListServicesUpdateUrl;
-
-    @Value("${cpMaster.api.list.services.listAllNamespaces}")
-    private String cpMasterApiListServicesListAllNamespacesUrl;
 
     //endpoint
     @Value("${cpMaster.api.list.endpoints.list}")
@@ -273,24 +245,6 @@ public class PropertyService {
     @Value("${cpMaster.api.list.events.listAllNamespaces}")
     private String cpMasterApiListEventsListAllNamespacesUrl;
 
-    //role
-    @Value("${cpMaster.api.list.roles.list}")
-    private String cpMasterApiListRolesListUrl;
-
-    @Value("${cpMaster.api.list.roles.get}")
-    private String cpMasterApiListRolesGetUrl;
-
-    @Value("${cpMaster.api.list.roles.create}")
-    private String cpMasterApiListRolesCreateUrl;
-
-    @Value("${cpMaster.api.list.roles.delete}")
-    private String cpMasterApiListRolesDeleteUrl;
-
-    @Value("${cpMaster.api.list.roles.update}")
-    private String cpMasterApiListRolesUpdateUrl;
-
-    @Value("${cpMaster.api.list.roles.listAllNamespaces}")
-    private String cpMasterApiListRolesListAllNamespacesUrl;
 
     //deployments
     @Value("${cpMaster.api.list.deployments.list}")
@@ -415,27 +369,6 @@ public class PropertyService {
     @Value("${cpMaster.api.list.limitRanges.listAllNamespaces}")
     private String cpMasterApiListLimitRangesListAllNamespacesUrl;
 
-    //ingresses
-    @Value("${cpMaster.api.list.ingresses.list}")
-    private String cpMasterApiListIngressesListUrl;
-
-    @Value("${cpMaster.api.list.ingresses.get}")
-    private String cpMasterApiListIngressesGetUrl;
-
-    @Value("${cpMaster.api.list.ingresses.create}")
-    private String cpMasterApiListIngressesCreateUrl;
-
-    @Value("${cpMaster.api.list.ingresses.delete}")
-    private String cpMasterApiListIngressesDeleteUrl;
-
-    @Value("${cpMaster.api.list.ingresses.update}")
-    private String cpMasterApiListIngressesUpdateUrl;
-
-    @Value("${cpMaster.api.list.ingresses.listAllNamespaces}")
-    private String cpMasterApiListIngressesListAllNamespacesUrl;
-
-    @Value("${cp.provide-as-service}")
-    private String cpProviderAsService;
 
     @Value("${cp.provide-as-standalone}")
     private String cpProviderAsStandalone;
@@ -462,30 +395,6 @@ public class PropertyService {
 
     @Value("${cpTerraman.template.path}")
     private String cpTerramanTemplatePath;
-
-    // metrics api
-    @Value("${cpMaster.api.metrics.node.list}")
-    private String cpMasterApiMetricsNodesListUrl;
-
-    @Value("${cpMaster.api.metrics.node.get}")
-    private String cpMasterApiMetricsNodesGetUrl;
-
-    @Value("${cpMaster.api.metrics.pod.list}")
-    private String cpMasterApiMetricsPodsListUrl;
-
-    @Value("${cpMaster.api.metrics.pod.get}")
-    private String cpMasterApiMetricsPodsGetUrl;
-
-
-    // cp metric collector
-    @Value("${cpMetricCollector.api.url}")
-    private String cpMetricCollectorApiUrl;
-
-    @Value("${cpMetricCollector.api.clusters.get}")
-    private String cpMetricCollectorApiClustersGetUrl;
-
-    @Value("${cpMetricCollector.api.clusters.key}")
-    private String cpMetricCollectorApiClustersKey;
 
 
 }

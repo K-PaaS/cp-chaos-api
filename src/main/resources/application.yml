@@ -104,10 +104,6 @@ cpNamespace:
   defaultNamespace: cp-portal-temp-namespace
   exceptNamespace: ${cpNamespace.defaultNamespace}, all
   clusterAdminNamespace: kube-system
-  role:
-    list: cp-init-role, cp-admin-role
-    init: cp-init-role
-    admin: cp-admin-role
   resourceQuotas:
     list: cp-low-resourcequota, cp-medium-resourcequota, cp-high-resourcequota
     low: cp-low-resourcequota
@@ -131,13 +127,6 @@ cpMaster:
   api:
     access: "/api"
     list:
-      services:
-        list: "/api/v1/namespaces/{namespace}/services"
-        get: "/api/v1/namespaces/{namespace}/services/{name}"
-        create: "/api/v1/namespaces/{namespace}/services"
-        delete: "/api/v1/namespaces/{namespace}/services/{name}"
-        update: "/api/v1/namespaces/{namespace}/services/{name}"
-        listAllNamespaces: "/api/v1/services"
       endpoints:
         list: "/api/v1/namespaces/{namespace}/endpoints"
         get: "/api/v1/namespaces/{namespace}/endpoints/{name}"
@@ -183,13 +172,6 @@ cpMaster:
         list: "/api/v1/namespaces/{namespace}/events"
         get: "/api/v1/namespaces/{namespace}/events/{name}"
         listAllNamespaces: "/api/v1/events"
-      roles:
-        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
-        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
-        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
-        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
-        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
-        listAllNamespaces: "/apis/rbac.authorization.k8s.io/v1/roles"
       deployments:
         list: "/apis/apps/v1/namespaces/{namespace}/deployments"
         get: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
@@ -237,20 +219,6 @@ cpMaster:
         delete: "/api/v1/namespaces/{namespace}/limitranges/{name}"
         update: "/api/v1/namespaces/{namespace}/limitranges/{name}"
         listAllNamespaces: "/api/v1/limitranges"
-      ingresses:
-        list: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses"
-        get: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses/{name}"
-        create: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses"
-        delete: "/apis/networking.k8s.io/v1/namespaces/{namespace}//ingresses/{name}"
-        update: "/apis/networking.k8s.io/v1/namespaces/{namespace}/ingresses/{name}"
-        listAllNamespaces: "/apis/networking.k8s.io/v1/ingresses"
-    metrics:
-      node:
-        list: "/apis/metrics.k8s.io/v1beta1/nodes"
-        get: "/apis/metrics.k8s.io/v1beta1/nodes/{name}"
-      pod:
-        list: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods"
-        get: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods/{name}"
 
 cpTerraman:
   api:

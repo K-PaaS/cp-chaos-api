@@ -73,8 +73,6 @@ public class Params {
     // sign Up
     public Boolean isSuperAdmin = false;
 
-    //ingress
-    public List rules;
 
     // rest send type
     public Boolean isClusterToken = false;
@@ -131,7 +129,6 @@ public class Params {
         this.rs_rq = Constants.EMPTY_STRING;
         this.rs_lr = Constants.EMPTY_STRING;
         this.isSuperAdmin = false;
-        this.rules = Collections.emptyList();
     }
 
     // sa, rb 관련 생성자

@@ -42,7 +42,6 @@ public class RestTemplateService {
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     private static final String CONTENT_TYPE = "Content-Type";
     private final String commonApiBase64Authorization;
-    private final String metricCollectorApiBase64Authorization;
     private final String chaosApiBase64Authorization;
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
@@ -69,8 +68,6 @@ public class RestTemplateService {
                                VaultService vaultService,
                                @Value("${commonApi.authorization.id}") String commonApiAuthorizationId,
                                @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword,
-                               @Value("${cpMetricCollector.api.authorization.id}") String metricCollectorApiAuthorizationId,
-                               @Value("${cpMetricCollector.api.authorization.password}") String metricCollectorApiAuthorizationPassword,
                                @Value("${spring.security.username}") String chaosApiAuthorizationId,
                                @Value("${spring.security.password}") String chaosApiAuthorizationPassword) {
         this.restTemplate = restTemplate;
@@ -82,9 +79,6 @@ public class RestTemplateService {
         this.commonApiBase64Authorization = "Basic "
                 + Base64Utils.encodeToString(
                 (commonApiAuthorizationId + ":" + commonApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
-        this.metricCollectorApiBase64Authorization =  "Basic "
-                + Base64Utils.encodeToString(
-                (metricCollectorApiAuthorizationId + ":" + metricCollectorApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
         this.chaosApiBase64Authorization =  "Basic "
                 + Base64Utils.encodeToString(
                 (chaosApiAuthorizationId + ":" + chaosApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
@@ -360,12 +354,6 @@ public class RestTemplateService {
         // TERRAMAN API
         if (TARGET_TERRAMAN_API.equals(reqApi)) {
             apiUrl = propertyService.getTerramanApiUrl();
-        }
-
-        // METRIC COLLECTOR API
-        if(TARGET_METRIC_COLLECTOR_API.equals(reqApi)) {
-            apiUrl = propertyService.getCpMetricCollectorApiUrl();
-            authorization = metricCollectorApiBase64Authorization;
         }
 
         // Chaos API

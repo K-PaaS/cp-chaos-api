@@ -33,7 +33,6 @@ public class Constants {
     public static final String TARGET_TERRAMAN_API = "terramanApi";
     public static final String TARGET_CHAOS_API = "chaosAPI";
     public static final String TARGET_CHAOS_EVENT_API = "chaosEventAPI";
-    public static final String TARGET_METRIC_COLLECTOR_API = "metricCollectorApi";
 
     public static final String CLUSTER_TYPE_HOST = "host";
     public static final String CLUSTER_TYPE_SUB = "sub";
@@ -50,19 +49,9 @@ public class Constants {
     public static final String AUTH_USER = "USER";
     public static final List<String> AUTH_ADMIN_LIST =   Arrays.asList(new String[]{AUTH_SUPER_ADMIN, AUTH_CLUSTER_ADMIN});
 
-    public static final String AUTH_CLUSTER_ADMIN_CG = "Cluster Admin";
-    public static final String AUTH_NAMESPACE_ADMIN_CG = "Namespace Admin";
-    public static final String AUTH_USER_CG = "User";
 
     public static final String ALL_NAMESPACES = "all";
-    public static final String ALL_USER_ID = "all";
-    public static final String USERS = "users";
-    public static final String DEFAULT_SERVICE_ACCOUNT = "default";
-
-    public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
-    public static final String DEFAULT_SUPER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
-    public static final String DEFAULT_CONFIGMAPS = "kube-root-ca.crt"; // k8s default configMaps name
 
     public static final String NOT_ALLOWED_POD_NAME_NODES = "nodes";
     public static final String NOT_ALLOWED_POD_NAME_RESOURCES= "resources";
@@ -76,8 +65,6 @@ public class Constants {
     public static final String SUPPORTED_RESOURCE_STORAGE = "storage";
     public static final String SUPPORTED_RESOURCE_PORT = "port";
 
-    public static final String INGRESS_CONTROLLER_NAMESPACE= "ingress-nginx";
-    public static final String INGRESS_CONTROLLER_RESOURCE_NAME= "ingress-nginx-controller";
 
     public static final String CHAOS_MESH_KIND_POD_CHAOS = "PodChaos";
     public static final String CHAOS_MESH_KIND_NETWORK_CHAOS = "NetworkChaos";
@@ -141,8 +128,6 @@ public class Constants {
     public static final String ENDS_WITH_SES = "ses";
     public static final String ENDS_WITH_S = "s";
 
-    // KUBERNETES METRIC API URI
-    public static final String URI_METRIC_API_BASIC = "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods";
 
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
@@ -193,11 +178,7 @@ public class Constants {
     public static final String URI_WORKLOAD_REPLICA_SETS = "/container-platform/workloads/replicaSets";
     public static final String URI_WORKLOAD_REPLICA_SETS_DETAIL = "/container-platform/workloads/replicaSets/{replicaSetName:.+}";
 
-    public static final String URI_SERVICES = "/container-platform/services";
-    public static final String URI_SERVICES_DETAIL = "/container-platform/services/{serviceName:.+}";
 
-    public static final String URI_INGRESSES = "/container-platform/ingresses";
-    public static final String URI_INGRESSES_DETAIL = "/container-platform/ingresses/{serviceName:.+}";
 
     public static final String URI_STORAGES = "/container-platform/storages";
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
@@ -219,7 +200,6 @@ public class Constants {
 
     public static final String URI_LIMIT_RANGES = "/container-platform";
     public static final String URI_LIMIT_RANGES_DETAIL = "/container-platform/limitRanges/{limitRangeName:.+}";
-    public static final String URI_SERVICEINSTANCE_DETAIL =  "/serviceInstance/{serviceInstanceId:.+}";
 
     public static final String DIR_SSH_KEY ="ssh-key/";
 
@@ -237,10 +217,6 @@ public class Constants {
     public static final String RESOURCE_DEPLOYMENT = "Deployment";
     public static final String RESOURCE_POD = "Pod";
     public static final String RESOURCE_REPLICASET = "ReplicaSet";
-
-    //service
-    public static final String RESOURCE_SERVICE = "Service";
-    public static final String RESOURCE_INGRESS = "Ingress";
 
     //storage
     public static final String RESOURCE_PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim";
@@ -294,7 +270,6 @@ public class Constants {
             put(RESOURCE_DEPLOYMENT, SERVICE_PACKAGE + "workloads.deployments:DeploymentsService");     // Deployment 서비스
             put(RESOURCE_POD, SERVICE_PACKAGE + "workloads.pods:PodsService");     // Pod 서비스
             put(RESOURCE_REPLICASET, SERVICE_PACKAGE + "workloads.pods:ReplicaSetsService");     // ReplicaSet 서비스
-            put(RESOURCE_SERVICE, SERVICE_PACKAGE + "customServices:CustomServicesService");     // Service 서비스
             put(RESOURCE_PERSISTENTVOLUMECLAIM, SERVICE_PACKAGE + "storages.persistentVolumeClaims:PersistentVolumeClaimsService");     // PersistentVolumeClaim 서비스
             put(RESOURCE_PERSISTENTVOLUME, SERVICE_PACKAGE + "storages.persistentVolumes:PersistentVolumesService");     // PersistentVolume 서비스
             put(RESOURCE_STORAGECLASS, SERVICE_PACKAGE + "storages.storageClasses:StorageClassesService");     // StorageClass 서비스
