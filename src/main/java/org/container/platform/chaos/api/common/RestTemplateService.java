@@ -2,12 +2,10 @@ package org.container.platform.chaos.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.clusters.clusters.Clusters;
-import org.container.platform.chaos.api.clusters.support.ClusterApiAccess;
 import org.container.platform.chaos.api.common.model.CommonStatusCode;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.exception.CommonStatusCodeException;
-import org.container.platform.chaos.api.exception.ResultStatusException;
 import org.container.platform.chaos.api.login.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +40,6 @@ public class RestTemplateService {
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     private static final String CONTENT_TYPE = "Content-Type";
     private final String commonApiBase64Authorization;
-    private final String chaosApiBase64Authorization;
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
     private final RestTemplate apiRestTemplate;
@@ -67,9 +64,7 @@ public class RestTemplateService {
                                CommonService commonService,
                                VaultService vaultService,
                                @Value("${commonApi.authorization.id}") String commonApiAuthorizationId,
-                               @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword,
-                               @Value("${spring.security.username}") String chaosApiAuthorizationId,
-                               @Value("${spring.security.password}") String chaosApiAuthorizationPassword) {
+                               @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
         this.apiRestTemplate = apiRestTemplate;
@@ -79,9 +74,7 @@ public class RestTemplateService {
         this.commonApiBase64Authorization = "Basic "
                 + Base64Utils.encodeToString(
                 (commonApiAuthorizationId + ":" + commonApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
-        this.chaosApiBase64Authorization =  "Basic "
-                + Base64Utils.encodeToString(
-                (chaosApiAuthorizationId + ":" + chaosApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
+
     }
 
 
@@ -405,51 +398,6 @@ public class RestTemplateService {
         return reqUrl;
     }
 
-
-
-
-    /**
-     * t 전송(Send t)
-     * <p></p>
-     *
-     * @param <T>          the type parameter
-     * @param reqUrl       the req url
-     * @param httpMethod   the http method
-     * @param responseType the response type
-     * @return the t
-     */
-
-    public <T> T sendValid(String reqUrl, HttpMethod httpMethod, Class<T> responseType,  Params params) {
-        HttpHeaders reqHeaders = new HttpHeaders();
-        reqHeaders.add(AUTHORIZATION_HEADER_KEY,"Bearer " + params.getClusterToken());
-        reqHeaders.add(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        reqHeaders.add("ACCEPT", Constants.ACCEPT_TYPE_JSON);
-        reqUrl = reqUrl + propertyService.getCpMasterApiAccessUrl();
-
-        HttpEntity<Object> reqEntity;
-        reqEntity = new HttpEntity<>(reqHeaders);
-
-
-        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", CommonUtils.loggerReplace(httpMethod),
-                CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(reqHeaders.get(CONTENT_TYPE)));
-
-        ResponseEntity<T> resEntity = null;
-
-        try {
-            resEntity = restTemplate.exchange(reqUrl, httpMethod, reqEntity, responseType);
-        } catch (HttpStatusCodeException exception) {
-            LOGGER.info("HttpStatusCodeException API Call URL : {}, errorCode : {}, errorMessage : {}", CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(exception.getRawStatusCode()),
-                    CommonUtils.loggerReplace(exception.getMessage()));
-            throw new CommonStatusCodeException(Integer.toString(exception.getRawStatusCode()));
-        }
-
-        ClusterApiAccess apiAccess = commonService.setResultObject(resEntity.getBody(), ClusterApiAccess.class);
-        if(apiAccess.getVersions() == null || apiAccess.getServerAddressByClientCIDRs() == null) {
-            throw new ResultStatusException(MessageConstant.CLUSTER_REGISTRATION_FAILED.getMsg());
-        }
-
-        return resEntity.getBody();
-    }
     /**
      * t 전송(Send t)
      * <p>
