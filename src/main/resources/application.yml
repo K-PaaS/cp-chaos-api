@@ -289,3 +289,6 @@ commonApi:
 cpTerraman:
   template:
     path: "/tmp/terraform/{id}/{id}.tf"
+
+cpApi:
+  url: ${CP_PORTAL_API_URI}
