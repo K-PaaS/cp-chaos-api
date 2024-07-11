@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +49,6 @@ public class Params {
     //provider
     public Object providerInfo = null;
     public String region = Constants.EMPTY_STRING;
-    public Constants.ProviderType providerType = Constants.ProviderType.AWS;
     public String project = Constants.EMPTY_STRING;
     public String site = Constants.EMPTY_STRING;
 
