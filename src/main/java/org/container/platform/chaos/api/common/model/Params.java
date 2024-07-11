@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +49,6 @@ public class Params {
     //provider
     public Object providerInfo = null;
     public String region = Constants.EMPTY_STRING;
-    public Constants.ProviderType providerType = Constants.ProviderType.AWS;
     public String project = Constants.EMPTY_STRING;
     public String site = Constants.EMPTY_STRING;
 
@@ -73,8 +71,6 @@ public class Params {
     // sign Up
     public Boolean isSuperAdmin = false;
 
-    //ingress
-    public List rules;
 
     // rest send type
     public Boolean isClusterToken = false;
@@ -102,21 +98,6 @@ public class Params {
 
 
     private Boolean isGlobal = false;
-
-    // catalog
-    private String repositories = Constants.EMPTY_STRING;
-    private String releases = Constants.EMPTY_STRING;
-    private String reversion = Constants.EMPTY_STRING;
-    private String charts = Constants.EMPTY_STRING;
-    private String info = Constants.EMPTY_STRING;
-    private String version = Constants.EMPTY_STRING;
-    private String repoName = Constants.EMPTY_STRING;
-    private String repoUrl = Constants.EMPTY_STRING;
-    private String packages = Constants.EMPTY_STRING;
-    private String packageID = Constants.EMPTY_STRING;
-    private String query = Constants.EMPTY_STRING;
-    private String userDefined = "1";
-    private String preview = "0";
 
     public Params(){
         this.cluster = Constants.EMPTY_STRING;
@@ -146,7 +127,6 @@ public class Params {
         this.rs_rq = Constants.EMPTY_STRING;
         this.rs_lr = Constants.EMPTY_STRING;
         this.isSuperAdmin = false;
-        this.rules = Collections.emptyList();
     }
 
     // sa, rb 관련 생성자

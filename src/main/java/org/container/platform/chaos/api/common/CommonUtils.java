@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import org.container.platform.chaos.api.common.model.CommonOwnerReferences;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-import org.container.platform.chaos.api.storages.persistentVolumes.support.ObjectReference;
 import org.container.platform.chaos.api.users.Users;
 
 /**
@@ -284,20 +283,7 @@ public class CommonUtils {
         return (ObjectUtils.isEmpty(requestString)) ? Constants.NULL_REPLACE_TEXT : requestString;
     }
 
-    /**
-     * Proc replace null value object reference
-     *
-     * @param requestObjectReference the request object reference
-     * @return the object reference
-     */
-    public static ObjectReference procReplaceNullValue(ObjectReference requestObjectReference) {
-        return (ObjectUtils.isEmpty(requestObjectReference)) ? new ObjectReference() {
-            {
-                setName(Constants.NULL_REPLACE_TEXT);
-                setNamespace(Constants.NULL_REPLACE_TEXT);
-            }
-        } : requestObjectReference;
-    }
+
 
     /**
      * Proc replace null value map
