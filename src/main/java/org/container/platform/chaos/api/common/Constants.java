@@ -126,6 +126,8 @@ public class Constants {
 
     public static final String RESOURCE_NAME = "name";
     public static final String RESOURCE_CREATIONTIMESTAMP = "creationTimestamp";
+    public static final String RESOURCE_CREATED_AT = "created_at";
+
     public static final String RESOURCE_CREATED = "created";
     public static final String RESOURCE_METADATA = "metadata";
     public static final String RESOURCE_NS = "namespace";

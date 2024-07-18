@@ -4,17 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-/*import org.container.platform.chaos.api.networkFaults.NetworkFaultsService;
-import org.container.platform.chaos.api.podFaults.PodFaultsService;
-import org.container.platform.chaos.api.stressScenarios.StressScenariosService;*/
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +24,6 @@ import java.util.Map;
 @Service
 public class ExperimentsService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentsService.class);
     private final CommonService commonService;
 
     private final RestTemplateService restTemplateService;
@@ -48,9 +44,6 @@ public class ExperimentsService {
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
-/*        this.networkFaultsService = networkFaultsService;
-        this.podFaultsService = podFaultsService;
-        this.stressScenariosService = stressScenariosService;*/
     }
 
     /**
@@ -66,7 +59,6 @@ public class ExperimentsService {
                 propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
         experimentsList.setItems(podFaultList.getItems());
-
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
                 propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
@@ -261,13 +253,21 @@ public class ExperimentsService {
      * @return the ExperimentsEventsList
      */
     public ExperimentsEventsList getExperimentsEventsList(Params params) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                propertyService.getCpChaosApiListEventListUrl(), HttpMethod.GET, null, Map.class, params);
-        ExperimentsEventsList experimentsEventsList = commonService.setResultObject(responseMap, ExperimentsEventsList.class);
-        experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
-        return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
-    };
+        ExperimentsEventsList experimentsEventsList = new ExperimentsEventsList();
 
+        ArrayList responseList = restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
+                propertyService.getCpChaosApiListEventListUrl(), HttpMethod.GET, null, ArrayList.class, params);
+        System.out.println("responseList\n" + responseList);
+
+        experimentsEventsList.setItems(responseList);
+        System.out.println("experimentsEventsList1 : " + experimentsEventsList);
+
+        experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
+        System.out.println("experimentsEventsList2 : " + experimentsEventsList);
+
+        return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+
+    };
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
@@ -277,10 +277,9 @@ public class ExperimentsService {
      */
 
     public ExperimentsEvents getExperimentsEvents(Params params) {
-        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
                 propertyService.getCpChaosApiListEventGetUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsEvents experimentsEvents = commonService.setResultObject(responseMapPodFault, ExperimentsEvents.class);
-
         return (ExperimentsEvents) commonService.setResultModel(experimentsEvents, Constants.RESULT_STATUS_SUCCESS);
 
     }

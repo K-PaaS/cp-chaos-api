@@ -56,12 +56,8 @@ cpChaos:
         delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
       event:
         url: ${CHAOS_EVENTS_API_URI}
-#        list: /api/events
-        list: "/apis/events.k8s.io/v1/namespaces/{namespace}/events"
-        get: "/apis/events.k8s.io/v1/namespaces/{namespace}/events/{eventname}"
-#        list: "/api/v1/events?fieldSelector=involvedObject.apiVersion=chaos-mesh.org/v1alpha1"
-#        get: "/api/v1/namespaces/{namespace}/events?fieldSelector=involvedObject.uid={uid}"
-
+        list: "/api/events"
+        get: "/api/events??object_id={uid}&limit=999"
 
 cpApi:
   url: ${CP_PORTAL_API_URI}
