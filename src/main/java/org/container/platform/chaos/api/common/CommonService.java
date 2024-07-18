@@ -2,8 +2,6 @@ package org.container.platform.chaos.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.SneakyThrows;
 import org.container.platform.chaos.api.clusters.clusters.Clusters;
 import org.container.platform.chaos.api.common.model.*;
@@ -11,15 +9,11 @@ import org.container.platform.chaos.api.login.support.PortalGrantedAuthority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -301,11 +295,11 @@ public class CommonService {
             if (order.equals("asc")) {
 
                 sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
-                        getField(Constants.RESOURCE_METADATA, x)))).collect(Collectors.toList());
+                        x))).collect(Collectors.toList());
             } else {
 
                     sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
-                            getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
+                            x)).reversed()).collect(Collectors.toList());
             }
         }
 

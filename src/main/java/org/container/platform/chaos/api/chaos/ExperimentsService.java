@@ -1,12 +1,12 @@
 package org.container.platform.chaos.api.chaos;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -247,44 +247,27 @@ public class ExperimentsService {
     }
 
     /**
-     * ExperimentsList Events 조회 (Get Experiments Events List)
+     * ExperimentsList Events 목록 조회 (Get Experiments Events List)
      *
      * @param params the params
      * @return the ExperimentsEventsList
      */
     public ExperimentsEventsList getExperimentsEventsList(Params params) {
+        ObjectMapper mapper = new ObjectMapper();
         ExperimentsEventsList experimentsEventsList = new ExperimentsEventsList();
 
         String fieldSelector = "?object_id=" + params.getObject_id();
-        ArrayList<Map<String, String>> responseList = restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
-                propertyService.getCpChaosApiListEventListUrl() + fieldSelector, HttpMethod.GET, null, ArrayList.class, params);
 
-        List<ExperimentsEventsListItems> itemsList = new ArrayList<>();
-        for (Map<String, String> map : responseList) {
-            ExperimentsEventsListItems item = new ExperimentsEventsListItems();
-            item.setId(String.valueOf(map.get("id")));
-            item.setObject_id(map.get("object_id"));
-            item.setCreated_at(map.get("created_at"));
-            item.setNamespace(map.get("namespace"));
-            item.setName(map.get("name"));
-            item.setKind(map.get("kind"));
-            item.setType(map.get("type"));
-            item.setReason(map.get("reason"));
-            item.setMessage(map.get("message"));
+        List<ExperimentsEventsListItems> items = mapper.convertValue(
+                restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
+                        propertyService.getCpChaosApiListEventListUrl() + fieldSelector,
+                        HttpMethod.GET, null, ArrayList.class, params),
+                new TypeReference<List<ExperimentsEventsListItems>>(){}
+        );
 
-            ExperimentsEventsListItems.Metadata metadata = new ExperimentsEventsListItems.Metadata();
-            metadata.setCreationTimestamp(map.get("created_at"));
-            metadata.setName(map.get("name"));
-            metadata.setNamespace(map.get("namespace"));
-
-            item.setMetadata(metadata);
-            item.setCreationTimestamp(map.get("created_at"));
-
-            itemsList.add(item);
-        }
-        experimentsEventsList.setItems(itemsList);
+        experimentsEventsList.setItems(items);
         experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
-
         return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+
     };
 }
