@@ -261,7 +261,7 @@ public class CommonService {
      * @param order      the order
      * @return the list
      */
-    public <T> List<T> sortingListByCondition(List<T> commonList, String orderBy, String order) {
+    public <T> List<T> sortingListByCondition(List<T> commonList, String orderBy, String order, Boolean event) {
 
         List sortList = null;
 
@@ -297,9 +297,14 @@ public class CommonService {
                 sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
                         x))).collect(Collectors.toList());
             } else {
-
+                if(!event) {
                     sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
+                            getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
+                }
+                if(event) {
+                    sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATED_AT,
                             x)).reversed()).collect(Collectors.toList());
+                }
             }
         }
 
@@ -431,7 +436,7 @@ public class CommonService {
         }
 
         // 2. 조건에 따른 리스트 정렬
-        resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
+        resourceItemList = sortingListByCondition(resourceItemList, orderBy, order, false);
 
         // 3. commonItemMetaData 추가
         CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, offset, limit);
@@ -635,7 +640,6 @@ public class CommonService {
      * @return the T
      */
     public <T> T resourceListProcessing(Object resourceList, Params params, Class<T> requestClass) {
-        System.out.println("common resourceList\n" + resourceList);
         Object resourceReturnList = null;
 
         List resourceItemList = getField("items", resourceList);
@@ -647,7 +651,7 @@ public class CommonService {
         }
 
         // 2. 조건에 따른 리스트 정렬
-        resourceItemList = sortingListByCondition(resourceItemList, params.getOrderBy(), params.getOrder());
+        resourceItemList = sortingListByCondition(resourceItemList, params.getOrderBy(), params.getOrder(), params.getEvent());
 
         // 3. commonItemMetaData 추가
         CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, params.getOffset(), params.getLimit());

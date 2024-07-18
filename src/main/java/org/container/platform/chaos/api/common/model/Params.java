@@ -89,6 +89,7 @@ public class Params {
     private String latency = Constants.EMPTY_STRING;
     private Object stressors = null;
     private String object_id = Constants.EMPTY_STRING;
+    private Boolean event = false;
 
     public
     @JsonProperty("yaml")

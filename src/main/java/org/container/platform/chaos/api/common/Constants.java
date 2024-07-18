@@ -125,7 +125,7 @@ public class Constants {
     public static final String RESOURCE_ROLE = "Role";
 
     public static final String RESOURCE_NAME = "name";
-    public static final String RESOURCE_CREATIONTIMESTAMP = "created_at";
+    public static final String RESOURCE_CREATIONTIMESTAMP = "creationTimestamp";
     public static final String RESOURCE_CREATED_AT = "created_at";
 
     public static final String RESOURCE_CREATED = "created";
