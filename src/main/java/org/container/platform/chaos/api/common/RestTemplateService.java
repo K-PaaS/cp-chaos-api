@@ -357,13 +357,17 @@ public class RestTemplateService {
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getResourceName()).replace("{userId}", params.getUserId());
         }
 
-        if (reqApi.equals(Constants.TARGET_CHAOS_API) || reqApi.equals(Constants.TARGET_CHAOS_EVENT_API)) {
+        if (reqApi.equals(Constants.TARGET_CHAOS_API)) {
             if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
 
             }
 
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getName());
+        }
+
+        if (reqApi.equals(Constants.TARGET_CHAOS_EVENT_API)) {
+            reqUrl = reqUrl.replace("{uid}", params.getUid());
         }
         return reqUrl;
     }

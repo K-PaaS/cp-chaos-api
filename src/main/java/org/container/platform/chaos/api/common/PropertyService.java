@@ -69,9 +69,6 @@ public class PropertyService {
     // events
     @Value("${cpChaos.api.list.event.list}")
     private String cpChaosApiListEventListUrl;
-    @Value("${cpChaos.api.list.event.get}")
-    private String cpChaosApiListEventGetUrl;
-
 
 
     @Value("${cpResource.clusterResource}")

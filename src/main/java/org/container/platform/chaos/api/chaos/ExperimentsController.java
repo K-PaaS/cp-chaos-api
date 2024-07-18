@@ -113,23 +113,6 @@ public class ExperimentsController {
         return experimentsService.getExperimentsEventsList(params);}
 
 
-    /**
-     * Experiments Events 상세 조회(Get Experiments Events Detail)
-     *
-     * @param params the params
-     * @return the experiments events detail
-     */
-
-    @ApiOperation(value = "Experiments Events 상세 조회(Get Experiments Events Detail)", nickname = "getExperimentsEvents")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
-    })
-    @GetMapping(value = "/events/{name:.+}")
-    public ExperimentsEvents getExperimentsEvents(Params params) {
-        return experimentsService.getExperimentsEvents(params);
-    }
-
-
 }
 
 

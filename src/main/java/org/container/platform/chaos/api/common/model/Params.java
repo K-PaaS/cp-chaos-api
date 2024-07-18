@@ -88,6 +88,8 @@ public class Params {
     private Object pods = null;
     private String latency = Constants.EMPTY_STRING;
     private Object stressors = null;
+    private String object_id = Constants.EMPTY_STRING;
+    private Boolean event = false;
 
     public
     @JsonProperty("yaml")
