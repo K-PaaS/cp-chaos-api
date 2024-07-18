@@ -247,7 +247,7 @@ public class ExperimentsService {
     }
 
     /**
-     * ExperimentsList Events 목록 조회 (Get Experiments Events List)
+     * ExperimentsList Events 조회 (Get Experiments Events List)
      *
      * @param params the params
      * @return the ExperimentsEventsList
@@ -255,33 +255,36 @@ public class ExperimentsService {
     public ExperimentsEventsList getExperimentsEventsList(Params params) {
         ExperimentsEventsList experimentsEventsList = new ExperimentsEventsList();
 
-        ArrayList responseList = restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
-                propertyService.getCpChaosApiListEventListUrl(), HttpMethod.GET, null, ArrayList.class, params);
-        System.out.println("responseList\n" + responseList);
+        String fieldSelector = "?object_id=" + params.getObject_id();
+        ArrayList<Map<String, String>> responseList = restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
+                propertyService.getCpChaosApiListEventListUrl() + fieldSelector, HttpMethod.GET, null, ArrayList.class, params);
 
-        experimentsEventsList.setItems(responseList);
-        System.out.println("experimentsEventsList1 : " + experimentsEventsList);
+        List<ExperimentsEventsListItems> itemsList = new ArrayList<>();
+        for (Map<String, String> map : responseList) {
+            ExperimentsEventsListItems item = new ExperimentsEventsListItems();
+            item.setId(String.valueOf(map.get("id")));
+            item.setObject_id(map.get("object_id"));
+            item.setCreated_at(map.get("created_at"));
+            item.setNamespace(map.get("namespace"));
+            item.setName(map.get("name"));
+            item.setKind(map.get("kind"));
+            item.setType(map.get("type"));
+            item.setReason(map.get("reason"));
+            item.setMessage(map.get("message"));
 
+            ExperimentsEventsListItems.Metadata metadata = new ExperimentsEventsListItems.Metadata();
+            metadata.setCreationTimestamp(map.get("created_at"));
+            metadata.setName(map.get("name"));
+            metadata.setNamespace(map.get("namespace"));
+
+            item.setMetadata(metadata);
+            item.setCreationTimestamp(map.get("created_at"));
+
+            itemsList.add(item);
+        }
+        experimentsEventsList.setItems(itemsList);
         experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
-        System.out.println("experimentsEventsList2 : " + experimentsEventsList);
 
         return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
-
     };
-
-    /**
-     * Experiments 상세 조회(Get Experiments Detail)
-     *
-     * @param params the params
-     * @return the experiments detail
-     */
-
-    public ExperimentsEvents getExperimentsEvents(Params params) {
-        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
-                propertyService.getCpChaosApiListEventGetUrl(), HttpMethod.GET, null, Map.class, params);
-        ExperimentsEvents experimentsEvents = commonService.setResultObject(responseMapPodFault, ExperimentsEvents.class);
-        return (ExperimentsEvents) commonService.setResultModel(experimentsEvents, Constants.RESULT_STATUS_SUCCESS);
-
-    }
-
 }

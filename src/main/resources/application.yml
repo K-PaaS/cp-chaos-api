@@ -57,7 +57,6 @@ cpChaos:
       event:
         url: ${CHAOS_EVENTS_API_URI}
         list: "/api/events"
-        get: "/api/events??object_id={uid}&limit=999"
 
 cpApi:
   url: ${CP_PORTAL_API_URI}
