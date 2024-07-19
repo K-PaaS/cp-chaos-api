@@ -72,7 +72,8 @@ public class ExperimentsService {
         experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
 
         return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
-    };
+    }
+
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
@@ -269,5 +270,5 @@ public class ExperimentsService {
         experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
         return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
 
-    };
+    }
 }

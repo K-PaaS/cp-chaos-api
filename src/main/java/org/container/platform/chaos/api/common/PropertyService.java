@@ -20,9 +20,6 @@ public class PropertyService {
     @Value("${cpChaos.api.access}")
     private String cpChaosApiAccessUrl;
 
-    @Value("${cpChaos.api.url: }")
-    private String cpChaosApiUrl;
-
     @Value("${cpChaos.api.list.event.url: }")
     private String cpChaosEventApiUrl;
 

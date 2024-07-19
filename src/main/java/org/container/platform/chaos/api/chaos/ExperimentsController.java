@@ -43,8 +43,8 @@ public class ExperimentsController {
     })
     @GetMapping
     public ExperimentsList getExperimentsList(Params params) {
-
-        return experimentsService.getExperimentsList(params);}
+                return experimentsService.getExperimentsList(params);
+    }
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
