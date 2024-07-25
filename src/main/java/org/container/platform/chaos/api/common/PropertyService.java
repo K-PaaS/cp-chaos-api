@@ -20,11 +20,8 @@ public class PropertyService {
     @Value("${cpChaos.api.access}")
     private String cpChaosApiAccessUrl;
 
-    @Value("${cpChaos.api.url: }")
-    private String cpChaosApiUrl;
-
-    @Value("${cpChaos.api.list.event.url: }")
-    private String cpChaosEventApiUrl;
+    @Value("${cpChaos.api.list.dashboard.url: }")
+    private String cpChaosDashboardApiUrl;
 
 
     //podFaults
@@ -66,9 +63,13 @@ public class PropertyService {
     @Value("${cpChaos.api.list.stressScenarios.delete}")
     private String cpChaosApiListStressScenariosDeleteUrl;
 
-    // events
-    @Value("${cpChaos.api.list.event.list}")
-    private String cpChaosApiListEventListUrl;
+    // dashboard - experiments list(status)
+    @Value("${cpChaos.api.list.dashboard.experiment.list}")
+    private String cpChaosDashboardApiListUrl;
+
+    // dashboard - events
+    @Value("${cpChaos.api.list.dashboard.event}")
+    private String cpChaosDashboardApiListEventUrl;
 
 
     @Value("${cpResource.clusterResource}")

@@ -3,9 +3,6 @@ spring:
     name: cp-chaos-api
   freemarker:
     template-loader-path: classpath:/templates/
-  security:
-    username: admin
-    password: cpchaos!123
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -27,14 +24,17 @@ spring:
           enabled: true
           min-renewal: 10s
           expiry-threshold: 1m
+
 server:
   port: ${PORT:8092}
   auth:
     valid: N
+
 cpChaos:
-  name:
+  authorization:
+    id: admin
+    password: cpchaos!123
   api:
-    url: ${CP_PORTAL_CHAOS_API_URI}
     access: "/apis"
     list:
       podFaults:
@@ -54,9 +54,11 @@ cpChaos:
         get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
-      event:
-        url: ${CHAOS_EVENTS_API_URI}
-        list: "/api/events"
+      dashboard:
+        url: ${CHAOS_DASHBOARD_API_URI}
+        experiment:
+            list: "/api/experiments"
+        event: "/api/events"
 
 cpApi:
   url: ${CP_PORTAL_API_URI}

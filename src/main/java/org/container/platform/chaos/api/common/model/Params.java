@@ -90,6 +90,7 @@ public class Params {
     private Object stressors = null;
     private String object_id = Constants.EMPTY_STRING;
     private Boolean event = false;
+    private List statusList;
 
     public
     @JsonProperty("yaml")

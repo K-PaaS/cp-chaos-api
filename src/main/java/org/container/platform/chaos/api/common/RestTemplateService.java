@@ -17,11 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
-
-
-
-import static org.container.platform.chaos.api.common.Constants.*;
 
 /**
  * Rest Template Service 클래스
@@ -42,6 +39,7 @@ public class RestTemplateService {
     private final CommonService commonService;
     protected final VaultService vaultService;
     protected String base64Authorization;
+
     protected String baseUrl;
 
 
@@ -56,13 +54,13 @@ public class RestTemplateService {
                                @Qualifier("shortTimeoutRestTemplate") RestTemplate shortRestTemplate,
                                PropertyService propertyService,
                                CommonService commonService,
-                               VaultService vaultService) {
+                               VaultService vaultService
+                                ) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
         this.propertyService = propertyService;
         this.commonService = commonService;
         this.vaultService = vaultService;
-
     }
 
 
@@ -84,14 +82,6 @@ public class RestTemplateService {
         return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
     }
 
-    @TrackExecutionTime
-    public <T> T sendGlobal(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, Params params) {
-        return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
-    }
-
-    public <T> T sendPing(String reqApi, Class<T> responseType, Params params) {
-        return sendPing(reqApi, "", HttpMethod.GET, null, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
-    }
 
     public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Class<T> responseType, Params params) {
         return sendAdmin(reqApi, reqUrl, httpMethod, params.getYaml(), responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml", params);
@@ -316,27 +306,23 @@ public class RestTemplateService {
             Assert.notNull(clusters, "Invalid parameter");
             apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
-
         }
 
         // Chaos API
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
-          //    authorization = chaosApiBase64Authorization;
+            apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
-            apiUrl = propertyService.getCpChaosApiUrl();
-
         }
 
-        // Chaos Event API
-        if (Constants.TARGET_CHAOS_EVENT_API.equals(reqApi)) {
+        // Chaos Dashboard API
+        if (Constants.TARGET_CHAOS_DASHBOARD_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
             authorization = "Bearer " + clusters.getClusterToken();
-            apiUrl = propertyService.getCpChaosEventApiUrl();
+            apiUrl = propertyService.getCpChaosDashboardApiUrl();
         }
-
         this.base64Authorization = authorization;
         this.baseUrl = apiUrl;
     }
@@ -352,7 +338,6 @@ public class RestTemplateService {
         if (reqApi.equals(Constants.TARGET_CP_MASTER_API)) {
             if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
-                //   reqUrl += commonService.generateFieldSelectorForExceptNamespace(params.getSelectorType());
             }
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getResourceName()).replace("{userId}", params.getUserId());
         }
@@ -360,9 +345,7 @@ public class RestTemplateService {
         if (reqApi.equals(Constants.TARGET_CHAOS_API)) {
             if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
-
             }
-
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getName());
         }
 

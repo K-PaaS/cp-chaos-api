@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Experiments Service 클래스
@@ -72,7 +69,8 @@ public class ExperimentsService {
         experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
 
         return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
-    };
+    }
+
 
     /**
      * Experiments 상세 조회(Get Experiments Detail)
@@ -106,6 +104,39 @@ public class ExperimentsService {
 
 
         return (Experiments) commonService.setResultModel(experiments, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ExperimentsList Status 목록 조회 (Get Experiments Status List)
+     *
+     * @param params the params
+     * @return the ExperimentsStatusList
+     */
+    public ExperimentsDashboardList getExperimentsStatusList(Params params) {
+        ObjectMapper mapper = new ObjectMapper();
+        ExperimentsDashboardList experimentsDashboardList = new ExperimentsDashboardList();
+
+        List<ExperimentsStatusListItems> items = mapper.convertValue(
+                restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                        propertyService.getCpChaosDashboardApiListUrl(),
+                        HttpMethod.GET, null, ArrayList.class, params),
+            new TypeReference<List<ExperimentsStatusListItems>>(){}
+        );
+        List<ExperimentsStatusListItems> newItems = new ArrayList<>();
+
+        for(ExperimentsStatusListItems item : items) {
+            for (Object uid : params.getStatusList()) {
+                if (Objects.equals(uid, item.getUid())) {
+                    newItems.add(item);
+                    break;
+                }
+            }
+        }
+        experimentsDashboardList.setItems(newItems);
+//        experimentsDashboardList = commonService.choasstatusListProcessing(experimentsDashboardList, params, ExperimentsDashboardList.class);
+
+       return (ExperimentsDashboardList) commonService.setResultModel(experimentsDashboardList, Constants.RESULT_STATUS_SUCCESS);
+
     }
 
     /**
@@ -259,15 +290,17 @@ public class ExperimentsService {
         String fieldSelector = "?object_id=" + params.getObject_id();
 
         List<ExperimentsEventsListItems> items = mapper.convertValue(
-                restTemplateService.send(Constants.TARGET_CHAOS_EVENT_API,
-                        propertyService.getCpChaosApiListEventListUrl() + fieldSelector,
+                restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                        propertyService.getCpChaosDashboardApiListEventUrl() + fieldSelector,
                         HttpMethod.GET, null, ArrayList.class, params),
                 new TypeReference<List<ExperimentsEventsListItems>>(){}
         );
 
         experimentsEventsList.setItems(items);
-        experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
+        experimentsEventsList = commonService.choasstatusListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
         return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
 
-    };
+    }
+
+
 }

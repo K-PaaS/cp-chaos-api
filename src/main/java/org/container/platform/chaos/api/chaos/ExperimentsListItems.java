@@ -11,7 +11,7 @@ public class ExperimentsListItems {
         private Status status;
 
         @Data
-        public static class Metadata {
+        public class Metadata {
             private String creationTimestamp;
             private String name;
             private String namespace;
@@ -19,24 +19,24 @@ public class ExperimentsListItems {
         }
 
         @Data
-        public static class Status {
+        public class Status {
             private List<Conditions> conditions;
             private Experiment experiment;
         }
 
         @Data
-        public static class Conditions {
+        public class Conditions {
             private String status;
             private String type;
         }
 
         @Data
-        public static class Experiment {
+        public class Experiment {
             private List<ContainerRecordsListItem> containerRecords;
         }
 
         @Data
-        public static class ContainerRecordsListItem {
+        public class ContainerRecordsListItem {
             private String phase;
         }
     }

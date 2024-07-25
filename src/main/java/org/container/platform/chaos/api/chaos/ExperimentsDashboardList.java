@@ -5,17 +5,12 @@ import org.container.platform.chaos.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 
-
 @Data
-public class ExperimentsList {
+public class ExperimentsDashboardList {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private CommonItemMetaData itemMetaData;
-    private List<ExperimentsListItems> items;
+    private List<ExperimentsStatusListItems> items;
 }
-
-
-
-
