@@ -316,12 +316,12 @@ public class RestTemplateService {
             authorization = "Bearer " + clusters.getClusterToken();
         }
 
-        // Chaos Event API
-        if (Constants.TARGET_CHAOS_EVENT_API.equals(reqApi)) {
+        // Chaos Dashboard API
+        if (Constants.TARGET_CHAOS_DASHBOARD_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
             authorization = "Bearer " + clusters.getClusterToken();
-            apiUrl = propertyService.getCpChaosEventApiUrl();
+            apiUrl = propertyService.getCpChaosDashboardApiUrl();
         }
         this.base64Authorization = authorization;
         this.baseUrl = apiUrl;

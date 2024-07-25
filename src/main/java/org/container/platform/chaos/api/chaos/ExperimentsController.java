@@ -9,6 +9,8 @@ import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 /**
  * Experiments Controller 클래스
  *
@@ -62,6 +64,19 @@ public class ExperimentsController {
         return experimentsService.getExperiments(params);
     }
 
+    /**
+     * Experiments Status 목록 조회(Get Experiments Status List)
+     *
+     * @return the Experiments Status List
+     */
+    @ApiOperation(value="Experiments Status 목록 조회(Get Experiments Status List)", nickname="getExperimentsStatusList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
+    })
+    @GetMapping("/status")
+    public ExperimentsDashboardList getExperimentsStatusList(Params params) {
+        return experimentsService.getExperimentsStatusList(params);
+    }
 
     /**
      * Experiments 생성(Create Experiments)

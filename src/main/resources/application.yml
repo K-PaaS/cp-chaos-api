@@ -54,9 +54,11 @@ cpChaos:
         get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
         delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
-      event:
-        url: ${CHAOS_EVENTS_API_URI}
-        list: "/api/events"
+      dashboard:
+        url: ${CHAOS_DASHBOARD_API_URI}
+        experiment:
+            list: "/api/experiments"
+        event: "/api/events"
 
 cpApi:
   url: ${CP_PORTAL_API_URI}
