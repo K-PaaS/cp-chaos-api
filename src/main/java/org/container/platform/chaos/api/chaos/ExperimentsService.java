@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static org.apache.logging.log4j.util.Strings.isEmpty;
+
 /**
  * Experiments Service 클래스
  *
@@ -133,7 +135,6 @@ public class ExperimentsService {
             }
         }
         experimentsDashboardList.setItems(newItems);
-//        experimentsDashboardList = commonService.choasstatusListProcessing(experimentsDashboardList, params, ExperimentsDashboardList.class);
 
        return (ExperimentsDashboardList) commonService.setResultModel(experimentsDashboardList, Constants.RESULT_STATUS_SUCCESS);
 
@@ -287,20 +288,46 @@ public class ExperimentsService {
         ObjectMapper mapper = new ObjectMapper();
         ExperimentsEventsList experimentsEventsList = new ExperimentsEventsList();
 
-        String fieldSelector = "?object_id=" + params.getObject_id();
+        if(isEmpty(params.getObject_id())) {
 
-        List<ExperimentsEventsListItems> items = mapper.convertValue(
-                restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                        propertyService.getCpChaosDashboardApiListEventUrl() + fieldSelector,
-                        HttpMethod.GET, null, ArrayList.class, params),
-                new TypeReference<List<ExperimentsEventsListItems>>(){}
-        );
+            if(params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
+                List<ExperimentsEventsListItems> items = mapper.convertValue(
+                        restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                                propertyService.getCpChaosDashboardApiListEventUrl(),
+                                HttpMethod.GET, null, ArrayList.class, params),
+                        new TypeReference<List<ExperimentsEventsListItems>>() {
+                        }
+                );
+                experimentsEventsList.setItems(items);
+                experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
+                return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+            }else {
+                String nsfieldSelector = "?namespace=" + params.getNamespace();
 
-        experimentsEventsList.setItems(items);
-        experimentsEventsList = commonService.choasstatusListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
-        return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
-
+                List<ExperimentsEventsListItems> items = mapper.convertValue(
+                        restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                                propertyService.getCpChaosDashboardApiListEventUrl() + nsfieldSelector,
+                                HttpMethod.GET, null, ArrayList.class, params),
+                        new TypeReference<List<ExperimentsEventsListItems>>() {
+                        }
+                );
+                experimentsEventsList.setItems(items);
+                experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
+                return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+            }
+        }
+        else {
+            String uidfieldSelector = "?object_id=" + params.getObject_id();
+            List<ExperimentsEventsListItems> items = mapper.convertValue(
+                    restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                            propertyService.getCpChaosDashboardApiListEventUrl() + uidfieldSelector,
+                            HttpMethod.GET, null, ArrayList.class, params),
+                    new TypeReference<List<ExperimentsEventsListItems>>() {
+                    }
+            );
+            experimentsEventsList.setItems(items);
+            experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
+            return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
+        }
     }
-
-
 }

@@ -95,7 +95,6 @@ public class MethodHandler {
 
         resource = InspectionUtil.parsingRequestURI(requestURI)[5];
         params.setResource(resource);
-        System.out.println("Method parma" + params.resource);
 
         if (StringUtils.isEmpty(yaml)) {
             YamlUtil.makeResourceYaml(params);

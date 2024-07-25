@@ -244,8 +244,6 @@ public class CommonService {
      * @return the list
      */
     public <T> List<T> chaosSearchKeywordForResourceName(List<T> commonList, String keyword) {
-        System.out.println("commonList: " + commonList + "\nkeyword : " + keyword);
-
         List filterList = commonList.stream()
                 .filter(x -> this.<String>getField(Constants.RESOURCE_NAME, x).matches("(?i).*" + keyword + ".*"))
                 .collect(Collectors.toList());
@@ -663,7 +661,11 @@ public class CommonService {
 
         // 1. 키워드 match에 따른 리스트 필터
         if (params.getSearchName() != null && !params.getSearchName().equals("")) {
-            resourceItemList = searchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
+            if(params.getEvent()){
+                resourceItemList = chaosSearchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
+            }else {
+                resourceItemList = searchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
+            }
         }
 
         // 2. 조건에 따른 리스트 정렬
@@ -681,38 +683,6 @@ public class CommonService {
         return (T) resourceReturnList;
     }
 
-    /**
-     * Resource(choas) 목록에 대한 검색 및 페이징, 정렬을 위한 공통 메서드(Common Method for searching, paging, ordering about resource's list)
-     *
-     * @param resourceList the resourceList
-     * @param params
-     * @param requestClass the requestClass
-     * @return the T
-     */
-    public <T> T choasstatusListProcessing(Object resourceList, Params params, Class<T> requestClass) {
-        Object resourceReturnList = null;
-
-        List resourceItemList = getField("items", resourceList);
-
-        // 1. 키워드 match에 따른 리스트 필터
-        if (params.getSearchName() != null && !params.getSearchName().equals("")) {
-            resourceItemList = chaosSearchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
-        }
-
-        // 2. 조건에 따른 리스트 정렬
-        resourceItemList = sortingListByCondition(resourceItemList, params.getOrderBy(), params.getOrder(), params.getEvent());
-
-        // 3. commonItemMetaData 추가
-        CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, params.getOffset(), params.getLimit());
-        resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
-
-        // 4. offset, limit에 따른 리스트 subLIst
-        resourceItemList = subListforLimit(resourceItemList, params.getOffset(), params.getLimit());
-        resourceReturnList = setField("items", resourceReturnList, resourceItemList);
-
-
-        return (T) resourceReturnList;
-    }
 
     /**
      * Resource 목록에 대한 검색 및 페이징, 정렬을 위한 글로벌 공통 메서드(Common Method for searching, paging, ordering about resource's list)
