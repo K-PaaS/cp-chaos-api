@@ -141,6 +141,22 @@ public class ExperimentsService {
     }
 
     /**
+     * ExperimentsList 상세 Status 조회 (Get Experiments Detail Status)
+     *
+     * @param params the params
+     * @return the ExperimentsDashboard
+     */
+    public ExperimentsDashboard getExperimentsStatus(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
+                propertyService.getCpChaosDashboardApiGetUrl(), HttpMethod.GET, null, Map.class, params);
+
+        ExperimentsDashboard experimentsDashboard = commonService.setResultObject(responseMap, ExperimentsDashboard.class);
+
+        return (ExperimentsDashboard) commonService.setResultModel(experimentsDashboard, Constants.RESULT_STATUS_SUCCESS);
+
+    }
+
+    /**
      * Experiments 생성(Create Experiments)
      *
      * @param params the params
