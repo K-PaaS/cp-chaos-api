@@ -63,9 +63,11 @@ public class PropertyService {
     @Value("${cpChaos.api.list.stressScenarios.delete}")
     private String cpChaosApiListStressScenariosDeleteUrl;
 
-    // dashboard - experiments list(status)
+    // dashboard - experiments(status)
     @Value("${cpChaos.api.list.dashboard.experiment.list}")
     private String cpChaosDashboardApiListUrl;
+    @Value("${cpChaos.api.list.dashboard.experiment.get}")
+    private String cpChaosDashboardApiGetUrl;
 
     // dashboard - events
     @Value("${cpChaos.api.list.dashboard.event}")

@@ -79,6 +79,20 @@ public class ExperimentsController {
     }
 
     /**
+     * Experiments 상세 Status 조회(Get Experiments Detail Status)
+     *
+     * @return the Experiments Detail Status
+     */
+    @ApiOperation(value="Experiments 상세 Status 조회(Get Experiments Detail Status)", nickname="getExperimentsStatus")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
+    })
+    @GetMapping("/status/{uid:.+}")
+    public ExperimentsDashboard getExperimentsStatus(Params params) {
+        return experimentsService.getExperimentsStatus(params);
+    }
+
+    /**
      * Experiments 생성(Create Experiments)
      *
      * @param params the params

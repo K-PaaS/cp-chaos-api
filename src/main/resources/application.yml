@@ -58,6 +58,7 @@ cpChaos:
         url: ${CHAOS_DASHBOARD_API_URI}
         experiment:
             list: "/api/experiments"
+            get: "/api/experiments/{uid}"
         event: "/api/events"
 
 cpApi:

@@ -349,7 +349,7 @@ public class RestTemplateService {
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getName());
         }
 
-        if (reqApi.equals(Constants.TARGET_CHAOS_EVENT_API)) {
+        if (reqApi.equals(Constants.TARGET_CHAOS_DASHBOARD_API)) {
             reqUrl = reqUrl.replace("{uid}", params.getUid());
         }
         return reqUrl;
