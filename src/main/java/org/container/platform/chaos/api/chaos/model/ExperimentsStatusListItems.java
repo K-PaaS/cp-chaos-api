@@ -1,4 +1,4 @@
-package org.container.platform.chaos.api.chaos;
+package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
 

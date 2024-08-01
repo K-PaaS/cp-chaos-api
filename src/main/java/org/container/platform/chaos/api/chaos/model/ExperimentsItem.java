@@ -1,4 +1,4 @@
-package org.container.platform.chaos.api.chaos;
+package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
 
@@ -10,9 +10,7 @@ import java.util.List;
 public class ExperimentsItem {
     private Metadata metadata;
     private String kind;
-
     private Spec spec;
-    private Status status;
 
     @Data
     public class Metadata {
@@ -61,40 +59,5 @@ public class ExperimentsItem {
         private Object labelSelectors;
         private List namespaces;
         private Object pods;
-    }
-
-    @Data
-    public class Status {
-        private List<Conditions> conditions;
-        private Experiment experiment;
-    }
-
-    @Data
-    public class Conditions {
-        private String status;
-        private String type;
-    }
-
-    @Data
-    public class Experiment {
-        private List<ContainerRecords> containerRecords;
-        private String desiredPhase;
-    }
-
-    @Data
-    class ContainerRecords {
-        private String id;
-        private int injectedCount;
-        private String phase;
-        private int recoveredCount;
-        private List<Event> events;
-        private String selectorKey;
-    }
-
-    @Data
-    public static class Event {
-        private String operation;
-        private String timestamp;
-        private String type;
     }
 }
