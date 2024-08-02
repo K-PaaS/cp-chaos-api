@@ -119,15 +119,15 @@ public class ExperimentsService {
         ObjectMapper mapper = new ObjectMapper();
         ExperimentsDashboardList experimentsDashboardList = new ExperimentsDashboardList();
 
-        List<ExperimentsStatusListItems> items = mapper.convertValue(
+        List<ExperimentsDashboardListItems> items = mapper.convertValue(
                 restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
                         propertyService.getCpChaosDashboardApiListUrl(),
                         HttpMethod.GET, null, ArrayList.class, params),
-            new TypeReference<List<ExperimentsStatusListItems>>(){}
+            new TypeReference<List<ExperimentsDashboardListItems>>(){}
         );
-        List<ExperimentsStatusListItems> newItems = new ArrayList<>();
+        List<ExperimentsDashboardListItems> newItems = new ArrayList<>();
 
-        for(ExperimentsStatusListItems item : items) {
+        for(ExperimentsDashboardListItems item : items) {
             for (Object uid : params.getStatusList()) {
                 if (Objects.equals(uid, item.getUid())) {
                     newItems.add(item);
@@ -347,4 +347,25 @@ public class ExperimentsService {
             return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
         }
     }
+
+    /**
+     * Experiments Resource Usage of Chaos 목록 조회 (Get Experiments Resource Usage of Chaos List)
+     *
+     * @param params the params
+     * @return the ResourceUsageOfChaosList
+     */
+    public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
+
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/resourceUsageOfChaos", HttpMethod.GET, null, Map.class, params);
+
+        ResourceUsageOfChaosList resourceUsageOfChaosList = commonService.setResultObject(responseMap, ResourceUsageOfChaosList.class);
+
+
+
+        return (ResourceUsageOfChaosList) commonService.setResultModel(resourceUsageOfChaosList, Constants.RESULT_STATUS_SUCCESS);
+
+    }
+
+
 }

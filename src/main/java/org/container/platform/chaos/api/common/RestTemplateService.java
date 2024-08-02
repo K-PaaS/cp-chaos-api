@@ -11,14 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static org.container.platform.chaos.api.common.Constants.TARGET_COMMON_API;
 
 /**
  * Rest Template Service 클래스
@@ -33,6 +38,9 @@ public class RestTemplateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestTemplateService.class);
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     private static final String CONTENT_TYPE = "Content-Type";
+
+    private final String commonApiBase64Authorization;
+
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
     protected final PropertyService propertyService;
@@ -54,13 +62,18 @@ public class RestTemplateService {
                                @Qualifier("shortTimeoutRestTemplate") RestTemplate shortRestTemplate,
                                PropertyService propertyService,
                                CommonService commonService,
-                               VaultService vaultService
+                               VaultService vaultService,
+                               @Value("${commonApi.authorization.id}") String commonApiAuthorizationId,
+                               @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword
                                 ) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
         this.propertyService = propertyService;
         this.commonService = commonService;
         this.vaultService = vaultService;
+        this.commonApiBase64Authorization = "Basic "
+                + Base64Utils.encodeToString(
+                (commonApiAuthorizationId + ":" + commonApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
     }
 
 
@@ -266,7 +279,7 @@ public class RestTemplateService {
         }
 
         // Rest 호출 시 에러가 났지만 에러 메세지를 보여주기 위해 200 OK로 리턴된 경우 (Common API Error Object)
-        if (Constants.TARGET_COMMON_API.equals(reqApi)) {
+        if (TARGET_COMMON_API.equals(reqApi)) {
             ObjectMapper oMapper = new ObjectMapper();
             Map map = oMapper.convertValue(res.getBody(), Map.class);
 
@@ -306,6 +319,12 @@ public class RestTemplateService {
             Assert.notNull(clusters, "Invalid parameter");
             apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
+        }
+
+        // COMMON API
+        if (TARGET_COMMON_API.equals(reqApi)) {
+            apiUrl = propertyService.getCommonApiUrl();
+            authorization = commonApiBase64Authorization;
         }
 
         // Chaos API

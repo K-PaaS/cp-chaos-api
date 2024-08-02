@@ -141,6 +141,22 @@ public class ExperimentsController {
         return experimentsService.getExperimentsEventsList(params);}
 
 
+    /**
+     * Experiments Resource Usage of Chaos 목록 조회(Get Experiments Resource Usage of Chaos List)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+
+    @ApiOperation(value="Experiments Resource Usage of Chaos 목록 조회(Get Experiments Resource Usage of Chaos List)", nickname="getResourceUsageOfChaosList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
+    })
+    @GetMapping("/resourceUsage")
+    public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
+        return experimentsService.getResourceUsageOfChaosList(params);}
+
+
 }
 
 

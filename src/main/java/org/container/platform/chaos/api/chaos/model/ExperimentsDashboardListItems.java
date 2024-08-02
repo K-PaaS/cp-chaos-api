@@ -3,7 +3,7 @@ package org.container.platform.chaos.api.chaos.model;
 import lombok.Data;
 
 @Data
-public class ExperimentsStatusListItems {
+public class ExperimentsDashboardListItems {
     private String namespace;
     private String name;
     private String kind;

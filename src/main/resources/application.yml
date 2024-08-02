@@ -101,3 +101,9 @@ cpMaster:
       roleBindings:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+
+commonApi:
+  url: ${CP_PORTAL_COMMON_API_URI}
+  authorization:
+    id: admin
+    password: cpcommon!123
