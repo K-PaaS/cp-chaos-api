@@ -114,5 +114,17 @@ public class PropertyService {
     @Value("${vault.path.user-token}")
     private String vaultUserTokenPath;
 
+    // metrics api
+    @Value("${cpMaster.api.metrics.node.list}")
+    private String cpMasterApiMetricsNodesListUrl;
+
+    @Value("${cpMaster.api.metrics.node.get}")
+    private String cpMasterApiMetricsNodesGetUrl;
+
+    @Value("${cpMaster.api.metrics.pod.list}")
+    private String cpMasterApiMetricsPodsListUrl;
+
+    @Value("${cpMaster.api.metrics.pod.get}")
+    private String cpMasterApiMetricsPodsGetUrl;
 
 }

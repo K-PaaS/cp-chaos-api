@@ -207,12 +207,28 @@ public class Constants {
 
     }
 
+    public static final String STRING_CONDITION_READY = "Ready";
+
+    public static final String CPU = "cpu";
+    public static final String MEMORY = "memory";
+    public static final String CPU_UNIT = "m";
+    public static final String MEMORY_UNIT = "Mi";
+
+    public static final String CONTAINER_STATE_TERMINATED = "terminated";
+    public static final String CONTAINER_STATE_WAITING = "waiting";
+
+    public static final String STATUS_FAILED = "Failed";
+    public static final String STATUS_RUNNING = "Running";
+
     public static final String CLUSTER_ROLE_BINDING_NAME = "-cluster-admin-binding";
     public static final String SA_TOKEN_NAME= "{username}-token";
 
 
     public static final String USAGE = "usage";
     public static final String PERCENT = "percent";
+
+    public static final Map<String, Object> INIT_USAGE = new HashMap<String, Object>() {{ put(USAGE, NULL_REPLACE_TEXT); }};
+
 
 
 }
