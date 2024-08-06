@@ -22,7 +22,6 @@ import java.util.Set;
  * @since 2020.08.20
  **/
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
 
     private static final Set<String> DEFAULT_PRODUCES_AND_CONSUMES = new HashSet<>(

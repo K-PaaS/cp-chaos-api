@@ -25,6 +25,15 @@ spring:
           min-renewal: 10s
           expiry-threshold: 1m
 
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+
 server:
   port: ${PORT:8092}
   auth:
