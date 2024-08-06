@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.chaos.model.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
+import org.container.platform.chaos.api.metrics.NodesMetricsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -155,6 +156,23 @@ public class ExperimentsController {
     @GetMapping("/resourceUsage")
     public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
         return experimentsService.getResourceUsageOfChaosList(params);}
+
+
+    /**
+     * Experiments Resource Usage of Chaos DB 조회(Get Experiments Resource Usage of Chaos DB)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+
+    @ApiOperation(value="Experiments Resource Usage of Chaos DB 조회(Get Experiments Resource Usage of Chaos DB)", nickname="getResourceUsageOfChaosDB")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body")
+    })
+    @GetMapping("/resourceUsageDB")
+    public NodesMetricsList getResourceUsageOfChaosDB(Params params) {
+        return experimentsService.getResourceUsageOfChaosDB(params);}
+
 
 
 }

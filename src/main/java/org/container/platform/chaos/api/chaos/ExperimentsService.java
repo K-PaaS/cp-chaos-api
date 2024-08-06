@@ -6,6 +6,8 @@ import org.container.platform.chaos.api.chaos.model.*;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
+import org.container.platform.chaos.api.metrics.MetricsService;
+import org.container.platform.chaos.api.metrics.NodesMetricsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class ExperimentsService {
     private final PropertyService propertyService;
     private final TemplateService templateService;
 
+    private final MetricsService metricsService;
+
+
 
 
     /**
@@ -37,13 +42,15 @@ public class ExperimentsService {
      *
      * @param restTemplateService the rest template service
      * @param propertyService     the property service
+     * @param metricsService
      */
     @Autowired
-    public ExperimentsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, TemplateService templateService) {
+    public ExperimentsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, TemplateService templateService, MetricsService metricsService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
+        this.metricsService = metricsService;
     }
 
     /**
@@ -368,4 +375,18 @@ public class ExperimentsService {
     }
 
 
+    /**
+     * Experiments Resource Usage of Chaos DB 조회 (Get Experiments Resource Usage of Chaos DB)
+     *
+     * @param params the params
+     * @return the ResourceUsageOfChaosList
+     */
+    public NodesMetricsList getResourceUsageOfChaosDB(Params params) {
+        NodesMetricsList nodesMetricsList;
+        nodesMetricsList = metricsService.getNodesMetricsList(params);
+
+        System.out.println("nodesMetricsList \n" + nodesMetricsList);
+        return null;
+
+    }
 }

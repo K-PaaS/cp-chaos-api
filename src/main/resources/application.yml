@@ -26,12 +26,12 @@ spring:
           expiry-threshold: 1m
 
 management:
-  security:
-    enabled: false
   endpoints:
     web:
       exposure:
         include: health
+  security:
+    enabled: false
 
 
 server:
@@ -110,6 +110,13 @@ cpMaster:
       roleBindings:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+    metrics:
+      node:
+        list: "/apis/metrics.k8s.io/v1beta1/nodes"
+        get: "/apis/metrics.k8s.io/v1beta1/nodes/{name}"
+      pod:
+        list: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods"
+        get: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods/{name}"
 
 commonApi:
   url: ${CP_PORTAL_COMMON_API_URI}
