@@ -327,20 +327,12 @@ public class RestTemplateService {
             authorization = commonApiBase64Authorization;
         }
 
-        // Chaos API
+        // Chaos Dashboard API
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
             Assert.notNull(clusters, "Invalid parameter");
-            apiUrl = clusters.getClusterApiUrl();
             authorization = "Bearer " + clusters.getClusterToken();
-        }
-
-        // Chaos Dashboard API
-        if (Constants.TARGET_CHAOS_DASHBOARD_API.equals(reqApi)) {
-            Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
-            Assert.notNull(clusters, "Invalid parameter");
-            authorization = "Bearer " + clusters.getClusterToken();
-            apiUrl = propertyService.getCpChaosDashboardApiUrl();
+            apiUrl = propertyService.getCpChaosApiUrl();
         }
         this.base64Authorization = authorization;
         this.baseUrl = apiUrl;
@@ -358,17 +350,10 @@ public class RestTemplateService {
             if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
             }
-            reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getResourceName()).replace("{userId}", params.getUserId());
-        }
-
-        if (reqApi.equals(Constants.TARGET_CHAOS_API)) {
-            if (httpMethod.equals(HttpMethod.GET) && params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
-                reqUrl = reqUrl.replace("namespaces/{namespace}/", "");
-            }
             reqUrl = reqUrl.replace("{namespace}", params.getNamespace()).replace("{name}", params.getName());
         }
 
-        if (reqApi.equals(Constants.TARGET_CHAOS_DASHBOARD_API)) {
+        if (reqApi.equals(Constants.TARGET_CHAOS_API)) {
             reqUrl = reqUrl.replace("{uid}", params.getUid());
         }
         return reqUrl;

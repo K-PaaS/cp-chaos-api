@@ -7,7 +7,7 @@ import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.metrics.MetricsService;
-import org.container.platform.chaos.api.metrics.NodesMetricsList;
+import org.container.platform.chaos.api.metrics.model.ResourceUsageOfChaosList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -27,21 +27,19 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 public class ExperimentsService {
 
     private final CommonService commonService;
-
     private final RestTemplateService restTemplateService;
     private final PropertyService propertyService;
     private final TemplateService templateService;
-
     private final MetricsService metricsService;
-
-
 
 
     /**
      * Instantiates a new Experiments service
      *
      * @param restTemplateService the rest template service
+     * @param commonService       common service
      * @param propertyService     the property service
+     * @param templateService     the template service
      * @param metricsService
      */
     @Autowired
@@ -62,17 +60,17 @@ public class ExperimentsService {
     public ExperimentsList getExperimentsList(Params params) {
         ExperimentsList experimentsList = new ExperimentsList();
 
-        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                propertyService.getCpChaosApiListPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
+        HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiChaosPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
         experimentsList.setItems(podFaultList.getItems());
-        HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                propertyService.getCpChaosApiListNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
+        HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiChaosNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
         experimentsList.getItems().addAll(networkDelayList.getItems());
 
-        HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                propertyService.getCpChaosApiListStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
+        HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiChaosStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
         experimentsList.getItems().addAll(stressList.getItems());
 
@@ -93,21 +91,21 @@ public class ExperimentsService {
         Experiments experiments = new Experiments();
 
         if (params.kind.equals("PodChaos")) {
-            HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListPodFaultsPodKillGetUrl(), HttpMethod.GET, null, Map.class, params);
+            HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosPodFaultsPodKillGetUrl(), HttpMethod.GET, null, Map.class, params);
             ExperimentsItem podFaultItem = commonService.setResultObject(responseMapPodFault, ExperimentsItem.class);
             experiments.addItem(podFaultItem);
         }
         if (params.kind.equals("NetworkChaos")) {
-            HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListNetworkFaultsDelayGetUrl(), HttpMethod.GET, null, Map.class, params);
+            HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosNetworkFaultsDelayGetUrl(), HttpMethod.GET, null, Map.class, params);
             ExperimentsItem networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsItem.class);
             experiments.addItem(networkDelayList);
         }
 
         if (params.kind.equals("StressChaos")) {
-            HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
+            HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
             ExperimentsItem stressList = commonService.setResultObject(responseMapStress, ExperimentsItem.class);
             experiments.addItem(stressList);
         }
@@ -127,8 +125,8 @@ public class ExperimentsService {
         ExperimentsDashboardList experimentsDashboardList = new ExperimentsDashboardList();
 
         List<ExperimentsDashboardListItems> items = mapper.convertValue(
-                restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                        propertyService.getCpChaosDashboardApiListUrl(),
+                restTemplateService.send(Constants.TARGET_CHAOS_API,
+                        propertyService.getChaosApiExperimentListUrl(),
                         HttpMethod.GET, null, ArrayList.class, params),
             new TypeReference<List<ExperimentsDashboardListItems>>(){}
         );
@@ -155,8 +153,8 @@ public class ExperimentsService {
      * @return the ExperimentsDashboard
      */
     public ExperimentsDashboard getExperimentsStatus(Params params) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                propertyService.getCpChaosDashboardApiGetUrl(), HttpMethod.GET, null, Map.class, params);
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                propertyService.getChaosApiExperimentGetUrl(), HttpMethod.GET, null, Map.class, params);
 
         ExperimentsDashboard experimentsDashboard = commonService.setResultObject(responseMap, ExperimentsDashboard.class);
 
@@ -225,14 +223,14 @@ public class ExperimentsService {
         if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
             stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
             params.setYaml(stringBuilder.toString());
-            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListPodFaultsPodKillCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosPodFaultsPodKillCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
         }
         else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_NETWORK_CHAOS)) {
             stringBuilder.append(templateService.convert("create_networkFaults_delay.ftl", map));
             params.setYaml(stringBuilder.toString());
-            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListNetworkFaultsDelayCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosNetworkFaultsDelayCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
         }
         else if (params.getKind().equals(Constants.CHAOS_MESH_KIND_STRESS_CHAOS)) {
             stringBuilder.append(templateService.convert("create_stressScenarios.ftl", map));
@@ -267,14 +265,18 @@ public class ExperimentsService {
                 }
             }
             params.setYaml(stringBuilder.toString());
-            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
+            resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
 
-
+            if(resultStatus.getHttpStatusCode().equals(200)) {
+                ResultStatus DBResultStatus  = metricsService.createStressChaos(params);
+                if(!DBResultStatus.getHttpStatusCode().equals(200)){
+                    return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
+                }
+            }
         }
 
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
-
     }
 
     /**
@@ -286,16 +288,16 @@ public class ExperimentsService {
     public ResultStatus deleteExperiments(Params params) {
         ResultStatus resultStatus = null;
         if (params.kind.equals("PodChaos")) {
-            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListPodFaultsPodKillDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosPodFaultsPodKillDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
         }
         if (params.kind.equals("NetworkChaos")) {
-            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListNetworkFaultsDelayDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosNetworkFaultsDelayDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
         }
         if (params.kind.equals("StressChaos")) {
-            resultStatus = restTemplateService.send(Constants.TARGET_CHAOS_API,
-                    propertyService.getCpChaosApiListStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
 
         }
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
@@ -316,8 +318,8 @@ public class ExperimentsService {
 
             if(params.getNamespace().equalsIgnoreCase(Constants.ALL_NAMESPACES)) {
                 List<ExperimentsEventsListItems> items = mapper.convertValue(
-                        restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                                propertyService.getCpChaosDashboardApiListEventUrl(),
+                        restTemplateService.send(Constants.TARGET_CHAOS_API,
+                                propertyService.getChaosApiEventListUrl(),
                                 HttpMethod.GET, null, ArrayList.class, params),
                         new TypeReference<List<ExperimentsEventsListItems>>() {
                         }
@@ -329,8 +331,8 @@ public class ExperimentsService {
                 String nsfieldSelector = "?namespace=" + params.getNamespace();
 
                 List<ExperimentsEventsListItems> items = mapper.convertValue(
-                        restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                                propertyService.getCpChaosDashboardApiListEventUrl() + nsfieldSelector,
+                        restTemplateService.send(Constants.TARGET_CHAOS_API,
+                                propertyService.getChaosApiEventListUrl() + nsfieldSelector,
                                 HttpMethod.GET, null, ArrayList.class, params),
                         new TypeReference<List<ExperimentsEventsListItems>>() {
                         }
@@ -343,8 +345,8 @@ public class ExperimentsService {
         else {
             String uidfieldSelector = "?object_id=" + params.getObject_id();
             List<ExperimentsEventsListItems> items = mapper.convertValue(
-                    restTemplateService.send(Constants.TARGET_CHAOS_DASHBOARD_API,
-                            propertyService.getCpChaosDashboardApiListEventUrl() + uidfieldSelector,
+                    restTemplateService.send(Constants.TARGET_CHAOS_API,
+                            propertyService.getChaosApiEventListUrl() + uidfieldSelector,
                             HttpMethod.GET, null, ArrayList.class, params),
                     new TypeReference<List<ExperimentsEventsListItems>>() {
                     }
@@ -364,7 +366,7 @@ public class ExperimentsService {
     public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/resourceUsageOfChaos", HttpMethod.GET, null, Map.class, params);
+                "/chaos/resourceGraph", HttpMethod.GET, null, Map.class, params);
 
         ResourceUsageOfChaosList resourceUsageOfChaosList = commonService.setResultObject(responseMap, ResourceUsageOfChaosList.class);
 
@@ -375,18 +377,5 @@ public class ExperimentsService {
     }
 
 
-    /**
-     * Experiments Resource Usage of Chaos DB 조회 (Get Experiments Resource Usage of Chaos DB)
-     *
-     * @param params the params
-     * @return the ResourceUsageOfChaosList
-     */
-    public NodesMetricsList getResourceUsageOfChaosDB(Params params) {
-        NodesMetricsList nodesMetricsList;
-        nodesMetricsList = metricsService.getNodesMetricsList(params);
 
-        System.out.println("nodesMetricsList \n" + nodesMetricsList);
-        return null;
-
-    }
 }
