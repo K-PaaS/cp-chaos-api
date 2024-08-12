@@ -1,13 +1,16 @@
 package org.container.platform.chaos.api.metrics;
 
 
+import org.container.platform.chaos.api.chaos.model.ExperimentsItem;
 import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesListItem;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
+import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.metrics.custom.BaseExponent;
 import org.container.platform.chaos.api.metrics.custom.ContainerMetrics;
 import org.container.platform.chaos.api.metrics.custom.Quantity;
 
+import org.container.platform.chaos.api.metrics.model.StressChaos;
 import org.container.platform.chaos.api.workloads.pods.Pods;
 import org.container.platform.chaos.api.workloads.pods.PodsList;
 import org.container.platform.chaos.api.workloads.pods.support.PodsListItem;
@@ -17,22 +20,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.container.platform.chaos.api.overview.support.SuffixBase.suffixToBinary;
 import static org.container.platform.chaos.api.overview.support.SuffixBase.suffixToDecimal;
+import static org.springframework.vault.support.DurationParser.parseDuration;
 
 
-/**
- * Metrics Service 클래스
- *
- * @author kjhoon
- * @version 1.0
- * @since 2022.07.04
- */
+
 @Service
 public class MetricsService {
+    private static final String STATUS_FIELD_NAME = "status";
+
 
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
@@ -53,6 +56,97 @@ public class MetricsService {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
+    }
+
+
+
+    /**
+     * Stress Chaos Data 생성  (Create Stress Chaos Data)
+     *
+     * @param params the params
+     * @return the ResultStatus
+     */
+    public ResultStatus createStressChaos(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CHAOS_API,
+                propertyService.getCpMasterApiChaosStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
+        ExperimentsItem stressList = commonService.setResultObject(responseMap, ExperimentsItem.class);
+
+        StressChaos stressChaos = new StressChaos();
+        stressChaos.setChaosName(stressList.getMetadata().getName());
+        stressChaos.setNamespaces((String) stressList.getSpec().getSelector().getNamespaces().get(0));
+
+        String creationTime = stressList.getMetadata().getCreationTimestamp();
+        String duration = stressList.getSpec().getDuration();
+
+        ZonedDateTime creationDateTime = ZonedDateTime.parse(creationTime, DateTimeFormatter.ISO_DATE_TIME);
+        Duration durationParsed = parseDuration(duration);
+        ZonedDateTime endDateTime = creationDateTime.plus(durationParsed);
+        String endTime = endDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
+
+        stressChaos.setCreationTime(creationTime);
+        stressChaos.setDuration(duration);
+        stressChaos.setEndTime(endTime);
+
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos/stressChaos", HttpMethod.POST, stressChaos, ResultStatus.class, params);
+
+        if(resultStatus.getHttpStatusCode().equals(200)){
+            this.getChaosPodLabel(params);
+        }else {
+            return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
+        }
+
+        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Chaos Pod Label 조회  (Get Stress Chaos Pod Label)
+     *
+     * @stressChaos stressChaos the stressChaos
+     * @return the StressChaos
+     */
+    public Pods getChaosPodLabel(Params params) {
+        Object podsObj = params.getPods();
+        List<String> podsList = null;
+        Map labels = null;
+
+        if (podsObj instanceof Map) {
+            Map<String, List<String>> podsMapCast = (Map<String, List<String>>) podsObj;
+            for (Map.Entry<String, List<String>> entry : podsMapCast.entrySet()) {
+                podsList = entry.getValue();
+            }
+        }
+
+        params.setNamespace((String) params.getNamespaces().get(0));
+
+        if (podsList != null && !podsList.isEmpty()) {
+            for(String pod : podsList){
+                params.setResourceName(pod);
+
+                HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                        propertyService.getCpMasterApiListPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
+
+                Pods pods = commonService.setResultObject(responseMap, Pods.class);
+                System.out.println("pods\n" + pods);
+                labels = (Map) pods.getLabels();
+                System.out.println("labels\n" + labels);
+
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Chaos Resource 생성  (Create Metrics Resource Stress Chaos Data)
+     *
+     * @param params the params
+     * @return the StressChaos
+     */
+    public ResultStatus createChaosResource(Params params) {
+
+
+        return null;
     }
 
 
@@ -83,7 +177,6 @@ public class MetricsService {
     }
 
 
-
     /**
      * Nodes Metrics 조회(Get Metrics for Nodes)
      *
@@ -99,9 +192,6 @@ public class MetricsService {
         }
         return null;
     }
-
-
-
 
     /**
      * Pods 내 ContainerMetrics 합계 (Sum Container Metrics in Pods)
@@ -339,7 +429,7 @@ public class MetricsService {
      * @param params the params
      * @return the PodsMetricsList
      */
-    public PodsMetricsItems getPodsMetricsDetails(Params params) {
+        public PodsMetricsItems getPodsMetricsDetails(Params params) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiMetricsPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
         PodsMetricsItems podsMetricsItems = commonService.setResultObject(responseMap, PodsMetricsItems.class);

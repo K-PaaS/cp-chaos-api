@@ -23,11 +23,9 @@ public class Constants {
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi/{cluster}";
     public static final String TARGET_COMMON_API = "commonApi";
-    //FIXME!!
-    public static final String TARGET_CHAOS_API = "chaosAPI";
-    public static final String TARGET_CHAOS_DASHBOARD_API = "chaosDashboardAPI";
 
-    public static final String TARGET_CHAOS_EVENT_API = "chaosEventAPI";
+    public static final String TARGET_CHAOS_API = "chaosAPI";
+
 
     public static final String CLUSTER_TYPE_SUB = "sub";
 

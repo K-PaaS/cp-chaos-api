@@ -17,64 +17,61 @@ import java.util.List;
 @Data
 public class PropertyService {
 
-    @Value("${cpChaos.api.access}")
-    private String cpChaosApiAccessUrl;
-
-    @Value("${cpChaos.api.list.dashboard.url: }")
-    private String cpChaosDashboardApiUrl;
+    @Value("${chaos.url: }")
+    private String cpChaosApiUrl;
 
     @Value("${commonApi.url}")
     private String commonApiUrl;
 
 
     //podFaults
-    @Value("${cpChaos.api.list.podFaults.podKill.list}")
-    private String cpChaosApiListPodFaultsPodKillListUrl;
+    @Value("${cpMaster.api.chaos.podFaults.podKill.list}")
+    private String cpMasterApiChaosPodFaultsPodKillListUrl;
 
-    @Value("${cpChaos.api.list.podFaults.podKill.get}")
-    private String cpChaosApiListPodFaultsPodKillGetUrl;
+    @Value("${cpMaster.api.chaos.podFaults.podKill.get}")
+    private String cpMasterApiChaosPodFaultsPodKillGetUrl;
 
-    @Value("${cpChaos.api.list.podFaults.podKill.create}")
-    private String cpChaosApiListPodFaultsPodKillCreateUrl;
+    @Value("${cpMaster.api.chaos.podFaults.podKill.create}")
+    private String cpMasterApiChaosPodFaultsPodKillCreateUrl;
 
-    @Value("${cpChaos.api.list.podFaults.podKill.delete}")
-    private String cpChaosApiListPodFaultsPodKillDeleteUrl;
+    @Value("${cpMaster.api.chaos.podFaults.podKill.delete}")
+    private String cpMasterApiChaosPodFaultsPodKillDeleteUrl;
 
     //networkFaults
-    @Value("${cpChaos.api.list.networkFaults.delay.list}")
-    private String cpChaosApiListNetworkFaultsDelayListUrl;
+    @Value("${cpMaster.api.chaos.networkFaults.delay.list}")
+    private String cpMasterApiChaosNetworkFaultsDelayListUrl;
 
-    @Value("${cpChaos.api.list.networkFaults.delay.get}")
-    private String cpChaosApiListNetworkFaultsDelayGetUrl;
+    @Value("${cpMaster.api.chaos.networkFaults.delay.get}")
+    private String cpMasterApiChaosNetworkFaultsDelayGetUrl;
 
-    @Value("${cpChaos.api.list.networkFaults.delay.create}")
-    private String cpChaosApiListNetworkFaultsDelayCreateUrl;
+    @Value("${cpMaster.api.chaos.networkFaults.delay.create}")
+    private String cpMasterApiChaosNetworkFaultsDelayCreateUrl;
 
-    @Value("${cpChaos.api.list.networkFaults.delay.delete}")
-    private String cpChaosApiListNetworkFaultsDelayDeleteUrl;
+    @Value("${cpMaster.api.chaos.networkFaults.delay.delete}")
+    private String cpMasterApiChaosNetworkFaultsDelayDeleteUrl;
 
     //stressScenarios
-    @Value("${cpChaos.api.list.stressScenarios.list}")
-    private String cpChaosApiListStressScenariosListUrl;
+    @Value("${cpMaster.api.chaos.stressScenarios.list}")
+    private String cpMasterApiChaosStressScenariosListUrl;
 
-    @Value("${cpChaos.api.list.stressScenarios.get}")
-    private String cpChaosApiListStressScenariosGetUrl;
+    @Value("${cpMaster.api.chaos.stressScenarios.get}")
+    private String cpMasterApiChaosStressScenariosGetUrl;
 
-    @Value("${cpChaos.api.list.stressScenarios.create}")
-    private String cpChaosApiListStressScenariosCreateUrl;
+    @Value("${cpMaster.api.chaos.stressScenarios.create}")
+    private String cpMasterApiChaosStressScenariosCreateUrl;
 
-    @Value("${cpChaos.api.list.stressScenarios.delete}")
-    private String cpChaosApiListStressScenariosDeleteUrl;
+    @Value("${cpMaster.api.chaos.stressScenarios.delete}")
+    private String cpMasterApiChaosStressScenariosDeleteUrl;
 
-    // dashboard - experiments(status)
-    @Value("${cpChaos.api.list.dashboard.experiment.list}")
-    private String cpChaosDashboardApiListUrl;
-    @Value("${cpChaos.api.list.dashboard.experiment.get}")
-    private String cpChaosDashboardApiGetUrl;
+    // chaos - experiments(status)
+    @Value("${chaos.api.experiment.list}")
+    private String chaosApiExperimentListUrl;
+    @Value("${chaos.api.experiment.get}")
+    private String chaosApiExperimentGetUrl;
 
-    // dashboard - events
-    @Value("${cpChaos.api.list.dashboard.event}")
-    private String cpChaosDashboardApiListEventUrl;
+    // chaos - events
+    @Value("${chaos.api.event.list}")
+    private String chaosApiEventListUrl;
 
 
     @Value("${cpResource.clusterResource}")
@@ -127,4 +124,7 @@ public class PropertyService {
     @Value("${cpMaster.api.metrics.pod.get}")
     private String cpMasterApiMetricsPodsGetUrl;
 
+    //pod
+    @Value("${cpMaster.api.list.pods.get}")
+    private String cpMasterApiListPodsGetUrl;
 }

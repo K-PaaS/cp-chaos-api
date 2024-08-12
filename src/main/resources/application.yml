@@ -39,36 +39,14 @@ server:
   auth:
     valid: N
 
-cpChaos:
-  authorization:
-    id: admin
-    password: cpchaos!123
+chaos:
+  url: ${CHAOS_DASHBOARD_API_URI}
   api:
-    access: "/apis"
-    list:
-      podFaults:
-        podKill:
-          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
-          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
-          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
-          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
-      networkFaults:
-        delay:
-          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
-          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
-          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
-          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
-      stressScenarios:
-        list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
-        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
-        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
-        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
-      dashboard:
-        url: ${CHAOS_DASHBOARD_API_URI}
-        experiment:
-            list: "/api/experiments"
-            get: "/api/experiments/{uid}"
-        event: "/api/events"
+    experiment:
+      list: "/api/experiments"
+      get: "/api/experiments/{uid}"
+    event:
+      list: "/api/events"
 
 cpApi:
   url: ${CP_PORTAL_API_URI}
@@ -103,13 +81,13 @@ cpResource:
   clusterResource: Namespace, PersistentVolume, StorageClass, Role, ResourceQuota, LimitRange, ConfigMap
 
 cpMaster:
-  name:
   api:
-    access: "/api"
     list:
       roleBindings:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+      pods:
+        get: "/api/v1/namespaces/{namespace}/pods/{name}"
     metrics:
       node:
         list: "/apis/metrics.k8s.io/v1beta1/nodes"
@@ -117,6 +95,25 @@ cpMaster:
       pod:
         list: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods"
         get: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods/{name}"
+    chaos:
+      podFaults:
+        podKill:
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+      networkFaults:
+        delay:
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+      stressScenarios:
+        list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
+        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
+        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+
 
 commonApi:
   url: ${CP_PORTAL_COMMON_API_URI}
