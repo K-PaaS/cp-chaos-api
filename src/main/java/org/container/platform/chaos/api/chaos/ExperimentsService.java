@@ -266,7 +266,7 @@ public class ExperimentsService {
             }
             params.setYaml(stringBuilder.toString());
             resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.POST, ResultStatus.class, params);
+                    propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
             if(resultStatus.getHttpStatusCode().equals(200)) {
                 ResultStatus DBResultStatus  = metricsService.createStressChaos(params);

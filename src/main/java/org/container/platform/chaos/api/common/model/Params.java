@@ -85,7 +85,7 @@ public class Params {
     private String gracePeriod = Constants.EMPTY_STRING;
     private Map<String, String> labelSelectors = null;
     public List namespaces;
-    private Object pods = null;
+    private Map<String, List<String>> pods = null;
     private String latency = Constants.EMPTY_STRING;
     private Object stressors = null;
     private String object_id = Constants.EMPTY_STRING;
