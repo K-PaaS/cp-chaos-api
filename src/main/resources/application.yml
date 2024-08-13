@@ -87,6 +87,7 @@ cpMaster:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
       pods:
+        list: "/api/v1/namespaces/{namespace}/pods"
         get: "/api/v1/namespaces/{namespace}/pods/{name}"
     metrics:
       node:
@@ -99,20 +100,20 @@ cpMaster:
       podFaults:
         podKill:
           list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
-          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{chaosname}"
           create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
-          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{name}"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{chaosname}"
       networkFaults:
         delay:
           list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
-          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{chaosname}"
           create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
-          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{name}"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{chaosname}"
       stressScenarios:
         list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
-        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
-        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{name}"
-        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{chaosname}"
+        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{chaosname}"
 
 
 commonApi:

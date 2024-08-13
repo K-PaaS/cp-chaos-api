@@ -10,4 +10,7 @@ public class ChaosResource {
     private String type;
     private Integer choice;
     private String generateName;
+
+    private String chaosName;
+    private String namespaces;
 }
