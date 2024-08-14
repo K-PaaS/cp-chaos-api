@@ -1,11 +1,7 @@
 package org.container.platform.chaos.api.metrics.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import nonapi.io.github.classgraph.json.Id;
-
-import java.util.List;
 
 
 /**

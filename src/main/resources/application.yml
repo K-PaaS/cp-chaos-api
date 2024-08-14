@@ -89,6 +89,9 @@ cpMaster:
       pods:
         list: "/api/v1/namespaces/{namespace}/pods"
         get: "/api/v1/namespaces/{namespace}/pods/{name}"
+      nodes:
+        list: "/api/v1/nodes"
+        get: "/api/v1/nodes/{name}"
     metrics:
       node:
         list: "/apis/metrics.k8s.io/v1beta1/nodes"

@@ -42,6 +42,7 @@ public class ExperimentsService {
      * @param templateService     the template service
      * @param metricsService
      */
+
     @Autowired
     public ExperimentsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, TemplateService templateService, MetricsService metricsService) {
         this.restTemplateService = restTemplateService;
@@ -261,21 +262,22 @@ public class ExperimentsService {
                         stringBuilder.append("      " + entryMemory.getKey() + ": " + entryMemory.getValue());
                         stringBuilder.append(Constants.NEW_LINE);
                     }
-
                 }
             }
             params.setYaml(stringBuilder.toString());
             resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
-            if(resultStatus.getHttpStatusCode().equals(200)) {
-                ResultStatus DBResultStatus  = metricsService.createStressChaos(params);
-                if(!DBResultStatus.getHttpStatusCode().equals(200)){
-                    return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
-                }
+            ResultStatus resultStatusDB = metricsService.createChaosData(params);
+            if(!resultStatusDB.getResultCode().equals("SUCCESS")){
+                //  실패하면 stresschaos 리소스 삭제하는 로직
+                ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                        propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+                // 리소스 삭제도 실패하면? > 오류 메세지 보여줌 (추측) > restTemplateService.send에 있음
+
+                return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
             }
         }
-
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
     }
 

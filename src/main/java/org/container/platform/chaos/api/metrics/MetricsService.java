@@ -2,6 +2,7 @@ package org.container.platform.chaos.api.metrics;
 
 
 import org.container.platform.chaos.api.chaos.model.ExperimentsItem;
+import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesList;
 import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesListItem;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
@@ -12,6 +13,7 @@ import org.container.platform.chaos.api.metrics.custom.Quantity;
 
 import org.container.platform.chaos.api.metrics.model.ChaosResource;
 import org.container.platform.chaos.api.metrics.model.StressChaos;
+import org.container.platform.chaos.api.metrics.model.StressChaosDataList;
 import org.container.platform.chaos.api.workloads.pods.Pods;
 import org.container.platform.chaos.api.workloads.pods.PodsList;
 import org.container.platform.chaos.api.workloads.pods.support.PodsListItem;
@@ -20,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.NodeList;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -43,14 +44,9 @@ import static org.springframework.vault.support.DurationParser.parseDuration;
 
 @Service
 public class MetricsService {
-    private static final String STATUS_FIELD_NAME = "status";
-
-
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final PropertyService propertyService;
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsService.class);
 
     /**
@@ -68,83 +64,89 @@ public class MetricsService {
     }
 
     /**
-     * Stress Chaos Data 생성  (Create Stress Chaos Data)
+     * Stress Chaos Resources Data 생성  (Create Stress Chaos Data)
      *
      * @param params the params
      * @return the ResultStatus
      */
-    public ResultStatus createStressChaos(Params params) {
+    public ResultStatus createChaosData(Params params){
+        StressChaosDataList stressChaosDataList = new StressChaosDataList();
+        stressChaosDataList.setStressChaos(getStressChaos(params));
+        stressChaosDataList.setChaosResource(getChaosResources(params));
+
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos", HttpMethod.POST, stressChaosDataList, ResultStatus.class, params);
+
+        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Stress Chaos 정보 조회  (Get Stress Chaos info)
+     *
+     * @param params the params
+     * @return the ResultStatus
+     */
+    public StressChaos getStressChaos(Params params) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsItem experimentsItem = commonService.setResultObject(responseMap, ExperimentsItem.class);
-        StressChaos stressChaos = this.setStressChaos(experimentsItem);
+        StressChaos stressChaos = setStressChaos(experimentsItem);
 
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/chaos/stressChaos", HttpMethod.POST, stressChaos, ResultStatus.class, params);
-
-        if(resultStatus.getHttpStatusCode().equals(200)){
-           // this.getChaosPodLabel(params);
-            this.createChaosResource(params);
-        }else {
-            return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
-        }
-        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+        return stressChaos;
     }
 
     /**
-     * Chaos Resource Data 생성  (Create Chaos Resource Data)
+     * Chaos Resource 정보 조회  (Get Chaos Resource info)
      *
      * @param params the params
      * @return the ResultStatus
      */
-    public ResultStatus createChaosResource(Params params) {
-        PodsList podsList = this.getChaosPodLabel(params);
-      //  NodeList nodeList;
-        ChaosResource chaosResource = new ChaosResource();
-        ResultStatus resultStatus = new ResultStatus();
+    public List<ChaosResource> getChaosResources(Params params) {
+        PodsList podsList = getChaosPodListByLabel(params);
+        NodesList nodesList = getNodesList(params);
+        List<ChaosResource> chaosResources = setChaosResources(podsList, nodesList, params);
 
-        for(PodsListItem item : podsList.getItems() ){
-            chaosResource.setResourceName(item.getName());
-            chaosResource.setType("pod");
-            if(item.getName().equals(params.getResourceName())){
-                chaosResource.setChoice(1);
-            }else {
-                chaosResource.setChoice(0);
-            }
-            chaosResource.setGenerateName(item.getMetadata().getGenerateName());
-            chaosResource.setChaosName(params.getName());
-            chaosResource.setNamespaces(item.getNamespace());
-
-            resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
-                    "/chaos/chaosResource", HttpMethod.POST, chaosResource, ResultStatus.class, params);
-
-            if(!resultStatus.getHttpStatusCode().equals(200)){
-                return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
-            }
-        }
-
-        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+        return chaosResources;
     }
 
     /**
-     * Chaos Pod Label 조회  (Get Stress Chaos Pod Label)
+     * StressChaos 값 설정  (Set StressChaos)
      *
-     * @Pods Pods the Pods
-     * @return the StressChaos
+     * @StressChaos StressChaos the StressChaos
+     * @return the stressChaos
      */
-    public PodsList getChaosPodLabel(Params params) {
+
+    public StressChaos setStressChaos(ExperimentsItem experimentsItem) {
+        StressChaos stressChaos = new StressChaos();
+        stressChaos.setChaosName(experimentsItem.getMetadata().getName());
+        stressChaos.setNamespaces((String) experimentsItem.getSpec().getSelector().getNamespaces().get(0));
+        stressChaos.setCreationTime(experimentsItem.getMetadata().getCreationTimestamp());
+        stressChaos.setDuration(experimentsItem.getSpec().getDuration());
+        stressChaos.setEndTime(calculateEndTime(experimentsItem.getMetadata().getCreationTimestamp(), experimentsItem.getSpec().getDuration()));
+        return stressChaos;
+    }
+
+    /**
+     * Chaos Pod List By Label 조회  (Get Chaos Pod List By Label)
+     *
+     * @PodsList PodsList the PodsList
+     * @return the PodsList
+     */
+
+    public PodsList getChaosPodListByLabel(Params params) {
+        HashMap responsePodList;
+        PodsList totalPodsList = new PodsList();
+        params.setNamespace((String) params.getNamespaces().get(0));
+
         for(List<String> value : params.getPods().values()) {
             for(String pod : value){
                 params.setResourceName(pod);
-
                 HashMap responsePod = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiListPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
-
                 Pods pods = commonService.setResultObject(responsePod, Pods.class);
                 Map labels = (Map) pods.getLabels();
                 String fieldSelectors = "?labelSelector=";
                 int count = 0;
-
                 for( Object label : labels.entrySet() ){
                     count++;
                     if(count < labels.size()){
@@ -153,30 +155,65 @@ public class MetricsService {
                         fieldSelectors += label;
                     }
                 };
-
-                HashMap responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiListPodsListUrl() + fieldSelectors, HttpMethod.GET, null, Map.class, params);
-               return commonService.setResultObject(responsePodList, PodsList.class);
+                PodsList podsList = commonService.setResultObject(responsePodList, PodsList.class);
+                totalPodsList.setItems(podsList.getItems());
             }
         }
-        return null;
+        PodsList removeDuplicatePodLists = removeDuplicatePodsList(totalPodsList);
+        return (PodsList) commonService.setResultModel(removeDuplicatePodLists, Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * Nodes 목록 조회(Get Nodes list)
+     *
+     * @param params the params
+     * @return the nodes list
+     */
+    public NodesList getNodesList(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesListUrl(), HttpMethod.GET, null, Map.class, params);
+        NodesList nodesList = commonService.setResultObject(responseMap, NodesList.class);
+        nodesList = commonService.resourceListProcessing(nodesList, params, NodesList.class);
+        return (NodesList) commonService.setResultModel(nodesList, Constants.RESULT_STATUS_SUCCESS);
+    }
 
     /**
-     * StressChaos 값 설정  (Set StressChaos)
+     * Chaos Resource 값 설정  (Set Chaos Resource)
      *
-     * @StressChaos StressChaos the StressChaos
-     * @return the stressChaos
+     * @List<ChaosResource> List<ChaosResource> the List<ChaosResource>
+     * @return the chaosResources
      */
-    public StressChaos setStressChaos(ExperimentsItem experimentsItem) {
-        StressChaos stressChaos = new StressChaos();
-        stressChaos.setChaosName(experimentsItem.getMetadata().getName());
-        stressChaos.setNamespaces((String) experimentsItem.getSpec().getSelector().getNamespaces().get(0));
-        stressChaos.setCreationTime(experimentsItem.getMetadata().getCreationTimestamp());
-        stressChaos.setDuration(experimentsItem.getSpec().getDuration());
-        stressChaos.setEndTime(this.calculateEndTime(experimentsItem.getMetadata().getCreationTimestamp(), experimentsItem.getSpec().getDuration()));
-        return stressChaos;
+
+    public List<ChaosResource> setChaosResources(PodsList podsList, NodesList nodesList, Params params) {
+        List<ChaosResource> chaosResources = new ArrayList<>();
+
+        if(!podsList.getItems().isEmpty()){
+            for(PodsListItem item : podsList.getItems() ){
+                ChaosResource chaosResource = new ChaosResource();
+                chaosResource.setResourceName(item.getName());
+                chaosResource.setType("pod");
+                if(item.getName().equals(params.getResourceName())){
+                    chaosResource.setChoice(1);
+                }else {
+                    chaosResource.setChoice(0);
+                }
+                chaosResource.setGenerateName(item.getMetadata().getGenerateName());
+                chaosResource.setChaosName(params.getName());
+                chaosResource.setNamespaces(item.getNamespace());
+                chaosResources.add(chaosResource);
+            }
+        }
+
+        for(NodesListItem item : nodesList.getItems()){
+            ChaosResource chaosResource = new ChaosResource();
+            chaosResource.setResourceName(item.getName());
+            chaosResource.setType("node");
+            chaosResource.setChoice(0);
+            chaosResources.add(chaosResource);
+        }
+        return chaosResources;
     }
 
     /**
@@ -194,77 +231,23 @@ public class MetricsService {
         return endDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-//    /**
-//     * Chaos Pod Label 조회  (Get Stress Chaos Pod Label)
-//     *
-//     * @Pods Pods the Pods
-//     * @return the StressChaos
-//     */
-//    public Pods getChaosPodLabel(Params params) {
-//        for(List<String> value : params.getPods().values()) {
-//            for(String pod : value){
-//                params.setResourceName(pod);
-//
-//                HashMap responsePod = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-//                        propertyService.getCpMasterApiListPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
-//
-//                Pods pods = commonService.setResultObject(responsePod, Pods.class);
-//                Map labels = (Map) pods.getLabels();
-//                String fieldSelectors = "?labelSelector=";
-//                int count = 0;
-//
-//                for( Object label : labels.entrySet() ){
-//                    count++;
-//                    if(count < labels.size()){
-//                        fieldSelectors += label + ",";
-//                    }else {
-//                        fieldSelectors += label;
-//                    }
-//                };
-//
-//                HashMap responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-//                        propertyService.getCpMasterApiListPodsListUrl() + fieldSelectors, HttpMethod.GET, null, Map.class, params);
-//                PodsList podsList = commonService.setResultObject(responsePodList, PodsList.class);
-//                System.out.println("podsList\n" + podsList);
-//                this.createChaosResourcePod(params, podsList);
-//            }
-//        }
-//
-//        return null;
-//    }
+    /**
+     * PodsList 내 중복 파드 제거 (Remove duplicate pods in PodsList)
+     *
+     * @PodsList PodsList the PodsList
+     * @return the PodsList
+     */
 
-//    /**
-//     * Chaos Resource 생성  (Create Metrics Resource Stress Chaos Data)
-//     *
-//     * @param params the params
-//     * @return the StressChaos
-//     */
-//    public ResultStatus createChaosResourcePod(Params params, PodsList podsList) {
-//        ChaosResource chaosResource = new ChaosResource();
-//        ResultStatus resultStatus = new ResultStatus();
-//
-//        for(PodsListItem item : podsList.getItems() ){
-//            chaosResource.setResourceName(item.getName());
-//            chaosResource.setType("pod");
-//            if(item.getName().equals(params.getResourceName())){
-//                chaosResource.setChoice(1);
-//            }else {
-//                chaosResource.setChoice(0);
-//            }
-//            chaosResource.setGenerateName(item.getMetadata().getGenerateName());
-//            chaosResource.setChaosName(params.getName());
-//            chaosResource.setNamespaces(item.getNamespace());
-//            System.out.println("chaosResource\n" + chaosResource);
-//
-//            resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
-//                    "/chaos/chaosResource", HttpMethod.POST, chaosResource, ResultStatus.class, params);
-//
-//            if(!resultStatus.getHttpStatusCode().equals(200)){
-//                return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
-//            }
-//        }
-//        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
-//    }
+    public PodsList removeDuplicatePodsList(PodsList podsList) {
+        Set<String> podNames = new HashSet<>();
+        List<PodsListItem> removeDuplicateItems = podsList.getItems().stream()
+                .filter(item -> podNames.add(item.getName()))
+                .collect(Collectors.toList());
+        PodsList newPodsList = new PodsList();
+        newPodsList.setItems(removeDuplicateItems);
+        return newPodsList;
+    }
+
 
 
     /**
@@ -292,7 +275,6 @@ public class MetricsService {
         PodsMetricsList podsMetricsList = commonService.setResultObject(responseMap, PodsMetricsList.class);
         return (PodsMetricsList) commonService.setResultModel(podsMetricsList, Constants.RESULT_STATUS_SUCCESS);
     }
-
 
     /**
      * Nodes Metrics 조회(Get Metrics for Nodes)
