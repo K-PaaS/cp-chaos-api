@@ -130,4 +130,8 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.pods.get}")
     private String cpMasterApiListPodsGetUrl;
+
+    //node
+    @Value("${cpMaster.api.list.nodes.list}")
+    private String cpMasterApiListNodesListUrl;
 }
