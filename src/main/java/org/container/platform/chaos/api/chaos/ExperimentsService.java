@@ -268,14 +268,13 @@ public class ExperimentsService {
             resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
-            ResultStatus resultStatusDB = metricsService.createChaosData(params);
+            ResultStatus resultStatusDB = metricsService.createStressChaosResourcesData(params);
             if(!resultStatusDB.getResultCode().equals("SUCCESS")){
-                //  실패하면 stresschaos 리소스 삭제하는 로직
+                params.setNamespace(params.getChaosNamespace());
                 ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
-                // 리소스 삭제도 실패하면? > 오류 메세지 보여줌 (추측) > restTemplateService.send에 있음
 
-                return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_FAIL);
+                return (ResultStatus) commonService.setResultModel(resultStatusDB, Constants.RESULT_STATUS_FAIL);
             }
         }
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);

@@ -1,6 +1,5 @@
 package org.container.platform.chaos.api.metrics;
 
-
 import org.container.platform.chaos.api.chaos.model.ExperimentsItem;
 import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesList;
 import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesListItem;
@@ -10,10 +9,9 @@ import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.metrics.custom.BaseExponent;
 import org.container.platform.chaos.api.metrics.custom.ContainerMetrics;
 import org.container.platform.chaos.api.metrics.custom.Quantity;
-
 import org.container.platform.chaos.api.metrics.model.ChaosResource;
 import org.container.platform.chaos.api.metrics.model.StressChaos;
-import org.container.platform.chaos.api.metrics.model.StressChaosDataList;
+import org.container.platform.chaos.api.metrics.model.StressChaosResourcesDataList;
 import org.container.platform.chaos.api.workloads.pods.Pods;
 import org.container.platform.chaos.api.workloads.pods.PodsList;
 import org.container.platform.chaos.api.workloads.pods.support.PodsListItem;
@@ -22,17 +20,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static org.container.platform.chaos.api.overview.support.SuffixBase.suffixToBinary;
 import static org.container.platform.chaos.api.overview.support.SuffixBase.suffixToDecimal;
 import static org.springframework.vault.support.DurationParser.parseDuration;
-
 
 /**
  * Metrics Service 클래스
@@ -64,18 +59,17 @@ public class MetricsService {
     }
 
     /**
-     * Stress Chaos Resources Data 생성  (Create Stress Chaos Data)
+     *  StressChaos Resources Data 생성(Create StressChaos Resources Data)
      *
      * @param params the params
      * @return the ResultStatus
      */
-    public ResultStatus createChaosData(Params params){
-        StressChaosDataList stressChaosDataList = new StressChaosDataList();
-        stressChaosDataList.setStressChaos(getStressChaos(params));
-        stressChaosDataList.setChaosResource(getChaosResources(params));
-
+    public ResultStatus createStressChaosResourcesData(Params params){
+        StressChaosResourcesDataList stressChaosResourcesDataList = new StressChaosResourcesDataList();
+        stressChaosResourcesDataList.setStressChaos(getStressChaos(params));
+        stressChaosResourcesDataList.setChaosResource(getChaosResources(params));
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/chaos", HttpMethod.POST, stressChaosDataList, ResultStatus.class, params);
+                "/chaos", HttpMethod.POST, stressChaosResourcesDataList, ResultStatus.class, params);
 
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -123,6 +117,7 @@ public class MetricsService {
         stressChaos.setCreationTime(experimentsItem.getMetadata().getCreationTimestamp());
         stressChaos.setDuration(experimentsItem.getSpec().getDuration());
         stressChaos.setEndTime(calculateEndTime(experimentsItem.getMetadata().getCreationTimestamp(), experimentsItem.getSpec().getDuration()));
+
         return stressChaos;
     }
 
@@ -137,6 +132,7 @@ public class MetricsService {
         HashMap responsePodList;
         PodsList totalPodsList = new PodsList();
         params.setNamespace((String) params.getNamespaces().get(0));
+        Boolean firstSetting = true;
 
         for(List<String> value : params.getPods().values()) {
             for(String pod : value){
@@ -158,10 +154,16 @@ public class MetricsService {
                 responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiListPodsListUrl() + fieldSelectors, HttpMethod.GET, null, Map.class, params);
                 PodsList podsList = commonService.setResultObject(responsePodList, PodsList.class);
-                totalPodsList.setItems(podsList.getItems());
+                if(firstSetting){
+                    totalPodsList.setItems(podsList.getItems());
+                    firstSetting = false;
+                }else {
+                    totalPodsList.getItems().addAll(podsList.getItems());
+                }
             }
         }
         PodsList removeDuplicatePodLists = removeDuplicatePodsList(totalPodsList);
+
         return (PodsList) commonService.setResultModel(removeDuplicatePodLists, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -176,6 +178,7 @@ public class MetricsService {
                 propertyService.getCpMasterApiListNodesListUrl(), HttpMethod.GET, null, Map.class, params);
         NodesList nodesList = commonService.setResultObject(responseMap, NodesList.class);
         nodesList = commonService.resourceListProcessing(nodesList, params, NodesList.class);
+
         return (NodesList) commonService.setResultModel(nodesList, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -194,10 +197,15 @@ public class MetricsService {
                 ChaosResource chaosResource = new ChaosResource();
                 chaosResource.setResourceName(item.getName());
                 chaosResource.setType("pod");
-                if(item.getName().equals(params.getResourceName())){
-                    chaosResource.setChoice(1);
-                }else {
-                    chaosResource.setChoice(0);
+                for(List<String> pods : params.getPods().values()){
+                    for (String pod : pods){
+                        if(item.getName().equals(pod)){
+                            chaosResource.setChoice(1);
+                            break;
+                        }else {
+                            chaosResource.setChoice(0);
+                        }
+                    }
                 }
                 chaosResource.setGenerateName(item.getMetadata().getGenerateName());
                 chaosResource.setChaosName(params.getName());
@@ -213,6 +221,7 @@ public class MetricsService {
             chaosResource.setChoice(0);
             chaosResources.add(chaosResource);
         }
+
         return chaosResources;
     }
 
@@ -228,6 +237,7 @@ public class MetricsService {
         ZonedDateTime creationDateTime = ZonedDateTime.parse(creationTime, DateTimeFormatter.ISO_DATE_TIME);
         Duration durationParsed = parseDuration(duration);
         ZonedDateTime endDateTime = creationDateTime.plus(durationParsed);
+
         return endDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
@@ -245,10 +255,9 @@ public class MetricsService {
                 .collect(Collectors.toList());
         PodsList newPodsList = new PodsList();
         newPodsList.setItems(removeDuplicateItems);
+
         return newPodsList;
     }
-
-
 
     /**
      * Metrics Node 목록 조회(Get Metrics List for Nodes)

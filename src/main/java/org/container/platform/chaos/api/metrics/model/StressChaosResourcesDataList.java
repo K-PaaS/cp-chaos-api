@@ -6,7 +6,7 @@ import org.container.platform.chaos.api.common.model.CommonItemMetaData;
 import java.util.List;
 
 /**
- * StressChaosList Model 클래스
+ * StressChaos Resources DataList Model 클래스
  *
  * @author Luna
  * @version 1.0
@@ -14,7 +14,7 @@ import java.util.List;
  **/
 
 @Data
-public class StressChaosDataList {
+public class StressChaosResourcesDataList {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
