@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
@@ -60,9 +61,7 @@ public class MethodHandler {
      * @throws Throwable
      */
     @Around("execution(* org.container.platform.chaos.api..*Controller.*create*(..))"
-            + "&& !execution(* org.container.platform.chaos.api.clusters.cloudAccounts.*.*(..))"
             + "&& !execution(* org.container.platform.chaos.api.clusters.clusters.*.*(..))"
-            + "&& !execution(* org.container.platform.chaos.api.clusters.hclTemplates.*.*(..))"
             + "&& !execution(* org.container.platform.chaos.api.chaos..*.*(..))"
 
 
@@ -79,7 +78,7 @@ public class MethodHandler {
         namespace = params.getNamespace();
 
 
-        if(namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
             return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_CREATED.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_CREATED.getMsg());
         }
 
@@ -192,8 +191,8 @@ public class MethodHandler {
             String resourceKind = YamlUtil.parsingYaml(temp, KIND_KEY);
 
             //isAdmin check
-            if(!isAdmin){
-                if(propertyService.getAdminResource().contains(resourceKind)) {
+            if (!isAdmin) {
+                if (propertyService.getAdminResource().contains(resourceKind)) {
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(),
                             CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.INCLUDE_INACCESSIBLE_RESOURCES.getMsg());
                 }
@@ -220,9 +219,7 @@ public class MethodHandler {
      * @throws Throwable
      */
     @Around("execution(* org.container.platform.chaos.api..*Controller.*update*(..))" +
-            "&& !execution(* org.container.platform.chaos.api.clusters.cloudAccounts.*.*(..))" +
             "&& !execution(* org.container.platform.chaos.api.clusters.clusters.*.*(..))" +
-            "&& !execution(* org.container.platform.chaos.api.clusters.hclTemplates.*.*(..))" +
             "&& !execution(* org.container.platform.chaos.api.chaos..*.*(..))")
     public Object updateResourceAspect(ProceedingJoinPoint joinPoint) throws Throwable {
 
@@ -330,7 +327,7 @@ public class MethodHandler {
 
         String updateYamlResourceName = YamlUtil.parsingYaml(yaml, METADATA_KEY);
 
-        if (!requestResource.equals(resourceKind) ) {
+        if (!requestResource.equals(resourceKind)) {
             return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), requestResource + MessageConstant.NOT_EXIST.getMsg());
         }
 
