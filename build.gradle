@@ -23,7 +23,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: "org.sonarqube"
 
-group = 'org.container.platform.api'
+group = 'org.container.platform.chaos.api'
 sourceCompatibility = '1.8'
 
 
