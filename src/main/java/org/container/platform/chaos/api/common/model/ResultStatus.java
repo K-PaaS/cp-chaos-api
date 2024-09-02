@@ -3,8 +3,6 @@ package org.container.platform.chaos.api.common.model;
 import lombok.Builder;
 import lombok.Data;
 
-import org.container.platform.chaos.api.common.CommonUtils;
-
 /**
  * Result Status model 클래스
  *
@@ -21,9 +19,6 @@ public class ResultStatus {
     private String detailMessage;
     private String nextActionUrl;
 
-    public ResultStatus() {
-    }
-
     public ResultStatus(String resultCode, String resultMessage, int httpStatusCode, String detailMessage) {
         this.resultCode = resultCode;
         this.resultMessage = resultMessage;
@@ -37,9 +32,5 @@ public class ResultStatus {
         this.httpStatusCode = httpStatusCode;
         this.detailMessage = detailMessage;
         this.nextActionUrl = nextActionUrl;
-    }
-
-    public String getNextActionUrl() {
-        return CommonUtils.procReplaceNullValue(nextActionUrl);
     }
 }

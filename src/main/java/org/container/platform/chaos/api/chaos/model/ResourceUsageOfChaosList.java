@@ -1,18 +1,16 @@
-package org.container.platform.chaos.api.metrics;
+package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 
-
 @Data
-public class PodsMetricsList {
-
+public class ResourceUsageOfChaosList {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private CommonItemMetaData itemMetaData;
-    private List<PodsMetricsItems> items;
+    private List<ResourceUsageOfChaos> items;
 }

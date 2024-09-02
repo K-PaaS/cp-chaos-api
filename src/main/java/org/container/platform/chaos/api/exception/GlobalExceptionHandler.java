@@ -3,12 +3,10 @@ package org.container.platform.chaos.api.exception;
 import org.container.platform.chaos.api.common.CommonUtils;
 import org.container.platform.chaos.api.common.Constants;
 import org.container.platform.chaos.api.common.MessageConstant;
-import org.container.platform.chaos.api.common.ResultStatusService;
 import org.container.platform.chaos.api.common.model.CommonStatusCode;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -21,7 +19,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.validation.BindException;
 import org.springframework.security.access.AccessDeniedException;
 import java.util.Iterator;
-import java.util.Iterator;
 
 /**
  * GlobalException Handler 클래스
@@ -33,9 +30,6 @@ import java.util.Iterator;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    @Autowired
-    ResultStatusService resultStatusService;
 
     public GlobalExceptionHandler() {
 

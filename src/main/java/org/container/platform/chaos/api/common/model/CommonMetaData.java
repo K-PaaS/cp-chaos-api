@@ -47,7 +47,4 @@ public class CommonMetaData {
         return CommonUtils.procSetTimestamp(creationTimestamp);
     }
 
-    public String getDeletionTimestamp() {
-        return CommonUtils.procSetTimestamp(deletionTimestamp);
-    }
 }
