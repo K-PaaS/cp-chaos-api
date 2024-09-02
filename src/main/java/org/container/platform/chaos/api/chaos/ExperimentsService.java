@@ -273,7 +273,7 @@ public class ExperimentsService {
             ResultStatus resultStatusDB = createStressChaosResourcesData(params);
             if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
                 params.setNamespace(params.getChaosNamespace());
-                restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
 
                 return (ResultStatus) commonService.setResultModel(resultStatusDB, Constants.RESULT_STATUS_FAIL);

@@ -38,13 +38,19 @@ public class CommonMetaData {
     private String _continue;
 
     public List<CommonOwnerReferences> getOwnerReferences() {
-     if(ownerReferences == null) {ownerReferences = null;}
-     return ownerReferences;
+        if (ownerReferences == null) {
+            ownerReferences = null;
+        }
+        return ownerReferences;
     }
 
 
     public String getCreationTimestamp() {
         return CommonUtils.procSetTimestamp(creationTimestamp);
+    }
+
+    public String getDeletionTimestamp() {
+        return CommonUtils.procSetTimestamp(deletionTimestamp);
     }
 
 }
