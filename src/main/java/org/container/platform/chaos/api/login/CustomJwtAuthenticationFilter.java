@@ -68,32 +68,27 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
                 clientIp = request.getRemoteAddr();
             }
 
-            if (StringUtils.hasText(jwtToken)) {
-                if (jwtTokenUtil.validateToken(jwtToken)) {
-                    List<GrantedAuthority> parsedTokens = jwtTokenUtil.getPortalRolesFromToken(jwtToken);
-                    UserDetails userDetails = new User(jwtTokenUtil.getUsernameFromToken(jwtToken), jwtTokenUtil.getClaimsFromToken(jwtToken, "userAuthId"), parsedTokens);
+            if (StringUtils.hasText(jwtToken) && jwtTokenUtil.validateToken(jwtToken)) {
+                List<GrantedAuthority> parsedTokens = jwtTokenUtil.getPortalRolesFromToken(jwtToken);
+                UserDetails userDetails = new User(jwtTokenUtil.getUsernameFromToken(jwtToken), jwtTokenUtil.getClaimsFromToken(jwtToken, "userAuthId"), parsedTokens);
 
-                    String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
+                String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
 
-                    if (AuthTokenValid.equals(CHECK_Y)) {
-                        if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
-                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                        } else {
-                            LOGGER.info("The connection information is different.");
-                            LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", CommonUtils.loggerReplace(agent), CommonUtils.loggerReplace(clientIp), CommonUtils.loggerReplace(tokenIp));
-                        }
-                    } else {
+                if (AuthTokenValid.equals(CHECK_Y)) {
+                    if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, parsedTokens);
+                                userDetails, null, userDetails.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    } else {
+                        LOGGER.info("The connection information is different.");
+                        LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", CommonUtils.loggerReplace(agent), CommonUtils.loggerReplace(clientIp), CommonUtils.loggerReplace(tokenIp));
                     }
                 } else {
-                    LOGGER.info("Cannot set the Security Context INVAILD");
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, parsedTokens);
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
-            } else {
-                LOGGER.info("Cannot set the Security Context EMPTY");
+
             }
         } catch (ExpiredJwtException ex) {
             RequestWrapper requestWrapper = new RequestWrapper(request);
