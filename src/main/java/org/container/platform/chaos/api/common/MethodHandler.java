@@ -63,8 +63,6 @@ public class MethodHandler {
     @Around("execution(* org.container.platform.chaos.api..*Controller.*create*(..))"
             + "&& !execution(* org.container.platform.chaos.api.clusters.clusters.*.*(..))"
             + "&& !execution(* org.container.platform.chaos.api.chaos..*.*(..))"
-
-
     )
 
     public Object createResourceAspect(ProceedingJoinPoint joinPoint) throws Throwable {
