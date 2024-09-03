@@ -38,77 +38,80 @@ import static org.container.platform.chaos.api.common.Constants.CHECK_Y;
 public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 
 
-	protected JwtUtil jwtTokenUtil;
+    protected JwtUtil jwtTokenUtil;
 
-	@Autowired
-	public CustomJwtAuthenticationFilter(JwtUtil jwtUtil) {
-		this.jwtTokenUtil = jwtUtil;
-	}
+    @Autowired
+    public CustomJwtAuthenticationFilter(JwtUtil jwtUtil) {
+        this.jwtTokenUtil = jwtUtil;
+    }
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandler.class);
 
-	@Value("${server.auth.valid}")
-	private String AuthTokenValid;
+    @Value("${server.auth.valid}")
+    private String AuthTokenValid;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
 
-		try{
-			RequestWrapper requestWrapper = new RequestWrapper(request);
+        try {
+            RequestWrapper requestWrapper = new RequestWrapper(request);
 
-			String jwtToken = jwtTokenUtil.extractJwtFromRequest(request);
+            String jwtToken = jwtTokenUtil.extractJwtFromRequest(request);
 
-			String agent = requestWrapper.getHeader("User-Agent");
-			String clientIp = requestWrapper.getHeader("HTTP_X_FORWARDED_FOR");
-			if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
-				clientIp = requestWrapper.getHeader("REMOTE_ADDR");
-			}
-			if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
-				clientIp = request.getRemoteAddr();
-			}
+            String agent = requestWrapper.getHeader("User-Agent");
+            String clientIp = requestWrapper.getHeader("HTTP_X_FORWARDED_FOR");
+            if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
+                clientIp = requestWrapper.getHeader("REMOTE_ADDR");
+            }
+            if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
+                clientIp = request.getRemoteAddr();
+            }
 
-			if (StringUtils.hasText(jwtToken) && jwtTokenUtil.validateToken(jwtToken)) {
-				List<GrantedAuthority> parsedTokens = jwtTokenUtil.getPortalRolesFromToken(jwtToken);
-				UserDetails userDetails = new User(jwtTokenUtil.getUsernameFromToken(jwtToken), jwtTokenUtil.getClaimsFromToken(jwtToken,"userAuthId"), parsedTokens);
+            if (StringUtils.hasText(jwtToken)) {
+                if (jwtTokenUtil.validateToken(jwtToken)) {
+                    List<GrantedAuthority> parsedTokens = jwtTokenUtil.getPortalRolesFromToken(jwtToken);
+                    UserDetails userDetails = new User(jwtTokenUtil.getUsernameFromToken(jwtToken), jwtTokenUtil.getClaimsFromToken(jwtToken, "userAuthId"), parsedTokens);
 
-				String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
+                    String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
 
-				if(AuthTokenValid.equals(CHECK_Y)) {
-					if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
-						UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-								userDetails, null, userDetails.getAuthorities());
-						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-					} else {
-						LOGGER.info("The connection information is different.");
-						LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", CommonUtils.loggerReplace(agent), CommonUtils.loggerReplace(clientIp), CommonUtils.loggerReplace(tokenIp));
-					}
-				}else{
-					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-							userDetails, null, parsedTokens);
-					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-				}
+                    if (AuthTokenValid.equals(CHECK_Y)) {
+                        if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities());
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                        } else {
+                            LOGGER.info("The connection information is different.");
+                            LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", CommonUtils.loggerReplace(agent), CommonUtils.loggerReplace(clientIp), CommonUtils.loggerReplace(tokenIp));
+                        }
+                    } else {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, parsedTokens);
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    }
+                } else {
+                    LOGGER.info("Cannot set the Security Context INVAILD");
+                }
+            } else {
+                LOGGER.info("Cannot set the Security Context EMPTY");
+            }
+        } catch (ExpiredJwtException ex) {
+            RequestWrapper requestWrapper = new RequestWrapper(request);
+            String isRefreshToken = requestWrapper.getHeader("isRefreshToken");
+            String requestURL = request.getRequestURL().toString();
+            // allow for Refresh Token creation if following conditions are true.
+            if (isRefreshToken != null && isRefreshToken.equals("true") && requestURL.contains("refreshtoken")) {
+                jwtTokenUtil.allowForRefreshToken(ex, request);
+            } else
+                request.setAttribute("exception", ex);
 
-			} else {
-				LOGGER.info("Cannot set the Security Context");
-			}
-		} catch (ExpiredJwtException ex) {
-			RequestWrapper requestWrapper = new RequestWrapper(request);
-			String isRefreshToken = requestWrapper.getHeader("isRefreshToken");
-			String requestURL = request.getRequestURL().toString();
-			// allow for Refresh Token creation if following conditions are true.
-			if (isRefreshToken != null && isRefreshToken.equals("true") && requestURL.contains("refreshtoken")) {
-				jwtTokenUtil.allowForRefreshToken(ex, request);
-			} else
-				request.setAttribute("exception", ex);
-
-		} catch (BadCredentialsException ex) {
-			request.setAttribute("exception", ex);
-		} catch (Exception ex) {
-			LOGGER.info(CommonUtils.loggerReplace(ex.getMessage()));
-		}
-		chain.doFilter(request, response);
-	}
+        } catch (BadCredentialsException ex) {
+            request.setAttribute("exception", ex);
+        } catch (Exception ex) {
+            LOGGER.info(CommonUtils.loggerReplace(ex.getMessage()));
+        }
+        chain.doFilter(request, response);
+    }
 
 
 }
