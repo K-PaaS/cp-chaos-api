@@ -124,3 +124,9 @@ commonApi:
   authorization:
     id: admin
     password: cpcommon!123
+
+chaosCollectorApi:
+  url: ${CP_PORTAL_CHAOS_COLLECTOR_API_URI}
+  authorization:
+    id: admin
+    password: cpcollector!123

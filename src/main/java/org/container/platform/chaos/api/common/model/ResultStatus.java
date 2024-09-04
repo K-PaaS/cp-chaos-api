@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import org.container.platform.chaos.api.common.CommonUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Result Status model 클래스
  *

@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static org.container.platform.chaos.api.common.Constants.TARGET_CHAOS_COLLECTOR_API;
 import static org.container.platform.chaos.api.common.Constants.TARGET_COMMON_API;
 
 /**
@@ -38,9 +39,8 @@ public class RestTemplateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestTemplateService.class);
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     private static final String CONTENT_TYPE = "Content-Type";
-
     private final String commonApiBase64Authorization;
-
+    private final String chaosCollectorApiBase64Authorization;
     private final RestTemplate restTemplate;
     private final RestTemplate shortRestTemplate;
     protected final PropertyService propertyService;
@@ -54,8 +54,8 @@ public class RestTemplateService {
     /**
      * Instantiates a new Rest template service
      *
-     * @param restTemplate                   the rest template
-     * @param propertyService                the property service
+     * @param restTemplate    the rest template
+     * @param propertyService the property service
      */
     @Autowired
     public RestTemplateService(RestTemplate restTemplate,
@@ -64,8 +64,10 @@ public class RestTemplateService {
                                CommonService commonService,
                                VaultService vaultService,
                                @Value("${commonApi.authorization.id}") String commonApiAuthorizationId,
-                               @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword
-                                ) {
+                               @Value("${commonApi.authorization.password}") String commonApiAuthorizationPassword,
+                               @Value("${chaosCollectorApi.authorization.id}") String chaosCollectorApiAuthorizationId,
+                               @Value("${chaosCollectorApi.authorization.password}") String chaosCollectorApiAuthorizationPassword
+    ) {
         this.restTemplate = restTemplate;
         this.shortRestTemplate = shortRestTemplate;
         this.propertyService = propertyService;
@@ -74,6 +76,9 @@ public class RestTemplateService {
         this.commonApiBase64Authorization = "Basic "
                 + Base64Utils.encodeToString(
                 (commonApiAuthorizationId + ":" + commonApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
+        this.chaosCollectorApiBase64Authorization = "Basic "
+                + Base64Utils.encodeToString(
+                (chaosCollectorApiAuthorizationId + ":" + chaosCollectorApiAuthorizationPassword).getBytes(StandardCharsets.UTF_8));
     }
 
 
@@ -95,6 +100,10 @@ public class RestTemplateService {
         return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
     }
 
+    @TrackExecutionTime
+    public <T> T sendGlobal(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, Params params) {
+        return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE, params);
+    }
 
     public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Class<T> responseType, Params params) {
         return sendAdmin(reqApi, reqUrl, httpMethod, params.getYaml(), responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml", params);
@@ -102,7 +111,7 @@ public class RestTemplateService {
     }
 
     public <T> T sendDryRun(String reqApi, String reqUrl, HttpMethod httpMethod, String yaml, Class<T> responseType, Params params) {
-        return sendAdmin(reqApi, reqUrl + "?dryRun=All", httpMethod,yaml, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml", params);
+        return sendAdmin(reqApi, reqUrl + "?dryRun=All", httpMethod, yaml, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml", params);
 
     }
 
@@ -257,9 +266,6 @@ public class RestTemplateService {
     }
 
 
-
-
-
     /**
      * 생성, 갱신, 삭제 로직의 코드 식별(Create/Update/Delete logic's status code discriminate)
      *
@@ -301,9 +307,6 @@ public class RestTemplateService {
     }
 
 
-
-
-
     /**
      * Authorization 값을 입력(Set the authorization value)
      *
@@ -327,6 +330,12 @@ public class RestTemplateService {
             authorization = commonApiBase64Authorization;
         }
 
+        // CHAOS COLLECTOR API
+        if (TARGET_CHAOS_COLLECTOR_API.equals(reqApi)) {
+            apiUrl = propertyService.getChaosCollectorApiUrl();
+            authorization = chaosCollectorApiBase64Authorization;
+        }
+
         // Chaos Dashboard API
         if (Constants.TARGET_CHAOS_API.equals(reqApi)) {
             Clusters clusters = (params.getIsClusterToken()) ? vaultService.getClusterDetails(params.getCluster()) : commonService.getKubernetesInfo(params);
@@ -340,7 +349,7 @@ public class RestTemplateService {
 
 
     /**
-     *Request URL 파라미터 설정 (Set Request URL Parameters)
+     * Request URL 파라미터 설정 (Set Request URL Parameters)
      *
      * @param reqApi the reqApi
      */
@@ -360,7 +369,7 @@ public class RestTemplateService {
     }
 
 
-    public String getLang(){
+    public String getLang() {
         CustomUserDetails customUserDetails = null;
         String u_lang = "";
         try {

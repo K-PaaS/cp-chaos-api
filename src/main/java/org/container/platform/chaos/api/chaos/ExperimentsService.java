@@ -270,7 +270,7 @@ public class ExperimentsService {
             resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
-            ResultStatus resultStatusDB = createStressChaosResourcesData(params);
+            StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
             if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
                 params.setNamespace(params.getChaosNamespace());
                 ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -379,14 +379,19 @@ public class ExperimentsService {
      * @param params the params
      * @return the ResultStatus
      */
-    public ResultStatus createStressChaosResourcesData(Params params) {
+    public StressChaosResourcesDataList createStressChaosResourcesData(Params params) {
         StressChaosResourcesDataList stressChaosResourcesDataList = new StressChaosResourcesDataList();
         stressChaosResourcesDataList.setStressChaos(getStressChaos(params));
         stressChaosResourcesDataList.setChaosResource(getChaosResources(params));
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/chaos", HttpMethod.POST, stressChaosResourcesDataList, ResultStatus.class, params);
+        StressChaosResourcesDataList resultStatus = restTemplateService.sendGlobal(Constants.TARGET_COMMON_API,
+                "/chaos", HttpMethod.POST, stressChaosResourcesDataList, StressChaosResourcesDataList.class, params);
 
-        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+        params.setStressChaosResourceIds(resultStatus.getResultList());
+
+        ResultStatus resultStatusCollector = restTemplateService.send(Constants.TARGET_CHAOS_COLLECTOR_API,
+                "/scheduler", HttpMethod.POST, params, ResultStatus.class, params);
+
+        return (StressChaosResourcesDataList) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

@@ -14,7 +14,7 @@ public class Params {
     public String namespace = Constants.EMPTY_STRING;
     public String resource;
     public String resourceName = Constants.EMPTY_STRING;
-    public String metadataName =  Constants.EMPTY_STRING;
+    public String metadataName = Constants.EMPTY_STRING;
     public int offset = 0;
     public int limit = 0;
     public String orderBy = "creationTime";
@@ -34,7 +34,7 @@ public class Params {
     public String clusterName = Constants.EMPTY_STRING;
     public Integer topN = 5;
     public String saToken = Constants.EMPTY_STRING;
-    public String saSecret =  Constants.EMPTY_STRING;
+    public String saSecret = Constants.EMPTY_STRING;
     public Boolean includeUsage = false;
 
     // request parameter setting
@@ -91,6 +91,7 @@ public class Params {
     private String object_id = Constants.EMPTY_STRING;
     private Boolean event = false;
     private List statusList;
+    private List stressChaosResourceIds;
 
     public
     @JsonProperty("yaml")
@@ -102,7 +103,7 @@ public class Params {
 
     private Boolean isGlobal = false;
 
-    public Params(){
+    public Params() {
         this.cluster = Constants.EMPTY_STRING;
         this.namespace = Constants.EMPTY_STRING;
         this.resource = Constants.EMPTY_STRING;
@@ -113,7 +114,7 @@ public class Params {
         this.orderBy = "creationTime";
         this.order = "desc";
         this.searchName = Constants.EMPTY_STRING;
-        this.yaml =Constants.EMPTY_STRING;
+        this.yaml = Constants.EMPTY_STRING;
         this.ownerReferencesUid = Constants.EMPTY_STRING;
         this.ownerReferencesName = Constants.EMPTY_STRING;
         this.selector = Constants.EMPTY_STRING;
@@ -161,7 +162,6 @@ public class Params {
         this.rs_role = role;
         this.isClusterToken = isClusterToken;
     }
-
 
 
     // getVaultToken 관련 생성자

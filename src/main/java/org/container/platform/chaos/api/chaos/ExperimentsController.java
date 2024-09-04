@@ -27,9 +27,7 @@ public class ExperimentsController {
     /**
      * Instantiates a new Experiments controller
      *
-     * @param experimentsService    the Experiments service
-     * @param metricsService
-     * @param schedulerTasksService
+     * @param experimentsService the Experiments service
      */
     @Autowired
     public ExperimentsController(ExperimentsService experimentsService) {
