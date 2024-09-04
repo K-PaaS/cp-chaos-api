@@ -1,5 +1,7 @@
 package org.container.platform.chaos.api.common;
+
 import org.springframework.http.MediaType;
+
 import java.util.*;
 
 /**
@@ -19,12 +21,12 @@ public class Constants {
 
     public static final String CHECK_TRUE = "true";
 
-    public static final String EMPTY_STRING ="";
+    public static final String EMPTY_STRING = "";
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi/{cluster}";
     public static final String TARGET_COMMON_API = "commonApi";
-
     public static final String TARGET_CHAOS_API = "chaosAPI";
+    public static final String TARGET_CHAOS_COLLECTOR_API = "chaosCollectorAPI";
 
 
     public static final String CLUSTER_TYPE_SUB = "sub";
@@ -38,7 +40,7 @@ public class Constants {
     public static final String ALL_NAMESPACES = "all";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
     public static final String NOT_ALLOWED_POD_NAME_NODES = "nodes";
-    public static final String NOT_ALLOWED_POD_NAME_RESOURCES= "resources";
+    public static final String NOT_ALLOWED_POD_NAME_RESOURCES = "resources";
 
     public static final String SUPPORTED_RESOURCE_STORAGE = "storage";
 
@@ -55,8 +57,7 @@ public class Constants {
     public static final String NEW_LINE = "\r\n";
 
 
-
-    public static final List<String> NOT_ALLOWED_POD_NAME_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+    public static final List<String> NOT_ALLOWED_POD_NAME_LIST = Collections.unmodifiableList(new ArrayList<String>() {
         {
             add(NOT_ALLOWED_POD_NAME_NODES);
             add(NOT_ALLOWED_POD_NAME_RESOURCES);
@@ -76,7 +77,7 @@ public class Constants {
 
     public static final String URI_CHECK_REGISTERED_USER = "/check/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}";
 
-    public static final String[] PERMIT_PATH_LIST = new String[]{ URI_SIGN_UP, URI_LOGIN, URI_CHECK_REGISTERED_USER};
+    public static final String[] PERMIT_PATH_LIST = new String[]{URI_SIGN_UP, URI_LOGIN, URI_CHECK_REGISTERED_USER};
 
     public static final String ENDS_WITH_SES = "ses";
     public static final String ENDS_WITH_S = "s";
@@ -85,7 +86,7 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/usersList";
 
 
-    public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/login/users/{userId:.+}";
+    public static final String URI_COMMON_API_USER_DETAIL_LOGIN = "/login/users/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USER_DELETE = "/users/";
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_USER_AUTH_ID = "/clusters/{cluster:.+}/users/{userAuthId:.+}";
@@ -98,9 +99,9 @@ public class Constants {
     public static final String URI_COMMON_API_CLUSTER_AND_NAMESPACE_LIST_BY_USER = "/users/{userAuthId:.+}/clustersAndNamespacesList?userType={userType:.+}";
 
 
-
-
-    /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
+    /**
+     * 서비스 요청시 처리 메소드 kind 매핑 정보
+     */
     public static final String RESOURCE_ENDPOINTS = "Endpoints";
     public static final String RESOURCE_EVENTS = "Events";
 
@@ -133,21 +134,20 @@ public class Constants {
     public static final String RESOURCE_ANNOTATIONS = "annotations";
 
 
-
-
     public static final String noName = "[-]";
     public static final String NULL_REPLACE_TEXT = "-";
 
 
-
-    public static final String PARAM_QUERY_FIRST ="?" ;
+    public static final String PARAM_QUERY_FIRST = "?";
 
     public static final String U_LANG_KO = "ko";
     public static final String U_LANG_KO_START_WITH = "ko_";
     public static final String U_LANG_ENG = "en";
 
 
-    /** 서비스 클래스의 Package */
+    /**
+     * 서비스 클래스의 Package
+     */
     public static final String SERVICE_PACKAGE = "org.container.platform.chaos.api.";
 
     public static final Map<String, String> RESOURCE_SERVICE_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {
@@ -184,7 +184,6 @@ public class Constants {
     }
 
 
-
     public enum ContextType {
         CLUSTER,
         NAMESPACE
@@ -196,9 +195,11 @@ public class Constants {
         DISABLED("D");
 
         private final String initial;
+
         ClusterStatus(String initial) {
             this.initial = initial;
         }
+
         public String getInitial() {
             return initial;
         }
@@ -219,14 +220,15 @@ public class Constants {
     public static final String STATUS_RUNNING = "Running";
 
     public static final String CLUSTER_ROLE_BINDING_NAME = "-cluster-admin-binding";
-    public static final String SA_TOKEN_NAME= "{username}-token";
+    public static final String SA_TOKEN_NAME = "{username}-token";
 
 
     public static final String USAGE = "usage";
     public static final String PERCENT = "percent";
 
-    public static final Map<String, Object> INIT_USAGE = new HashMap<String, Object>() {{ put(USAGE, NULL_REPLACE_TEXT); }};
-
+    public static final Map<String, Object> INIT_USAGE = new HashMap<String, Object>() {{
+        put(USAGE, NULL_REPLACE_TEXT);
+    }};
 
 
 }

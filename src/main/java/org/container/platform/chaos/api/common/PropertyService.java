@@ -23,6 +23,9 @@ public class PropertyService {
     @Value("${commonApi.url}")
     private String commonApiUrl;
 
+    @Value("${chaosCollectorApi.url}")
+    private String chaosCollectorApiUrl;
+
 
     //podFaults
     @Value("${cpMaster.api.chaos.podFaults.podKill.list}")
