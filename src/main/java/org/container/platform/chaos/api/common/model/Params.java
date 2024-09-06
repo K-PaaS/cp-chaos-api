@@ -91,7 +91,7 @@ public class Params {
     private String object_id = Constants.EMPTY_STRING;
     private Boolean event = false;
     private List statusList;
-    private List stressChaosResourceIds;
+    private List<Long> stressChaosResourceIds;
 
     public
     @JsonProperty("yaml")
