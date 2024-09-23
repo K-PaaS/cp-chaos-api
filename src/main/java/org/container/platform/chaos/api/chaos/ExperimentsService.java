@@ -50,7 +50,6 @@ public class ExperimentsService {
      * @param commonService       common service
      * @param propertyService     the property service
      * @param templateService     the template service
-     * @param metricsService
      */
 
     @Autowired
@@ -384,7 +383,7 @@ public class ExperimentsService {
         stressChaosResourcesDataList.setStressChaos(getStressChaos(params));
         stressChaosResourcesDataList.setChaosResource(getChaosResources(params));
         StressChaosResourcesDataList resultStatus = restTemplateService.sendGlobal(Constants.TARGET_COMMON_API,
-                "/chaos", HttpMethod.POST, stressChaosResourcesDataList, StressChaosResourcesDataList.class, params);
+                "/chaos/stressChaosResourceList", HttpMethod.POST, stressChaosResourcesDataList, StressChaosResourcesDataList.class, params);
 
         params.setStressChaosResourceIds(resultStatus.getResultList());
 
