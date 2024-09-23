@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -134,7 +135,6 @@ public class CommonService {
     public <T> T setResultObject(Object requestObject, Class<T> requestClass) {
         return this.fromJson(this.toJson(requestObject), requestClass);
     }
-
 
 
     /**
@@ -312,11 +312,11 @@ public class CommonService {
                 sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
                         x))).collect(Collectors.toList());
             } else {
-                if(!event) {
+                if (!event) {
                     sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
                             getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
                 }
-                if(event) {
+                if (event) {
                     sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATED_AT,
                             x)).reversed()).collect(Collectors.toList());
                 }
@@ -360,8 +360,8 @@ public class CommonService {
                 sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATED,
                         x))).collect(Collectors.toList());
             } else {
-                    sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATED,
-                            x)).reversed()).collect(Collectors.toList());
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATED,
+                        x)).reversed()).collect(Collectors.toList());
             }
         }
         return sortList;
@@ -612,7 +612,7 @@ public class CommonService {
                     }
                 }
 
-                if(key.contains(propertyService.getCpAnnotationsLastApplied())) {
+                if (key.contains(propertyService.getCpAnnotationsLastApplied())) {
                     commonAnnotations.setCheckYn(Constants.CHECK_Y);
                 }
 
@@ -661,9 +661,9 @@ public class CommonService {
 
         // 1. 키워드 match에 따른 리스트 필터
         if (params.getSearchName() != null && !params.getSearchName().equals("")) {
-            if(params.getEvent()){
+            if (params.getEvent()) {
                 resourceItemList = chaosSearchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
-            }else {
+            } else {
                 resourceItemList = searchKeywordForResourceName(resourceItemList, params.getSearchName().trim());
             }
         }
@@ -797,7 +797,7 @@ public class CommonService {
         //clusterId, namespaceId로 조회.
         Clusters clusters = new Clusters();
         PortalGrantedAuthority portalGrantedAuthority;
-        LOGGER.info("in getKubernetesInfo, params: "  + CommonUtils.loggerReplace(params));
+        LOGGER.info("in getKubernetesInfo, params: " + CommonUtils.loggerReplace(params));
         LOGGER.info("cluster AUTHORITY: " + CommonUtils.loggerReplace(getClusterAuthorityFromContext(params.getCluster())));
         switch (getClusterAuthorityFromContext(params.getCluster())) {
             case Constants.AUTH_SUPER_ADMIN:
@@ -824,12 +824,12 @@ public class CommonService {
 
 
     /**
-     *  사용자 이름 조회(Get User name from context)
+     * 사용자 이름 조회(Get User name from context)
      *
      * @return the string
      */
     public String getUserNameFromContext() {
-        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return user.getUsername();
     }
