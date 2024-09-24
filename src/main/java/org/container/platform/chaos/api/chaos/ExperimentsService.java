@@ -480,6 +480,12 @@ public class ExperimentsService {
             }
         }
         PodsList removeDuplicatePodLists = removeDuplicatePodsList(totalPodsList);
+        
+        List<PodsListItem> removeDuplicateItems = removeDuplicatePodLists.getItems().stream()
+                .filter(item -> item.getContainerStatus().equals("Running"))
+                .collect(Collectors.toList());
+
+        removeDuplicatePodLists.setItems(removeDuplicateItems);
 
         return (PodsList) commonService.setResultModel(removeDuplicatePodLists, Constants.RESULT_STATUS_SUCCESS);
     }
