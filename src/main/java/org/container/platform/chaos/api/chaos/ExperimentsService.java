@@ -446,10 +446,11 @@ public class ExperimentsService {
      * @PodsList PodsList the PodsList
      */
     public PodsList getChaosPodListByLabel(Params params) {
-        HashMap responsePodList;
         PodsList totalPodsList = new PodsList();
         params.setNamespace((String) params.getNamespaces().get(0));
         Boolean firstSetting = true;
+
+        List<PodsListItem> totalItems = new ArrayList<>();
 
         for (List<String> value : params.getPods().values()) {
             for (String pod : value) {
@@ -468,23 +469,18 @@ public class ExperimentsService {
                         fieldSelectors += label;
                     }
                 }
-                responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+
+                HashMap responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                         propertyService.getCpMasterApiListPodsListUrl() + fieldSelectors, HttpMethod.GET, null, Map.class, params);
                 PodsList podsList = commonService.setResultObject(responsePodList, PodsList.class);
-                if (firstSetting) {
-                    totalPodsList.setItems(podsList.getItems());
-                    firstSetting = false;
-                } else {
-                    totalPodsList.getItems().addAll(podsList.getItems());
-                }
+                totalItems.addAll(podsList.getItems());
             }
         }
+        totalPodsList.setItems(totalItems);
         PodsList removeDuplicatePodLists = removeDuplicatePodsList(totalPodsList);
-
         List<PodsListItem> runningPodListsItem = removeDuplicatePodLists.getItems().stream()
-                .filter(item -> item.getContainerStatus().equals("Running"))
+                .filter(item -> item.getStatus().getPhase().equals("Running"))
                 .collect(Collectors.toList());
-
 
         PodsList podLists = new PodsList();
         podLists.setItems(runningPodListsItem);
@@ -572,9 +568,11 @@ public class ExperimentsService {
      */
     public PodsList removeDuplicatePodsList(PodsList podsList) {
         Set<String> podNames = new HashSet<>();
+
         List<PodsListItem> removeDuplicateItems = podsList.getItems().stream()
                 .filter(item -> podNames.add(item.getName()))
                 .collect(Collectors.toList());
+
         PodsList newPodsList = new PodsList();
         newPodsList.setItems(removeDuplicateItems);
 
