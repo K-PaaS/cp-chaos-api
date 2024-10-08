@@ -269,6 +269,7 @@ public class ExperimentsService {
             resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
+            // stresschaos DB 등록
             StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
             if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
                 params.setNamespace(params.getChaosNamespace());
@@ -276,6 +277,13 @@ public class ExperimentsService {
                         propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
 
                 return (ResultStatus) commonService.setResultModel(resultStatusDB, Constants.RESULT_STATUS_FAIL);
+            } else {
+                ResultStatus resultStatusCollector = restTemplateService.send(Constants.TARGET_CHAOS_COLLECTOR_API,
+                        "/scheduler", HttpMethod.POST, params, ResultStatus.class, params);
+
+                if (!resultStatusCollector.getResultCode().equals("SUCCESS")) {
+                    return (ResultStatus) commonService.setResultModel(resultStatusCollector, Constants.RESULT_STATUS_FAIL);
+                }
             }
         }
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
@@ -386,9 +394,6 @@ public class ExperimentsService {
                 "/chaos/stressChaosResourceList", HttpMethod.POST, stressChaosResourcesDataList, StressChaosResourcesDataList.class, params);
 
         params.setStressChaosResourceIds(resultStatus.getResultList());
-
-        ResultStatus resultStatusCollector = restTemplateService.send(Constants.TARGET_CHAOS_COLLECTOR_API,
-                "/scheduler", HttpMethod.POST, params, ResultStatus.class, params);
 
         return (StressChaosResourcesDataList) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -578,4 +583,6 @@ public class ExperimentsService {
 
         return newPodsList;
     }
+
+
 }
