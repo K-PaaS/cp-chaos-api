@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import org.container.platform.chaos.api.chaos.model.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-import org.container.platform.chaos.api.chaos.model.ResourceUsageOfChaosList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -123,16 +122,42 @@ public class ExperimentsController {
     }
 
     /**
-     * Experiments Resource Usage of Chaos 목록 조회(Get Experiments Resource Usage of Chaos List)
+     * Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)
      *
      * @param params the params
-     * @return the resultStatus
+     * @return the ResourceUsage
      */
-    @ApiOperation(value = "Experiments Resource Usage of Chaos 목록 조회(Get Experiments Resource Usage of Chaos List)", nickname = "getResourceUsageOfChaosList")
+    @ApiOperation(value = "Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)", nickname = "getResourceUsageByPod")
     @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
-    @GetMapping("/resourceUsage")
-    public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
-        return experimentsService.getResourceUsageOfChaosList(params);
+    @GetMapping("/resourceUsageByPod/{name:.+}")
+    public ResourceUsage getResourceUsageByPod(Params params) {
+        return experimentsService.getResourceUsageByPod(params);
+    }
+
+    /**
+     * Resource usage by workload for selected Pods during chao 조회(Get Resource usage by workload for selected Pods during chao)
+     *
+     * @param params the params
+     * @return the ResourceUsage
+     */
+    @ApiOperation(value = "Resource usage by workload for selected Pods during chao 조회(Get Resource usage by workload for selected Pods during chao)", nickname = "getResourceUsageByWorkload")
+    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @GetMapping("/resourceUsageByWorkload/{name:.+}")
+    public ResourceUsage getResourceUsageByWorkload(Params params) {
+        return experimentsService.getResourceUsageByWorkload(params);
+    }
+
+    /**
+     * Resource usage by node during chaos 조회(Get Resource usage by node during chaos)
+     *
+     * @param params the params
+     * @return the ResourceUsage
+     */
+    @ApiOperation(value = "Resource usage by node during chaos 조회(Get Resource usage by node during chaos)", nickname = "getResourceUsageByNode")
+    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @GetMapping("/resourceUsageByNode/{name:.+}")
+    public ResourceUsage getResourceUsageByNode(Params params) {
+        return experimentsService.getResourceUsageByNode(params);
     }
 }
 

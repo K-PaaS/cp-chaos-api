@@ -9,7 +9,6 @@ import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.chaos.model.ChaosResource;
-import org.container.platform.chaos.api.chaos.model.ResourceUsageOfChaosList;
 import org.container.platform.chaos.api.chaos.model.StressChaos;
 import org.container.platform.chaos.api.chaos.model.StressChaosResourcesDataList;
 import org.container.platform.chaos.api.workloads.pods.Pods;
@@ -367,20 +366,6 @@ public class ExperimentsService {
     }
 
     /**
-     * Experiments Resource Usage of Chaos 목록 조회 (Get Experiments Resource Usage of Chaos List)
-     *
-     * @param params the params
-     * @return the ResourceUsageOfChaosList
-     */
-    public ResourceUsageOfChaosList getResourceUsageOfChaosList(Params params) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/chaos/resourceGraph", HttpMethod.GET, null, Map.class, params);
-
-        ResourceUsageOfChaosList resourceUsageOfChaosList = commonService.setResultObject(responseMap, ResourceUsageOfChaosList.class);
-        return (ResourceUsageOfChaosList) commonService.setResultModel(resourceUsageOfChaosList, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-    /**
      * StressChaos Resources Data 생성(Create StressChaos Resources Data)
      *
      * @param params the params
@@ -582,6 +567,48 @@ public class ExperimentsService {
         newPodsList.setItems(removeDuplicateItems);
 
         return newPodsList;
+    }
+
+    /**
+     * Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)
+     *
+     * @param params the params
+     * @return the ResourceUsage
+     */
+    public ResourceUsage getResourceUsageByPod(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos/resourceUsageByPod/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+
+        ResourceUsage resourceUsage = commonService.setResultObject(responseMap, ResourceUsage.class);
+        return (ResourceUsage) commonService.setResultModel(resourceUsage, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Resource usage by workload for selected Pods during chao 조회(Get Resource usage by workload for selected Pods during chao)
+     *
+     * @param params the params
+     * @return the ResourceUsage
+     */
+    public ResourceUsage getResourceUsageByWorkload(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos/resourceUsageByWorkload/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+
+        ResourceUsage resourceUsage = commonService.setResultObject(responseMap, ResourceUsage.class);
+        return (ResourceUsage) commonService.setResultModel(resourceUsage, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Resource usage by node during chaos 조회(Get Resource usage by node during chaos)
+     *
+     * @param params the params
+     * @return the ResourceUsage
+     */
+    public ResourceUsage getResourceUsageByNode(Params params) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos/resourceUsageByNode/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+
+        ResourceUsage resourceUsage = commonService.setResultObject(responseMap, ResourceUsage.class);
+        return (ResourceUsage) commonService.setResultModel(resourceUsage, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
