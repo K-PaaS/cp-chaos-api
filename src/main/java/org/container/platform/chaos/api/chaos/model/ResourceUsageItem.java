@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class ResourceUsageItem {
     private List<String> time;
-    private List<String> podName;
+    private List<String> resourceName;
     private List<List<String>> cpu;
     private List<List<String>> memory;
     private List<List<Integer>> appStatus;
