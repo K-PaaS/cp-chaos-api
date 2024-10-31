@@ -18,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,6 +112,13 @@ public class ExperimentsService {
             HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, params);
             ExperimentsItem stressList = commonService.setResultObject(responseMapStress, ExperimentsItem.class);
+
+            LocalDateTime startTime = LocalDateTime.ofInstant(Instant.parse(stressList.getMetadata().getCreationTimestamp()), ZoneId.systemDefault());
+            LocalDateTime endTime = LocalDateTime.ofInstant(Instant.parse(calculateEndTime(stressList.getMetadata().getCreationTimestamp(), stressList.getSpec().getDuration())), ZoneId.systemDefault());
+            Duration duration = Duration.between(startTime, endTime);
+            long durationInMillis = duration.toMillis();
+            stressList.setExperimentTime(durationInMillis);
+
             experiments.addItem(stressList);
         }
 
@@ -269,19 +275,27 @@ public class ExperimentsService {
                     propertyService.getCpMasterApiChaosStressScenariosCreateUrl(), HttpMethod.POST, ResultStatus.class, params);
 
             // stresschaos DB 등록
-            StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
-            if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
-                params.setNamespace(params.getChaosNamespace());
-                ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                        propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+            StressChaos stressChaos = getStressChaos(params);
+            LocalDateTime startTime = LocalDateTime.ofInstant(Instant.parse(stressChaos.getCreationTime()), ZoneId.systemDefault());
+            LocalDateTime endTime = LocalDateTime.ofInstant(Instant.parse(calculateEndTime(stressChaos.getCreationTime(), params.getDuration())), ZoneId.systemDefault());
+            Duration duration = Duration.between(startTime, endTime);
+            long durationInMillis = duration.toMillis();
 
-                return (ResultStatus) commonService.setResultModel(resultStatusDB, Constants.RESULT_STATUS_FAIL);
-            } else {
-                ResultStatus resultStatusCollector = restTemplateService.send(Constants.TARGET_CHAOS_COLLECTOR_API,
-                        "/scheduler", HttpMethod.POST, params, ResultStatus.class, params);
+            if (durationInMillis >= 60000) {
+                StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
+                if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
+                    params.setNamespace(params.getChaosNamespace());
+                    ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                            propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
 
-                if (!resultStatusCollector.getResultCode().equals("SUCCESS")) {
-                    return (ResultStatus) commonService.setResultModel(resultStatusCollector, Constants.RESULT_STATUS_FAIL);
+                    return (ResultStatus) commonService.setResultModel(resultStatusDB, Constants.RESULT_STATUS_FAIL);
+                } else {
+                    ResultStatus resultStatusCollector = restTemplateService.send(Constants.TARGET_CHAOS_COLLECTOR_API,
+                            "/scheduler", HttpMethod.POST, params, ResultStatus.class, params);
+
+                    if (!resultStatusCollector.getResultCode().equals("SUCCESS")) {
+                        return (ResultStatus) commonService.setResultModel(resultStatusCollector, Constants.RESULT_STATUS_FAIL);
+                    }
                 }
             }
         }

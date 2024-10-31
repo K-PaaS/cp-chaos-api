@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 
-
 import java.util.List;
 
 @Data
 public class ExperimentsItem {
+    private long experimentTime;
+
     private Metadata metadata;
     private String kind;
     private Spec spec;
@@ -33,7 +34,7 @@ public class ExperimentsItem {
     }
 
     @Data
-    public class Delay  {
+    public class Delay {
         private String latency;
     }
 
