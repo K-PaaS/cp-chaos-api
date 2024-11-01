@@ -281,7 +281,7 @@ public class ExperimentsService {
             Duration duration = Duration.between(startTime, endTime);
             long durationInMillis = duration.toMillis();
 
-            if (durationInMillis >= 60000) {
+            if (durationInMillis >= 30000) {
                 StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
                 if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
                     params.setNamespace(params.getChaosNamespace());
