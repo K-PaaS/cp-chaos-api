@@ -321,11 +321,33 @@ public class ExperimentsService {
         if (params.kind.equals("StressChaos")) {
             resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiChaosStressScenariosDeleteUrl(), HttpMethod.DELETE, null, ResultStatus.class, params);
+            
+            ResultStatus deleteDBStressChaos = deleteStressChaos(params);
+            if (deleteDBStressChaos.getHttpStatusCode().equals(200)) {
+                ResultStatus resultModel = (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+                resultModel.setDetailMessage("chaos는 삭제되었으나, Metric가 정상적으로 삭제되지 않았습니다. 관리자에게 문의하세요.");
 
+                return resultModel;
+
+            }
         }
         return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
 
     }
+
+    /**
+     * StressChaos DB 삭제(Delete StressChaos DB)
+     *
+     * @param params the params
+     * @return the resultStatus
+     */
+    public ResultStatus deleteStressChaos(Params params) {
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_COMMON_API,
+                "/chaos/stressChaos/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.DELETE, null, ResultStatus.class, params);
+
+        return (ResultStatus) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+    }
+
 
     /**
      * ExperimentsList Events 목록 조회 (Get Experiments Events List)
