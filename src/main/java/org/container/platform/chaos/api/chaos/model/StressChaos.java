@@ -14,7 +14,8 @@ import lombok.Data;
 
 @Data
 public class StressChaos {
-
+    private String resultCode;
+    private String resultMessage;
     private long chaosId;
     private String chaosName;
     private String namespaces;

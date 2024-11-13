@@ -10,7 +10,6 @@ import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.chaos.model.ChaosResource;
 import org.container.platform.chaos.api.chaos.model.StressChaos;
-import org.container.platform.chaos.api.chaos.model.StressChaosResourcesDataList;
 import org.container.platform.chaos.api.workloads.pods.Pods;
 import org.container.platform.chaos.api.workloads.pods.PodsList;
 import org.container.platform.chaos.api.workloads.pods.support.PodsListItem;
@@ -280,9 +279,11 @@ public class ExperimentsService {
             LocalDateTime endTime = LocalDateTime.ofInstant(Instant.parse(calculateEndTime(stressChaos.getCreationTime(), params.getDuration())), ZoneId.systemDefault());
             Duration duration = Duration.between(startTime, endTime);
             long durationInMillis = duration.toMillis();
+            params.setCreationTime(String.valueOf(startTime));
+            params.setChaosId(stressChaos.getChaosId());
 
             if (durationInMillis >= 30000) {
-                StressChaosResourcesDataList resultStatusDB = createStressChaosResourcesData(params);
+                StressChaos resultStatusDB = createStressChaosData(params);
                 if (!resultStatusDB.getResultCode().equals("SUCCESS")) {
                     params.setNamespace(params.getChaosNamespace());
                     ResultStatus resultStatusDelete = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -406,16 +407,12 @@ public class ExperimentsService {
      * @param params the params
      * @return the ResultStatus
      */
-    public StressChaosResourcesDataList createStressChaosResourcesData(Params params) {
-        StressChaosResourcesDataList stressChaosResourcesDataList = new StressChaosResourcesDataList();
-        stressChaosResourcesDataList.setStressChaos(getStressChaos(params));
-        stressChaosResourcesDataList.setChaosResource(getChaosResources(params));
-        StressChaosResourcesDataList resultStatus = restTemplateService.sendGlobal(Constants.TARGET_COMMON_API,
-                "/chaos/stressChaosResourceList", HttpMethod.POST, stressChaosResourcesDataList, StressChaosResourcesDataList.class, params);
+    public StressChaos createStressChaosData(Params params) {
+        StressChaos stressChaos = getStressChaos(params);
+        StressChaos resultStatus = restTemplateService.sendGlobal(Constants.TARGET_COMMON_API,
+                "/chaos/stressChaos", HttpMethod.POST, stressChaos, StressChaos.class, params);
 
-        params.setStressChaosResourceIds(resultStatus.getResultList());
-
-        return (StressChaosResourcesDataList) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
+        return (StressChaos) commonService.setResultModel(resultStatus, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -433,19 +430,6 @@ public class ExperimentsService {
         return stressChaos;
     }
 
-    /**
-     * Chaos Resource 정보 조회  (Get Chaos Resource info)
-     *
-     * @param params the params
-     * @return the ResultStatus
-     */
-    public List<ChaosResource> getChaosResources(Params params) {
-        PodsList podsList = getChaosPodListByLabel(params);
-        NodesList nodesList = getNodesList(params);
-        List<ChaosResource> chaosResources = setChaosResources(podsList, nodesList, params);
-
-        return chaosResources;
-    }
 
     /**
      * StressChaos 값 설정  (Set StressChaos)
@@ -464,111 +448,6 @@ public class ExperimentsService {
         return stressChaos;
     }
 
-    /**
-     * Chaos Pod List By Label 조회  (Get Chaos Pod List By Label)
-     *
-     * @return the PodsList
-     * @PodsList PodsList the PodsList
-     */
-    public PodsList getChaosPodListByLabel(Params params) {
-        PodsList totalPodsList = new PodsList();
-        params.setNamespace((String) params.getNamespaces().get(0));
-        Boolean firstSetting = true;
-
-        List<PodsListItem> totalItems = new ArrayList<>();
-
-        for (List<String> value : params.getPods().values()) {
-            for (String pod : value) {
-                params.setResourceName(pod);
-                HashMap responsePod = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                        propertyService.getCpMasterApiListPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
-                Pods pods = commonService.setResultObject(responsePod, Pods.class);
-                Map labels = (Map) pods.getLabels();
-                String fieldSelectors = "?labelSelector=";
-                int count = 0;
-                for (Object label : labels.entrySet()) {
-                    count++;
-                    if (count < labels.size()) {
-                        fieldSelectors += label + ",";
-                    } else {
-                        fieldSelectors += label;
-                    }
-                }
-
-                HashMap responsePodList = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                        propertyService.getCpMasterApiListPodsListUrl() + fieldSelectors, HttpMethod.GET, null, Map.class, params);
-                PodsList podsList = commonService.setResultObject(responsePodList, PodsList.class);
-                totalItems.addAll(podsList.getItems());
-            }
-        }
-        totalPodsList.setItems(totalItems);
-        PodsList removeDuplicatePodLists = removeDuplicatePodsList(totalPodsList);
-        List<PodsListItem> runningPodListsItem = removeDuplicatePodLists.getItems().stream()
-                .filter(item -> item.getStatus().getPhase().equals("Running"))
-                .collect(Collectors.toList());
-
-        PodsList podLists = new PodsList();
-        podLists.setItems(runningPodListsItem);
-
-        return (PodsList) commonService.setResultModel(podLists, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-    /**
-     * Nodes 목록 조회(Get Nodes list)
-     *
-     * @param params the params
-     * @return the nodes list
-     */
-    public NodesList getNodesList(Params params) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesListUrl(), HttpMethod.GET, null, Map.class, params);
-        NodesList nodesList = commonService.setResultObject(responseMap, NodesList.class);
-        nodesList = commonService.resourceListProcessing(nodesList, params, NodesList.class);
-
-        return (NodesList) commonService.setResultModel(nodesList, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-    /**
-     * Chaos Resource 값 설정  (Set Chaos Resource)
-     *
-     * @return the chaosResources
-     * @List<ChaosResource> List<ChaosResource> the List<ChaosResource>
-     */
-    public List<ChaosResource> setChaosResources(PodsList podsList, NodesList nodesList, Params params) {
-        List<ChaosResource> chaosResources = new ArrayList<>();
-
-        if (!podsList.getItems().isEmpty()) {
-            for (PodsListItem item : podsList.getItems()) {
-                ChaosResource chaosResource = new ChaosResource();
-                chaosResource.setResourceName(item.getName());
-                chaosResource.setType("pod");
-                for (List<String> pods : params.getPods().values()) {
-                    for (String pod : pods) {
-                        if (item.getName().equals(pod)) {
-                            chaosResource.setChoice(1);
-                            break;
-                        } else {
-                            chaosResource.setChoice(0);
-                        }
-                    }
-                }
-                chaosResource.setGenerateName(item.getMetadata().getGenerateName());
-                chaosResource.setChaosName(params.getName());
-                chaosResource.setNamespaces(item.getNamespace());
-                chaosResources.add(chaosResource);
-            }
-        }
-
-        for (NodesListItem item : nodesList.getItems()) {
-            ChaosResource chaosResource = new ChaosResource();
-            chaosResource.setResourceName(item.getName());
-            chaosResource.setType("node");
-            chaosResource.setChoice(0);
-            chaosResources.add(chaosResource);
-        }
-
-        return chaosResources;
-    }
 
     /**
      * EndTime 계산 (Calculate EndTime)
@@ -585,24 +464,6 @@ public class ExperimentsService {
         return endDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-    /**
-     * PodsList 내 중복 파드 제거 (Remove duplicate pods in PodsList)
-     *
-     * @return the PodsList
-     * @PodsList PodsList the PodsList
-     */
-    public PodsList removeDuplicatePodsList(PodsList podsList) {
-        Set<String> podNames = new HashSet<>();
-
-        List<PodsListItem> removeDuplicateItems = podsList.getItems().stream()
-                .filter(item -> podNames.add(item.getName()))
-                .collect(Collectors.toList());
-
-        PodsList newPodsList = new PodsList();
-        newPodsList.setItems(removeDuplicateItems);
-
-        return newPodsList;
-    }
 
     /**
      * Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)

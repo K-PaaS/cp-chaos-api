@@ -81,6 +81,8 @@ public class Params {
     private String uid = Constants.EMPTY_STRING;
     public String chaosNamespace = Constants.EMPTY_STRING;
     private String duration = Constants.EMPTY_STRING;
+    private String creationTime = Constants.EMPTY_STRING;
+    private long chaosId = 0;
     private String action = Constants.EMPTY_STRING;
     private String gracePeriod = Constants.EMPTY_STRING;
     private Map<String, String> labelSelectors = null;
@@ -91,7 +93,6 @@ public class Params {
     private String object_id = Constants.EMPTY_STRING;
     private Boolean event = false;
     private List statusList;
-    private List<Long> stressChaosResourceIds;
 
     public
     @JsonProperty("yaml")
