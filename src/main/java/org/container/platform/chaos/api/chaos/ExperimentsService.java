@@ -279,8 +279,6 @@ public class ExperimentsService {
             LocalDateTime endTime = LocalDateTime.ofInstant(Instant.parse(calculateEndTime(stressChaos.getCreationTime(), params.getDuration())), ZoneId.systemDefault());
             Duration duration = Duration.between(startTime, endTime);
             long durationInMillis = duration.toMillis();
-            params.setCreationTime(String.valueOf(startTime));
-            params.setChaosId(stressChaos.getChaosId());
 
             if (durationInMillis >= 30000) {
                 StressChaos resultStatusDB = createStressChaosData(params);
