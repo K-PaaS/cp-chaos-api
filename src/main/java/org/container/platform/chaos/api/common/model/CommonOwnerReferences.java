@@ -14,5 +14,6 @@ public
 class CommonOwnerReferences {
     private String name;
     private String uid;
+    private String kind;
     private boolean controller;
 }

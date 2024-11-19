@@ -3,16 +3,14 @@ package org.container.platform.chaos.api.chaos;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.container.platform.chaos.api.chaos.model.*;
-import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesList;
-import org.container.platform.chaos.api.clusters.clusters.nodes.support.NodesListItem;
 import org.container.platform.chaos.api.common.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
-import org.container.platform.chaos.api.chaos.model.ChaosResource;
 import org.container.platform.chaos.api.chaos.model.StressChaos;
-import org.container.platform.chaos.api.workloads.pods.Pods;
 import org.container.platform.chaos.api.workloads.pods.PodsList;
-import org.container.platform.chaos.api.workloads.pods.support.PodsListItem;
+import org.container.platform.chaos.api.workloads.pods.support.HorizontalPodAutoscalerItem;
+import org.container.platform.chaos.api.workloads.pods.support.HorizontalPodAutoscalerList;
+import org.container.platform.chaos.api.workloads.replicaSets.ReplicaSetsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.logging.log4j.util.Strings.isEmpty;
 import static org.springframework.vault.support.DurationParser.parseDuration;
@@ -470,8 +467,47 @@ public class ExperimentsService {
      * @return the ResourceUsage
      */
     public ResourceUsage getResourceUsageByPod(Params params) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
-                "/chaos/resourceUsageByPod/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+        HashMap horizontalpodautoscalers = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListAutoscalingListUrl(), HttpMethod.GET, null, Map.class, params);
+        HorizontalPodAutoscalerList horizontalPodAutoscalerList = commonService.setResultObject(horizontalpodautoscalers, HorizontalPodAutoscalerList.class);
+        boolean isHPA = false;
+
+        for (HorizontalPodAutoscalerItem horizontalPodAutoscalerItem : horizontalPodAutoscalerList.getItems()) {
+            String hpaTargetName = horizontalPodAutoscalerItem.getSpec().getScaleTargetRef().getName();
+            String hpaTargetKind = horizontalPodAutoscalerItem.getSpec().getScaleTargetRef().getKind();
+
+            for (Object podName : params.getPodList()) {
+                HashMap podHashMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                        propertyService.getCpMasterApiListPodsGetUrl(), HttpMethod.GET, null, Map.class, params);
+                PodsList podList = commonService.setResultObject(podHashMap, PodsList.class);
+                String podOwnerKind = podList.getItems().get(0).getMetadata().getOwnerReferences().get(0).getKind();
+                String podOwnerName = podList.getItems().get(0).getMetadata().getOwnerReferences().get(0).getName();
+
+                if (hpaTargetKind.equals(podOwnerKind) && hpaTargetName.equals(podOwnerName)) {
+                    isHPA = true;
+                } else if (hpaTargetKind.equals("Deployment")) {
+                    HashMap replicaSetHashMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                            propertyService.getCpMasterApiListReplicaSetsGetUrl(), HttpMethod.GET, null, Map.class, params);
+                    ReplicaSetsList replicaSetsList = commonService.setResultObject(replicaSetHashMap, ReplicaSetsList.class);
+                    String replicaSetOwnerName = replicaSetsList.getItems().get(0).getMetadata().getOwnerReferences().get(0).getName();
+
+                    if (hpaTargetName.equals(replicaSetOwnerName)) {
+                        isHPA = true;
+                    }
+
+                }
+            }
+        }
+
+        HashMap responseMap = null;
+
+        if (isHPA) {
+            responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                    "/chaos/resourceUsageByHpaPod/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+        } else {
+            responseMap = (HashMap) restTemplateService.send(Constants.TARGET_COMMON_API,
+                    "/chaos/resourceUsageByPod/{chaosName}".replace("{chaosName}", params.getName()), HttpMethod.GET, null, Map.class, params);
+        }
 
         ResourceUsage resourceUsage = commonService.setResultObject(responseMap, ResourceUsage.class);
         return (ResourceUsage) commonService.setResultModel(resourceUsage, Constants.RESULT_STATUS_SUCCESS);
