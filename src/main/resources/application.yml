@@ -79,12 +79,16 @@ cpResource:
 cpMaster:
   api:
     list:
+      autoscaling:
+        list: "/apis/autoscaling/v2/namespaces/{namespace}/horizontalpodautoscalers"
       roleBindings:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
       pods:
         list: "/api/v1/namespaces/{namespace}/pods"
         get: "/api/v1/namespaces/{namespace}/pods/{name}"
+      replicaSets:
+        get: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
       nodes:
         list: "/api/v1/nodes"
         get: "/api/v1/nodes/{name}"

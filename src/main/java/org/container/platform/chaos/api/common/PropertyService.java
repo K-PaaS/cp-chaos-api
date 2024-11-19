@@ -127,12 +127,20 @@ public class PropertyService {
     @Value("${cpMaster.api.metrics.pod.get}")
     private String cpMasterApiMetricsPodsGetUrl;
 
+    //autoscaling
+    @Value("${cpMaster.api.list.autoscaling.list}")
+    private String cpMasterApiListAutoscalingListUrl;
+
     //pod
     @Value("${cpMaster.api.list.pods.list}")
     private String cpMasterApiListPodsListUrl;
 
     @Value("${cpMaster.api.list.pods.get}")
     private String cpMasterApiListPodsGetUrl;
+
+    //replicaset
+    @Value("${cpMaster.api.list.replicaSets.get}")
+    private String cpMasterApiListReplicaSetsGetUrl;
 
     //node
     @Value("${cpMaster.api.list.nodes.list}")
