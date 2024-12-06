@@ -1,49 +1,79 @@
 spring:
   application:
-    name: cp-portal-chaos-api
+    name: cp-chaos-api
   freemarker:
     template-loader-path: classpath:/templates/
-
-jwt:
-  secret: cp-secret
-  expirationDateInMs: 3600000
-
-project:
-  name: cp-portal-chaos-api
-  artifactId: cp-portal-chaos-api
-  description: Chaos API of the Container Platform Portal
 
 management:
   security:
     enabled: false
 
+
+server:
+  port: ${PORT:8092}
+  auth:
+    valid: N
+
+chaos:
+  url: ${CHAOS_DASHBOARD_API_URI}
+  api:
+    experiment:
+      list: "/api/experiments"
+      get: "/api/experiments/{uid}"
+    event:
+      list: "/api/events"
+
+jwt:
+  secret: dfa4ad2646d6b4864f2dfa5428249d4eb54dc29bf3f29658fd4676d25706f83c9fc4ef626fa60d2c589a79ebec448ba4d591e2fcb04926fab783fcae50e97c06
+  expirationDateInMs: 10800000
+  refreshExpirationDateInMs: 10800000
+
 cpNamespace:
-  ignoreNamespace: kubernetes-dashboard, kube-node-lease, kube-public, kube-system, default, cp-temp-namespace
   defaultNamespace: cp-portal-temp-namespace
 
 cpMaster:
   api:
     url: TEST-ONLY.DUMMY.COM:6443
     list:
+      autoscaling:
+        list: "/apis/autoscaling/v2/namespaces/{namespace}/horizontalpodautoscalers"
       roleBindings:
         create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
         delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
-      users:
-        get: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
-        create: "/api/v1/namespaces/{namespace}/serviceaccounts"
-        delete: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
-      namespaces:
-        list: "/api/v1/namespaces"
-        get: "/api/v1/namespaces/{namespace}"
-        create: "/api/v1/namespaces"
-        delete: "/api/v1/namespaces/{name}"
-        update: "/api/v1/namespaces/{name}"
-      secrets:
-        get: "/api/v1/namespaces/{namespace}/secrets/{name}"
-        create: "/api/v1/namespaces/{namespace}/secrets"
-      clusterRoleBindings:
-        create: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings"
-        delete: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}"
+      pods:
+        list: "/api/v1/namespaces/{namespace}/pods"
+        get: "/api/v1/namespaces/{namespace}/pods/{name}"
+      replicaSets:
+        get: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+      nodes:
+        list: "/api/v1/nodes"
+        get: "/api/v1/nodes/{name}"
+    metrics:
+      node:
+        list: "/apis/metrics.k8s.io/v1beta1/nodes"
+        get: "/apis/metrics.k8s.io/v1beta1/nodes/{name}"
+      pod:
+        list: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods"
+        get: "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods/{name}"
+    chaos:
+      podFaults:
+        podKill:
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{chaosname}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos/{chaosname}"
+      networkFaults:
+        delay:
+          list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
+          get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{chaosname}"
+          create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos"
+          delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos/{chaosname}"
+      stressScenarios:
+        list: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+        get: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{chaosname}"
+        create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
+        delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{chaosname}"
+
 
 commonApi:
   url: ${CP_PORTAL_COMMON_API_URI}
@@ -51,3 +81,8 @@ commonApi:
     id: admin
     password: cpcommon!123
 
+chaosCollectorApi:
+  url: ${CP_PORTAL_CHAOS_COLLECTOR_API_URI}
+  authorization:
+    id: admin
+    password: cpcollector!123
