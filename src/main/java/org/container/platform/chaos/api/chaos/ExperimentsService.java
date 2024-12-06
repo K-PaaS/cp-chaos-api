@@ -67,6 +67,7 @@ public class ExperimentsService {
                 propertyService.getCpMasterApiChaosPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
         experimentsList.setItems(podFaultList.getItems());
+
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
@@ -76,6 +77,16 @@ public class ExperimentsService {
                 propertyService.getCpMasterApiChaosStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
         experimentsList.getItems().addAll(stressList.getItems());
+
+        for (ExperimentsListItems item : experimentsList.getItems()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getMetadata().getCreationTimestamp(), formatter);
+            ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String creationTime = seoulDateTime.format(outputFormatter);
+
+            item.getMetadata().setCreationTimestamp(creationTime);
+        }
 
         experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
 
@@ -117,6 +128,14 @@ public class ExperimentsService {
 
             experiments.addItem(stressList);
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(experiments.getItems().get(0).getMetadata().getCreationTimestamp(), formatter);
+        ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String creationTime = seoulDateTime.format(outputFormatter);
+
+        experiments.getItems().get(0).getMetadata().setCreationTimestamp(creationTime);
 
         return (Experiments) commonService.setResultModel(experiments, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -364,6 +383,17 @@ public class ExperimentsService {
                         new TypeReference<List<ExperimentsEventsListItems>>() {
                         }
                 );
+
+                for (ExperimentsEventsListItems item : items) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                    ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getCreated_at(), formatter);
+                    ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    String creationTime = seoulDateTime.format(outputFormatter);
+
+                    item.setCreated_at(creationTime);
+                }
+
                 experimentsEventsList.setItems(items);
                 experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
                 return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
@@ -377,6 +407,17 @@ public class ExperimentsService {
                         new TypeReference<List<ExperimentsEventsListItems>>() {
                         }
                 );
+
+                for (ExperimentsEventsListItems item : items) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                    ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getCreated_at(), formatter);
+                    ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    String creationTime = seoulDateTime.format(outputFormatter);
+
+                    item.setCreated_at(creationTime);
+                }
+
                 experimentsEventsList.setItems(items);
                 experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
                 return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
@@ -390,6 +431,17 @@ public class ExperimentsService {
                     new TypeReference<List<ExperimentsEventsListItems>>() {
                     }
             );
+
+            for (ExperimentsEventsListItems item : items) {
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getCreated_at(), formatter);
+                ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String creationTime = seoulDateTime.format(outputFormatter);
+
+                item.setCreated_at(creationTime);
+            }
+
             experimentsEventsList.setItems(items);
             experimentsEventsList = commonService.resourceListProcessing(experimentsEventsList, params, ExperimentsEventsList.class);
             return (ExperimentsEventsList) commonService.setResultModel(experimentsEventsList, Constants.RESULT_STATUS_SUCCESS);
