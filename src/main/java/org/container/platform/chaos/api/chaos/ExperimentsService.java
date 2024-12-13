@@ -66,28 +66,35 @@ public class ExperimentsService {
         HashMap responseMapPodFault = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosPodFaultsPodKillListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList podFaultList = commonService.setResultObject(responseMapPodFault, ExperimentsList.class);
-        experimentsList.setItems(podFaultList.getItems());
+        if (podFaultList != null) {
+            experimentsList.setItems(podFaultList.getItems());
+        }
 
         HashMap responseMapNetworkDelay = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosNetworkFaultsDelayListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList networkDelayList = commonService.setResultObject(responseMapNetworkDelay, ExperimentsList.class);
-        experimentsList.getItems().addAll(networkDelayList.getItems());
+        if (networkDelayList != null) {
+            experimentsList.getItems().addAll(networkDelayList.getItems());
+        }
 
         HashMap responseMapStress = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosStressScenariosListUrl(), HttpMethod.GET, null, Map.class, params);
         ExperimentsList stressList = commonService.setResultObject(responseMapStress, ExperimentsList.class);
-        experimentsList.getItems().addAll(stressList.getItems());
-
-        for (ExperimentsListItems item : experimentsList.getItems()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getMetadata().getCreationTimestamp(), formatter);
-            ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String creationTime = seoulDateTime.format(outputFormatter);
-
-            item.getMetadata().setCreationTimestamp(creationTime);
+        if (stressList != null) {
+            experimentsList.getItems().addAll(stressList.getItems());
         }
 
+        if (experimentsList.getItems() != null) {
+            for (ExperimentsListItems item : experimentsList.getItems()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getMetadata().getCreationTimestamp(), formatter);
+                ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String creationTime = seoulDateTime.format(outputFormatter);
+
+                item.getMetadata().setCreationTimestamp(creationTime);
+            }
+        }
         experimentsList = commonService.resourceListProcessing(experimentsList, params, ExperimentsList.class);
 
         return (ExperimentsList) commonService.setResultModel(experimentsList, Constants.RESULT_STATUS_SUCCESS);
@@ -129,13 +136,15 @@ public class ExperimentsService {
             experiments.addItem(stressList);
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        ZonedDateTime utcDateTime = ZonedDateTime.parse(experiments.getItems().get(0).getMetadata().getCreationTimestamp(), formatter);
-        ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String creationTime = seoulDateTime.format(outputFormatter);
+        if (experiments.getItems().size() > 0) {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            ZonedDateTime utcDateTime = ZonedDateTime.parse(experiments.getItems().get(0).getMetadata().getCreationTimestamp(), formatter);
+            ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String creationTime = seoulDateTime.format(outputFormatter);
 
-        experiments.getItems().get(0).getMetadata().setCreationTimestamp(creationTime);
+            experiments.getItems().get(0).getMetadata().setCreationTimestamp(creationTime);
+        }
 
         return (Experiments) commonService.setResultModel(experiments, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -159,14 +168,17 @@ public class ExperimentsService {
         );
         List<ExperimentsDashboardListItems> newItems = new ArrayList<>();
 
-        for (ExperimentsDashboardListItems item : items) {
-            for (Object uid : params.getStatusList()) {
-                if (Objects.equals(uid, item.getUid())) {
-                    newItems.add(item);
-                    break;
+        if (items != null) {
+            for (ExperimentsDashboardListItems item : items) {
+                for (Object uid : params.getStatusList()) {
+                    if (Objects.equals(uid, item.getUid())) {
+                        newItems.add(item);
+                        break;
+                    }
                 }
             }
         }
+
         experimentsDashboardList.setItems(newItems);
 
         return (ExperimentsDashboardList) commonService.setResultModel(experimentsDashboardList, Constants.RESULT_STATUS_SUCCESS);
@@ -196,6 +208,8 @@ public class ExperimentsService {
     public ResultStatus createExperiments(Params params) {
         String line = "";
         StringBuilder stringBuilder = new StringBuilder();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ResultStatus resultStatus = null;
 
         Map map = new HashMap();
         map.put("kind", params.getKind());
@@ -209,6 +223,7 @@ public class ExperimentsService {
         stringBuilder.append(templateService.convert("create_chaosMesh_common.ftl", map));
         stringBuilder.append(Constants.NEW_LINE);
         stringBuilder.append(Constants.CHAOS_MESH_NAMESPACES);
+
         for (int i = 0; i < params.getNamespaces().size(); i++) {
             line = "      - " + params.getNamespaces().get(i) + Constants.NEW_LINE;
             stringBuilder.append(line);
@@ -216,7 +231,6 @@ public class ExperimentsService {
 
         stringBuilder.append(Constants.CHAOS_MESH_LABEL_SELECTOR);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> mapLabelSelector = params.getLabelSelectors();
 
         for (Map.Entry<String, String> entry : mapLabelSelector.entrySet()) {
@@ -243,7 +257,7 @@ public class ExperimentsService {
             }
         }
 
-        ResultStatus resultStatus = null;
+
         if (params.getKind().equals(Constants.CHAOS_MESH_KIND_POD_CHAOS)) {
             stringBuilder.append(templateService.convert("create_podFaults_podKill.ftl", map));
             params.setYaml(stringBuilder.toString());
@@ -408,14 +422,16 @@ public class ExperimentsService {
                         }
                 );
 
-                for (ExperimentsEventsListItems item : items) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-                    ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getCreated_at(), formatter);
-                    ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    String creationTime = seoulDateTime.format(outputFormatter);
+                if (items != null) {
+                    for (ExperimentsEventsListItems item : items) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                        ZonedDateTime utcDateTime = ZonedDateTime.parse(item.getCreated_at(), formatter);
+                        ZonedDateTime seoulDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+                        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        String creationTime = seoulDateTime.format(outputFormatter);
 
-                    item.setCreated_at(creationTime);
+                        item.setCreated_at(creationTime);
+                    }
                 }
 
                 experimentsEventsList.setItems(items);
@@ -499,7 +515,7 @@ public class ExperimentsService {
     /**
      * EndTime 계산 (Calculate EndTime)
      *
-     * @return the endTime
+     * @return the endTime`
      * @creationTime creationTime the creationTime
      * @duration duration the duration
      */

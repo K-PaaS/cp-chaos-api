@@ -21,8 +21,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -175,31 +178,25 @@ public class ExperimentsServiceTest {
 
     @Test
     public void getExperimentsList_Valid_ReturnModel() {
-//        gParams.setKind("PodChaos");
         when(propertyService.getCpMasterApiChaosPodFaultsPodKillListUrl()).thenReturn("/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/podchaos", HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ExperimentsList.class)).thenReturn(gPodFaultExperimentsList);
-//        gExperimentsListModel.setItems(gPodFaultExperimentsList.getItems());
 
-//        gParams.setKind("NetworkChaos");
         when(propertyService.getCpMasterApiChaosNetworkFaultsDelayListUrl()).thenReturn("/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/networkchaos", HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ExperimentsList.class)).thenReturn(gNetworkDelayExperimentsList);
-//        gExperimentsListModel.getItems().addAll(gNetworkDelayExperimentsList.getItems());
 
-//        gParams.setKind("StressChaos");
         when(propertyService.getCpMasterApiChaosStressScenariosListUrl()).thenReturn("/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos", HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ExperimentsList.class)).thenReturn(gStressExperimentsList);
-//        gExperimentsListModel.getItems().addAll(gStressExperimentsList.getItems());
 
         when(commonService.resourceListProcessing(gExperimentsListModel, gParams, ExperimentsList.class)).thenReturn(gExperimentsListModel);
         when(commonService.setResultModel(gExperimentsListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gExperimentsListModel);
 
-//        ExperimentsList experimentsList = experimentsService.getExperimentsList(gParams);
+        ExperimentsList experimentsList = experimentsService.getExperimentsList(gParams);
 
 //        assertThat(experimentsList).isNotNull();
 //        assertEquals(Constants.RESULT_STATUS_SUCCESS, experimentsList.getResultCode());
@@ -224,6 +221,10 @@ public class ExperimentsServiceTest {
 
         when(commonService.setResultModel(gExperiments, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gExperiments);
 
+        Experiments experiments = experimentsService.getExperiments(gParams);
+
+//        assertThat(experiments).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, experiments.getResultCode());
     }
 
     @Test
@@ -233,6 +234,11 @@ public class ExperimentsServiceTest {
                 "/api/experiments", HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
 
         when(commonService.setResultModel(gExperimentsDashboardList, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gExperimentsDashboardList);
+
+        ExperimentsDashboardList experimentsDashboardList = experimentsService.getExperimentsStatusList(gParams);
+
+//        assertThat(experimentsDashboardList).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, experimentsDashboardList.getResultCode());
     }
 
     @Test
@@ -244,6 +250,10 @@ public class ExperimentsServiceTest {
 
         when(commonService.setResultModel(gExperimentsDashboard, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gExperimentsDashboard);
 
+        ExperimentsDashboard experimentsDashboard = experimentsService.getExperimentsStatus(gParams);
+
+//        assertThat(experimentsDashboard).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, experimentsDashboard.getResultCode());
     }
 
     @Test
@@ -270,6 +280,11 @@ public class ExperimentsServiceTest {
 
         when(commonService.setResultModel(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultStatusModel);
 
+//        ResultStatus resultStatus = experimentsService.createExperiments(gParams);
+
+//        assertThat(resultStatus).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
+
     }
 
     @Test
@@ -288,6 +303,11 @@ public class ExperimentsServiceTest {
 
         when(commonService.setResultModel(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultStatusModel);
 
+        ResultStatus resultStatus = experimentsService.deleteExperiments(gParams);
+
+//        assertThat(resultStatus).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
+
     }
 
     @Test
@@ -296,6 +316,11 @@ public class ExperimentsServiceTest {
                 "/chaos/stressChaos/{chaosName}".replace("{chaosName}", gParams.getName()), HttpMethod.DELETE, null, ResultStatus.class, gParams)).thenReturn(gResultStatusModel);
 
         when(commonService.setResultModel(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultStatusModel);
+
+        ResultStatus resultStatus = experimentsService.deleteStressChaos(gParams);
+
+//        assertThat(resultStatus).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
 
     }
 
@@ -309,6 +334,11 @@ public class ExperimentsServiceTest {
         when(commonService.resourceListProcessing(gExperimentsEventsList, gParams, ExperimentsEventsList.class)).thenReturn(gExperimentsEventsList);
         when(commonService.setResultModel(gExperimentsEventsList, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gExperimentsEventsList);
 
+        ExperimentsEventsList experimentsEventsList = experimentsService.getExperimentsEventsList(gParams);
+
+//        assertThat(experimentsEventsList).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, experimentsEventsList.getResultCode());
+
     }
 
     @Test
@@ -319,6 +349,10 @@ public class ExperimentsServiceTest {
                 "/chaos/stressChaos", HttpMethod.POST, stressChaos, StressChaos.class, gParams)).thenReturn(gStressChaos);
         when(commonService.setResultModel(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultStatusModel);
 
+//        StressChaos resultStressChaos = experimentsService.createStressChaosData(gParams);
+
+//        assertThat(resultStressChaos).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStressChaos.getResultCode());
     }
 
     @Test
@@ -327,6 +361,21 @@ public class ExperimentsServiceTest {
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiChaosStressScenariosGetUrl(), HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ExperimentsItem.class)).thenReturn(gExperimentsItem);
+
+//        StressChaos stressChaos = experimentsService.getStressChaos(gParams);
+
+//        assertThat(stressChaos).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, stressChaos.getResultCode());
+
+    }
+
+    @Test
+    public void setStressChaos() {
+
+    }
+
+    @Test
+    public void calculateEndTime() {
 
     }
 
@@ -356,6 +405,10 @@ public class ExperimentsServiceTest {
         when(commonService.setResultObject(gResultMap, ResourceUsage.class)).thenReturn(gResourceUsage);
         when(commonService.setResultModel(gResourceUsage, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResourceUsage);
 
+//        ResourceUsage resourceUsage = experimentsService.getResourceUsageByPod(gParams);
+
+//        assertThat(resourceUsage).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resourceUsage.getResultCode());
     }
 
     @Test
@@ -365,6 +418,10 @@ public class ExperimentsServiceTest {
         when(commonService.setResultObject(gResultMap, ResourceUsage.class)).thenReturn(gResourceUsage);
         when(commonService.setResultModel(gResourceUsage, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResourceUsage);
 
+        ResourceUsage resourceUsage = experimentsService.getResourceUsageByWorkload(gParams);
+
+//        assertThat(resourceUsage).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resourceUsage.getResultCode());
     }
 
     @Test
@@ -373,6 +430,11 @@ public class ExperimentsServiceTest {
                 "/chaos/resourceUsageByNode/{chaosName}".replace("{chaosName}", gParams.getName()), HttpMethod.GET, null, Map.class, gParams)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ResourceUsage.class)).thenReturn(gResourceUsage);
         when(commonService.setResultModel(gResourceUsage, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResourceUsage);
+
+        ResourceUsage resourceUsage = experimentsService.getResourceUsageByNode(gParams);
+
+//        assertThat(resourceUsage).isNotNull();
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resourceUsage.getResultCode());
 
     }
 }
