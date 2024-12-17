@@ -20,7 +20,7 @@
     <td align="center"><a href="https://github.com/K-PaaS/sidecar-portal-ui">Portal UI</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/K-PaaS/cp-portal-api">🚩Portal API</a></td>
+    <td align="center"><a href="https://github.com/K-PaaS/cp-portal-api">Portal API</a></td>
     <td align="center"><a href="https://github.com/K-PaaS/sidecar-portal-api">Portal API</a></td>
   </tr>
   <tr>
@@ -40,7 +40,7 @@
     <td align="center"></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/K-PaaS/cp-chaos-api">Chaos API</a></td>
+    <td align="center"><a href="https://github.com/K-PaaS/cp-chaos-api">🚩Chaos API</a></td>
     <td align="center"></td>
   </tr>
   <tr>
