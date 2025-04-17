@@ -12,8 +12,8 @@ limitations under the License.
 */
 package org.container.platform.chaos.api.metrics.custom;
 
-public class BaseExponent {
 
+public class BaseExponent {
   private final int base;
   private final int exponent;
   private final Quantity.Format format;

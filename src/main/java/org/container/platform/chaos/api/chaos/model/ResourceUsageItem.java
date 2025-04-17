@@ -1,7 +1,6 @@
 package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
-
 import java.util.List;
 
 /**

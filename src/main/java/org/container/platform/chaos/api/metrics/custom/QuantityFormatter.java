@@ -13,7 +13,6 @@ limitations under the License.
 package org.container.platform.chaos.api.metrics.custom;
 
 import org.apache.commons.lang3.tuple.Pair;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 
@@ -30,8 +29,8 @@ public class QuantityFormatter {
     final String suffix = value.substring(parts[0].length());
     final BaseExponent baseExponent = new SuffixFormatter().parse(suffix);
     final BigDecimal unitMultiplier =
-        BigDecimal.valueOf(baseExponent.getBase())
-            .pow(baseExponent.getExponent(), MathContext.DECIMAL64);
+            BigDecimal.valueOf(baseExponent.getBase())
+                    .pow(baseExponent.getExponent(), MathContext.DECIMAL64);
     final BigDecimal unitlessValue = numericValue.multiply(unitMultiplier);
     return new Quantity(unitlessValue, baseExponent.getFormat());
   }
@@ -45,18 +44,16 @@ public class QuantityFormatter {
   }
 
   public String format(final Quantity quantity) {
-    switch (quantity.getFormat()) {
-      case DECIMAL_SI:
-      case DECIMAL_EXPONENT:
-        return toBase10String(quantity);
-      case BINARY_SI:
-        if (isFractional(quantity)) {
-          return toBase10String(new Quantity(quantity.getNumber(), Quantity.Format.DECIMAL_SI));
-        }
-        return toBase1024String(quantity);
-      default:
-        throw new IllegalArgumentException("Can't format a " + quantity.getFormat() + " quantity");
-    }
+      return switch (quantity.getFormat()) {
+          case DECIMAL_SI, DECIMAL_EXPONENT -> toBase10String(quantity);
+          case BINARY_SI -> {
+              if (isFractional(quantity)) {
+                  yield toBase10String(new Quantity(quantity.getNumber(), Quantity.Format.DECIMAL_SI));
+              }
+              yield toBase1024String(quantity);
+          }
+          default -> throw new IllegalArgumentException("Can't format a " + quantity.getFormat() + " quantity");
+      };
   }
 
   private boolean isFractional(Quantity quantity) {

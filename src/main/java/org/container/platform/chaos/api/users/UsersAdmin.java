@@ -1,14 +1,10 @@
 package org.container.platform.chaos.api.users;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonItemMetaData;
-
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-
 import org.container.platform.chaos.api.common.CommonUtils;
 import org.container.platform.chaos.api.common.Constants;
 
@@ -62,7 +58,7 @@ public class UsersAdmin {
         }
 
         public Secrets getSecrets() {
-            return (ObjectUtils.isEmpty(secrets)) ? new UsersAdmin.Secrets(Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT) {{
+            return (ObjectUtils.isEmpty(secrets)) ? new Secrets(Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT) {{
                 setSaSecret(Constants.NULL_REPLACE_TEXT);
             }} : secrets;
         }

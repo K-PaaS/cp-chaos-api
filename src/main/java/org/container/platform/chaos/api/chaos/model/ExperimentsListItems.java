@@ -2,8 +2,6 @@ package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class ExperimentsListItems {
     private String kind;

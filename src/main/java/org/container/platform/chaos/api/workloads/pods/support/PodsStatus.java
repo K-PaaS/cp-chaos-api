@@ -2,7 +2,6 @@ package org.container.platform.chaos.api.workloads.pods.support;
 
 import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonCondition;
-
 import java.util.List;
 
 /**

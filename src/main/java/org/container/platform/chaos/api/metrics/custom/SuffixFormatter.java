@@ -75,7 +75,7 @@ public class SuffixFormatter {
       return binarySuffix;
     }
 
-    if (suffix.length() > 0 && (suffix.charAt(0) == 'E' || suffix.charAt(0) == 'e')) {
+    if (!suffix.isEmpty() && (suffix.charAt(0) == 'E' || suffix.charAt(0) == 'e')) {
       return extractDecimalExponent(suffix);
     }
 
@@ -92,16 +92,12 @@ public class SuffixFormatter {
   }
 
   public String format(final Quantity.Format format, final int exponent) {
-    switch (format) {
-      case DECIMAL_SI:
-        return getDecimalSiSuffix(exponent);
-      case BINARY_SI:
-        return getBinarySiSuffix(exponent);
-      case DECIMAL_EXPONENT:
-        return exponent == 0 ? "" : "e" + exponent;
-      default:
-        throw new IllegalStateException("Can't format " + format + " with exponent " + exponent);
-    }
+      return switch (format) {
+          case DECIMAL_SI -> getDecimalSiSuffix(exponent);
+          case BINARY_SI -> getBinarySiSuffix(exponent);
+          case DECIMAL_EXPONENT -> exponent == 0 ? "" : "e" + exponent;
+          default -> throw new IllegalStateException("Can't format " + format + " with exponent " + exponent);
+      };
   }
 
   private String getBinarySiSuffix(int exponent) {

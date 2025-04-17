@@ -18,7 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,9 +34,9 @@ import java.util.stream.Collectors;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
-    private CustomUserDetailsService customUserDetailsService;
-    private UsersService usersService;
-    private AccessTokenService accessTokenService;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final UsersService usersService;
+    private final AccessTokenService accessTokenService;
 
     public CustomAuthenticationProvider(CustomUserDetailsService customUserDetailsService, UsersService usersService, AccessTokenService accessTokenService) {
         this.customUserDetailsService = customUserDetailsService;
@@ -58,11 +57,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
         String userType = list.get(0).getAuthority(); // USER TYPE
 
-        if( userId == null || userId.length() < 1) {
+        if( userId == null || userId.isEmpty()) {
             throw new AuthenticationCredentialsNotFoundException(MessageConstant.ID_REQUIRED.getMsg());
         }
 
-        if( userAuthId == null || userAuthId.length() < 1) {
+        if( userAuthId == null || userAuthId.isEmpty()) {
             throw new AuthenticationCredentialsNotFoundException(MessageConstant.AUTH_ID_REQUIRED.getMsg());
         }
 
@@ -74,7 +73,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UsersList loadedUsersList = usersService.getMappingClustersAndNamespacesListByUser(params);
 
         List<GrantedAuthority> portalGrantedAuthorityList = new ArrayList<>();
-        if(loadedUsersList.getItems().stream().map(Users::getUserType).collect(Collectors.toList()).contains(Constants.AUTH_CLUSTER_ADMIN))
+        if(loadedUsersList.getItems().stream().map(Users::getUserType).toList().contains(Constants.AUTH_CLUSTER_ADMIN))
             portalGrantedAuthorityList.add(new SimpleGrantedAuthority(Constants.AUTH_CLUSTER_ADMIN));
         else portalGrantedAuthorityList.add(list.get(0));
 
@@ -96,9 +95,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         portalGrantedAuthorityList.forEach(x -> LOGGER.info("##IN AUTHENTICATE:: JWT Token Set, portalGrantedAuthorityList: " + x));
 
-//        Collection<? extends GrantedAuthority> authorities = loadedUser.getAuthorities();
-        Collection<? extends GrantedAuthority> authorities = portalGrantedAuthorityList;
-
         if (loadedUser == null) {
             throw new InternalAuthenticationServiceException(MessageConstant.INVALID_LOGIN_INFO.getMsg());
         }
@@ -118,8 +114,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!loadedUser.isCredentialsNonExpired()) {
             throw new CredentialsExpiredException(MessageConstant.UNAVAILABLE_ID.getMsg());
         }
-//        UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(loadedUser, null, loadedUser.getAuthorities());
-        UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(loadedUser, null, authorities);
+        UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(loadedUser, null, portalGrantedAuthorityList);
         result.setDetails(authentication.getDetails());
 
         LOGGER.info("authenticate END, result : " + CommonUtils.loggerReplace(result.toString()));

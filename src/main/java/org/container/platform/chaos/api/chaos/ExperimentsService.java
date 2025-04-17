@@ -14,11 +14,9 @@ import org.container.platform.chaos.api.workloads.replicaSets.ReplicaSetsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import static org.apache.logging.log4j.util.Strings.isEmpty;
 import static org.springframework.vault.support.DurationParser.parseDuration;
 

@@ -1,7 +1,6 @@
 package org.container.platform.chaos.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
 import org.container.platform.chaos.api.common.model.CommonOwnerReferences;
 import org.container.platform.chaos.api.common.model.ResultStatus;
 import org.container.platform.chaos.api.users.Users;
@@ -175,9 +172,6 @@ public class CommonUtils {
     }
 
 
-
-
-
     /**
      * 운영자 회원가입 용 정규 표현식에 일치하는 지 체크(check regex)
      *
@@ -222,8 +216,6 @@ public class CommonUtils {
 
         return defaultValue;
     }
-
-
 
 
     /**

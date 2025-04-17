@@ -16,11 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
-
 import static org.container.platform.chaos.api.common.Constants.NOT_ALLOWED_POD_NAME_LIST;
 
 /**
@@ -253,9 +251,6 @@ public class MethodHandler {
         }
 
         yaml = params.getYaml();
-
-
-        //requestResource = InspectionUtil.makeResourceName(requestResource);
 
         String resourceKind = YamlUtil.parsingYaml(yaml, KIND_KEY);
         resourceKind = YamlUtil.makeResourceNameYAML(resourceKind);

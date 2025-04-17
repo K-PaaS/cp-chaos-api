@@ -1,10 +1,14 @@
 package org.container.platform.chaos.api.login.support;
 
+import lombok.Getter;
 import org.container.platform.chaos.api.common.Constants;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
+import java.io.Serial;
+
 public class PortalGrantedAuthority implements GrantedAuthority {
+    @Serial
     private static final long serialVersionUID = 21301223123L;
     private final String id;
     private final String type;
@@ -62,7 +66,6 @@ public class PortalGrantedAuthority implements GrantedAuthority {
         this.url = Constants.EMPTY_STRING;
         this.parentId = Constants.EMPTY_STRING;
     }
-
     public String getId() {
         return this.id;
     }
@@ -78,11 +81,6 @@ public class PortalGrantedAuthority implements GrantedAuthority {
     public String geturl() {
         return this.url;
     }
-
-//    public String getToken(String id) {
-//        if(this.id.equals(id))  return this.token;
-//        return null;
-//    }
 
     public String getAuthority(String id) {
         if(this.id.equals(id))  return this.role;

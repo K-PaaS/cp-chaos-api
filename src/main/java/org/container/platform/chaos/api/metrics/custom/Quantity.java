@@ -5,7 +5,6 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -21,41 +20,40 @@ import java.util.Objects;
 public class Quantity {
 
     private final BigDecimal number;
-    private Format format;
+    private final Format format;
 
     public enum Format {
         DECIMAL_EXPONENT(10),
         DECIMAL_SI(10),
         BINARY_SI(2);
 
-        private int base;
+        private final int base;
 
         Format(final int base) {
             this.base = base;
         }
-
         public int getBase() {
             return base;
         }
+
     }
 
     public Quantity(final BigDecimal number, final Format format) {
         this.number = number;
         this.format = format;
     }
-
-    public Quantity(final String value) {
-        final Quantity quantity = fromString(value);
-        this.number = quantity.number;
-        this.format = quantity.format;
-    }
-
     public BigDecimal getNumber() {
         return number;
     }
 
     public Format getFormat() {
         return format;
+    }
+
+    public Quantity(final String value) {
+        final Quantity quantity = fromString(value);
+        this.number = quantity.number;
+        this.format = quantity.format;
     }
 
     public static Quantity fromString(final String value) {

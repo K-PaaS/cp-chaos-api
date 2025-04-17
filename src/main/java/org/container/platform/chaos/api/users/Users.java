@@ -2,9 +2,7 @@ package org.container.platform.chaos.api.users;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.Data;
-
 import org.container.platform.chaos.api.users.support.NamespaceRole;
 import org.springframework.util.ObjectUtils;
 import org.container.platform.chaos.api.common.CommonUtils;
