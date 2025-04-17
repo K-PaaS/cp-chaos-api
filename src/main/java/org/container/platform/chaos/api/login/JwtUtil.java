@@ -15,8 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -47,12 +46,12 @@ public class JwtUtil {
 
     @Value("${jwt.expirationDateInMs}")
     public void setJwtExpirationInMs(int jwtExpirationInMs) {
-        this.jwtExpirationInMs = jwtExpirationInMs;
+        JwtUtil.jwtExpirationInMs = jwtExpirationInMs;
     }
 
     @Value("${jwt.refreshExpirationDateInMs}")
     public void setRefreshExpirationDateInMs(int refreshExpirationDateInMs) {
-        this.refreshExpirationDateInMs = refreshExpirationDateInMs;
+        JwtUtil.refreshExpirationDateInMs = refreshExpirationDateInMs;
     }
 
 
@@ -112,7 +111,7 @@ public class JwtUtil {
                         Params vaultResult = accessTokenService.getVaultSecrets(new Params(clusterId, userAuthId, item.getUserType(), namespaceName));
                         roles.add(new PortalGrantedAuthority(namespaceName, Constants.ContextType.NAMESPACE.name(),
                                 item.getUserType(), vaultResult.getClusterToken(), vaultResult.getClusterApiUrl(), clusterId));
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 });
             }
@@ -139,9 +138,8 @@ public class JwtUtil {
      */
     public String getClientIpFromToken(String authToken) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
-        String clientIp = String.valueOf(claims.get("IP"));
 
-        return clientIp;
+        return String.valueOf(claims.get("IP"));
     }
 
 
@@ -156,7 +154,7 @@ public class JwtUtil {
 
         String bearerToken = requestWrapper.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         return null;
     }

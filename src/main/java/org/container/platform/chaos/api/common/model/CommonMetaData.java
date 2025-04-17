@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.container.platform.chaos.api.common.CommonUtils;
-
 import java.util.List;
 import java.util.Map;
 

@@ -5,15 +5,12 @@ import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.List;
 
 import static org.container.platform.chaos.api.common.Constants.TARGET_COMMON_API;
@@ -53,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> roles = null;
         Users user = getUsersDetailsForLogin(userId);
         if (user != null) {
-            roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
+            roles = List.of(new SimpleGrantedAuthority(user.getUserType()));
             return new User(user.getUserId(), user.getUserAuthId(), roles);
         }
         throw new UsernameNotFoundException(MessageConstant.INVALID_LOGIN_INFO.getMsg());

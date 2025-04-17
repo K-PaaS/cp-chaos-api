@@ -17,11 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,8 +35,6 @@ import static org.container.platform.chaos.api.common.Constants.CHECK_Y;
  */
 @Component
 public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
-
-
     protected JwtUtil jwtTokenUtil;
 
     @Autowired
@@ -61,10 +58,10 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 
             String agent = requestWrapper.getHeader("User-Agent");
             String clientIp = requestWrapper.getHeader("HTTP_X_FORWARDED_FOR");
-            if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
+            if (null == clientIp || clientIp.isEmpty() || clientIp.equalsIgnoreCase("unknown")) {
                 clientIp = requestWrapper.getHeader("REMOTE_ADDR");
             }
-            if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
+            if (null == clientIp || clientIp.isEmpty() || clientIp.equalsIgnoreCase("unknown")) {
                 clientIp = request.getRemoteAddr();
             }
 
@@ -75,7 +72,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
                 String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
 
                 if (AuthTokenValid.equals(CHECK_Y)) {
-                    if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
+                    if (clientIp.equals(tokenIp) && agent.contains("Java")) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
@@ -94,7 +91,6 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
             RequestWrapper requestWrapper = new RequestWrapper(request);
             String isRefreshToken = requestWrapper.getHeader("isRefreshToken");
             String requestURL = request.getRequestURL().toString();
-            // allow for Refresh Token creation if following conditions are true.
             if (isRefreshToken != null && isRefreshToken.equals("true") && requestURL.contains("refreshtoken")) {
                 jwtTokenUtil.allowForRefreshToken(ex, request);
             } else

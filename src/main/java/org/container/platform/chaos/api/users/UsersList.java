@@ -2,7 +2,6 @@ package org.container.platform.chaos.api.users;
 
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
-
 import java.util.List;
 
 /**

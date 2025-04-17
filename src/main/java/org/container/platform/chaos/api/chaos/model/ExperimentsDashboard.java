@@ -3,8 +3,6 @@ package org.container.platform.chaos.api.chaos.model;
 import lombok.Data;
 import org.container.platform.chaos.api.common.model.CommonItemMetaData;
 
-import java.util.List;
-
 @Data
 public class ExperimentsDashboard {
     private String resultCode;

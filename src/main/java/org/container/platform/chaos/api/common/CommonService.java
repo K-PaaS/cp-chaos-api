@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -483,35 +482,6 @@ public class CommonService {
         return (T) resourceReturnList;
     }
 
-
-    /**
-     * 리소스 목록 조회 제외 대상 네임스페이스 fieldSelector 생성 (Create Except Namespace Field Selector)
-     *
-     * @param type the type
-     * @return the string
-     */
-/*
-    public String generateFieldSelectorForExceptNamespace(String type) {
-
-        String fieldSelector = "?fieldSelector=";
-        String query = "metadata.namespace!=";
-
-        if (type.equals(Constants.RESOURCE_CLUSTER)) {
-            query = "metadata.name!=";
-        }
-
-        for (String namespace : ignoreNamespaceList) {
-            fieldSelector += query + namespace + Constants.separatorString;
-        }
-
-        // remove last char (separator)
-        fieldSelector = fieldSelector.replaceFirst(".$", "");
-
-        return fieldSelector;
-    }
-*/
-
-
     /**
      * Nodes 명에 따른 Pods 목록조회 fieldSelector 생성 (Create Field Selector For pods By NodeNames)
      *
@@ -799,6 +769,7 @@ public class CommonService {
         PortalGrantedAuthority portalGrantedAuthority;
         LOGGER.info("in getKubernetesInfo, params: " + CommonUtils.loggerReplace(params));
         LOGGER.info("cluster AUTHORITY: " + CommonUtils.loggerReplace(getClusterAuthorityFromContext(params.getCluster())));
+
         switch (getClusterAuthorityFromContext(params.getCluster())) {
             case Constants.AUTH_SUPER_ADMIN:
             case Constants.AUTH_CLUSTER_ADMIN:

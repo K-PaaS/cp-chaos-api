@@ -7,11 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.container.platform.chaos.api.common.Constants.*;
 
 /**
@@ -23,9 +20,6 @@ import static org.container.platform.chaos.api.common.Constants.*;
  **/
 @Service
 public class UsersService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsersService.class);
-
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
 

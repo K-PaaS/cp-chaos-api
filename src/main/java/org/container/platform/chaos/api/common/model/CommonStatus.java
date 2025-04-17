@@ -2,7 +2,6 @@ package org.container.platform.chaos.api.common.model;
 
 import lombok.Data;
 import org.container.platform.chaos.api.metrics.custom.Quantity;
-
 import java.util.List;
 import java.util.Map;
 

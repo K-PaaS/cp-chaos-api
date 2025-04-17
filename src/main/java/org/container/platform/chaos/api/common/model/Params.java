@@ -3,7 +3,6 @@ package org.container.platform.chaos.api.common.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.container.platform.chaos.api.common.Constants;
-
 import java.util.List;
 import java.util.Map;
 

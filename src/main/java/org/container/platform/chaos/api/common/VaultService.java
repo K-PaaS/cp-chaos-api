@@ -3,21 +3,16 @@ package org.container.platform.chaos.api.common;
 import io.jsonwebtoken.lang.Assert;
 import org.container.platform.chaos.api.clusters.clusters.Clusters;
 import org.container.platform.chaos.api.common.model.Params;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class VaultService {
-
-    Logger logger = LoggerFactory.getLogger(VaultService.class);
 
     @Autowired
     VaultTemplate vaultTemplate;
@@ -38,9 +33,9 @@ public class VaultService {
     public <T> T read(String path,  Class<T> requestClass) {
         path = setPath(path);
 
-        Object response = Optional.ofNullable(vaultTemplate.read(path))
+        Object response = Optional.of(vaultTemplate.read(path))
                 .map(VaultResponse::getData)
-                .filter(x -> x.keySet().contains("data"))
+                .filter(x -> x.containsKey("data"))
                 .orElseGet(HashMap::new)
                 .getOrDefault("data", null);
 

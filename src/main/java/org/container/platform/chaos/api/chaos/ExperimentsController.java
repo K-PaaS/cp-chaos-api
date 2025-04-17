@@ -1,9 +1,9 @@
 package org.container.platform.chaos.api.chaos;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.container.platform.chaos.api.chaos.model.*;
 import org.container.platform.chaos.api.common.model.Params;
 import org.container.platform.chaos.api.common.model.ResultStatus;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @version 1.0
  * @since 2024.06.21
  **/
-@Api(value = "ExperimentsController v1")
+@Tag(name = "ExperimentsController v1")
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/experiments")
 public class ExperimentsController {
@@ -38,8 +38,8 @@ public class ExperimentsController {
      *
      * @return the Experiments List
      */
-    @ApiOperation(value = "Experiments 목록 조회(Get Experiments List)", nickname = "getExperimentsList")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments 목록 조회(Get Experiments List)", operationId = "getExperimentsList")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping
     public ExperimentsList getExperimentsList(Params params) {
         return experimentsService.getExperimentsList(params);
@@ -51,8 +51,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the experiments detail
      */
-    @ApiOperation(value = "Experiments 상세 조회(Get Experiments Detail)", nickname = "getExperiments")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments 상세 조회(Get Experiments Detail)", operationId = "getExperiments")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping(value = "/{kind:.+}/{name:.+}")
     public Experiments getExperiments(Params params) {
         return experimentsService.getExperiments(params);
@@ -63,8 +63,8 @@ public class ExperimentsController {
      *
      * @return the Experiments Status List
      */
-    @ApiOperation(value = "Experiments Status 목록 조회(Get Experiments Status List)", nickname = "getExperimentsStatusList")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments Status 목록 조회(Get Experiments Status List)", operationId = "getExperimentsStatusList")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping("/status")
     public ExperimentsDashboardList getExperimentsStatusList(Params params) {
         return experimentsService.getExperimentsStatusList(params);
@@ -75,8 +75,8 @@ public class ExperimentsController {
      *
      * @return the Experiments Detail Status
      */
-    @ApiOperation(value = "Experiments 상세 Status 조회(Get Experiments Detail Status)", nickname = "getExperimentsStatus")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments 상세 Status 조회(Get Experiments Detail Status)", operationId = "getExperimentsStatus")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping("/status/{uid:.+}")
     public ExperimentsDashboard getExperimentsStatus(Params params) {
         return experimentsService.getExperimentsStatus(params);
@@ -88,8 +88,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the resultStatus
      */
-    @ApiOperation(value = "Experiments 생성(Create Experiments)", nickname = "createExperiments")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments 생성(Create Experiments)", operationId = "createExperiments")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @PostMapping
     public Object createExperiments(@RequestBody Params params) {
         return experimentsService.createExperiments(params);
@@ -101,8 +101,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the resultStatus
      */
-    @ApiOperation(value = "Experiments 삭제(Delete Experiments)", nickname = "deleteExperiments")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments 삭제(Delete Experiments)", operationId = "deleteExperiments")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @DeleteMapping("/{kind:.+}/{name:.+}")
     public ResultStatus deleteExperiments(Params params) {
         return experimentsService.deleteExperiments(params);
@@ -114,8 +114,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the resultStatus
      */
-    @ApiOperation(value = "Experiments Events 목록 조회(Get Experiments Events List)", nickname = "getExperimentsEventsList")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Experiments Events 목록 조회(Get Experiments Events List)", operationId = "getExperimentsEventsList")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping("/events")
     public ExperimentsEventsList getExperimentsEventsList(Params params) {
         return experimentsService.getExperimentsEventsList(params);
@@ -127,8 +127,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the ResourceUsage
      */
-    @ApiOperation(value = "Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)", nickname = "getResourceUsageByPod")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Resource usage by selected Pods during chaos 조회(Get Resource Usage by selected Pods during chaos)", operationId = "getResourceUsageByPod")
+    @Parameter(name = "params", description = "request parameters", required = true)
     @GetMapping("/resourceUsageByPod/{name:.+}")
     public ResourceUsage getResourceUsageByPod(Params params) {
         return experimentsService.getResourceUsageByPod(params);
@@ -140,8 +140,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the ResourceUsage
      */
-    @ApiOperation(value = "Resource usage by workload for selected Pods during chao 조회(Get Resource usage by workload for selected Pods during chao)", nickname = "getResourceUsageByWorkload")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Resource usage by workload for selected Pods during chao 조회(Get Resource usage by workload for selected Pods during chao)", operationId = "getResourceUsageByWorkload")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping("/resourceUsageByWorkload/{name:.+}")
     public ResourceUsage getResourceUsageByWorkload(Params params) {
         return experimentsService.getResourceUsageByWorkload(params);
@@ -153,8 +153,8 @@ public class ExperimentsController {
      * @param params the params
      * @return the ResourceUsage
      */
-    @ApiOperation(value = "Resource usage by node during chaos 조회(Get Resource usage by node during chaos)", nickname = "getResourceUsageByNode")
-    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "request parameters", required = true, dataType = "common.model.Params", paramType = "body", dataTypeClass = Params.class)})
+    @Operation(summary = "Resource usage by node during chaos 조회(Get Resource usage by node during chaos)", operationId = "getResourceUsageByNode")
+    @Parameter(name = "params", description = "request parameters", required = true, schema = @Schema(type  = "common.model.Params"))
     @GetMapping("/resourceUsageByNode/{name:.+}")
     public ResourceUsage getResourceUsageByNode(Params params) {
         return experimentsService.getResourceUsageByNode(params);

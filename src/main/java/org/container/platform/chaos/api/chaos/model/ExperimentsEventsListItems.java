@@ -1,10 +1,6 @@
 package org.container.platform.chaos.api.chaos.model;
 
 import lombok.Data;
-import org.container.platform.chaos.api.common.Constants;
-
-import java.time.Instant;
-import java.util.List;
 
 @Data
 public class ExperimentsEventsListItems {

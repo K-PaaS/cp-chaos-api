@@ -118,7 +118,6 @@ cpMaster:
         create: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos"
         delete: "/apis/chaos-mesh.org/v1alpha1/namespaces/{namespace}/stresschaos/{chaosname}"
 
-
 commonApi:
   url: ${CP_PORTAL_COMMON_API_URI}
   authorization:
@@ -130,3 +129,28 @@ chaosCollectorApi:
   authorization:
     id: admin
     password: cpcollector!123
+
+logging:
+  config: classpath:logback-spring.xml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+logging:
+  file:
+    path: logs
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  file:
+    path: /home/1000/logs
+
+
